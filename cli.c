@@ -203,15 +203,15 @@ void cli_line_here(text_buf *b, size_t cn, size_t ln, size_t len)
 {
     text_char space = {.utf8 = " ", .fg = text_col_none};
     text_col nextcol, col = -1;
-    vec *line;
+    vec line;
     int looping;
 
     fputs("\033[K", stdout);
 
     if (!(b->flags & text_flag_vis)) return;
+    if (ln >= text_buf_len(b))       return;
 
-    line = vec_get(&(b->lines), ln);
-    if (!line) cli_line_blank();
+    text_buf_get(b, ln, &line);
 
     looping = 1;
 
@@ -219,7 +219,7 @@ void cli_line_here(text_buf *b, size_t cn, size_t ln, size_t len)
       {
         text_char *chr;
 
-        chr = vec_get(line, cn);
+        chr = vec_get(&line, cn);
         if (chr == NULL) 
         {
             chr = &space;
@@ -245,6 +245,7 @@ void cli_line_here(text_buf *b, size_t cn, size_t ln, size_t len)
         cn += 1;
     }
     
+    vec_kill(&line);
     cli_fg(text_col_none);
 }
 
@@ -255,8 +256,16 @@ void cli_line(text_buf *b, size_t cn, size_t ln)
 
     if (cn < b->scrollx) cn = b->scrollx;
 
-    cli_goto(b->x + cn - b->scrollx, b->y + ln - b->scrolly);
-    cli_line_here(b, cn, ln, b->w - cn + b->scrollx);
+    if (ln >= text_buf_len(b))
+    {
+        cli_goto(b->x, b->y + ln - b->scrolly);
+        cli_line_blank();
+    }
+    else
+    {
+        cli_goto(b->x + cn - b->scrollx, b->y + ln - b->scrolly);
+        cli_line_here(b, cn, ln, b->w - cn + b->scrollx);
+    }
 }   
 
 void cli_lines_after(text_buf *b, size_t ln)
@@ -327,40 +336,10 @@ void cli_input(void)
 
     fflush(stdout);        
 }
- 
-/*
-void cli_input(void)
-{
-//    fflush(stdout);cmd_handle_key(cli_gdet_key(getchar()));return;
 
-    fd_set fds;
-    struct timeval tmout = CLI_INP_TMOUT;
-
-    FD_ZERO(&fds);
-    FD_SET(STDIN_FILENO, &fds);
-
-    select(STDIN_FILENO + 1, &fds, NULL, NULL, &tmout);
-
-    while (FD_ISSET(STDIN_FILENO, &fds))
-    {
-        int chr;
-        cli_key key;
-
-        chr = getchar();    
-        if (chr == EOF) break;
-
-        key = cli_get_key(chr);
-        cmd_handle_key(key);
-    }
-
-    puts("LOVE");
-}
-*/
-#include <unistd.h>
 int main(void)
 {
     text_buf b;
-
 
     text_buf_init(&b);
     b.flags |= text_flag_vis;
@@ -374,6 +353,7 @@ int main(void)
 
     fflush(stdout);
 
+    pthread_mutex_init(&cli_input_mtx, NULL);
     pthread_create(&cli_input_thread, NULL, cli_input_listen, NULL);
 
     while (cli_alive) cli_input();

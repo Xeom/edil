@@ -1,6 +1,6 @@
 #if !defined(TEXT_H)
 # define TEXT_H
-
+# include <pthread.h>
 # include "vec.h"
 
 typedef enum
@@ -42,6 +42,7 @@ typedef struct text_cmd_s  text_cmd;
 typedef struct text_char_s text_char;
 typedef struct text_buf_s  text_buf;
 typedef struct text_cur_s  text_cur;
+typedef struct text_dims_s text_dims;
 
 struct text_cmd_s
 {
@@ -70,14 +71,23 @@ struct text_char_s
     text_col fg;
 };
 
+struct text_dims_s
+{
+    size_t scx, scy;
+    size_t x,   y;
+    size_t w,   h;
+};
+
 struct text_buf_s
 {
+    pthread_mutex_t mtx;
     vec       lines;
     text_cur  cur;
     text_flag flags;
     size_t    scrollx, scrolly;
     size_t    x, y;
     size_t    w, h;
+    text_dims dims;
 };
 
 text_buf *text_cur_buf;
@@ -85,15 +95,23 @@ text_buf *text_cur_buf;
 int text_utf8_len(char utf8);
 
 void text_buf_update_cur(text_buf *b, text_cur *orig);
+
 void text_buf_init(text_buf *b);
 void text_buf_kill(text_buf *b);
+
 void text_buf_cmd(text_buf *b, text_cmd *cmd);
-void text_cur_cmd(text_cur *cur, text_cmd *cmd);
-void text_buf_setfg(text_buf *b, size_t cn, size_t ln, size_t maxcn, text_col col);
-void text_buf_ins(text_buf *b, size_t cn, size_t ln, vec *chrs);
-void text_buf_del(text_buf *b, size_t cn, size_t ln, size_t n);
-void text_buf_del_line(text_buf *b, size_t ln);
-void text_buf_ins_line(text_buf *b, size_t ln);
+void text_cur_cmd(text_buf *b, text_cmd *cmd);
+
+void text_buf_get(text_buf *b, size_t ln, vec *v);
+
+void text_buf_getcur(text_buf *b, text_cur *cur);
+void text_buf_setcur(text_buf *b, text_cur *cur);
+
+text_flag text_buf_getflag(text_buf *b);
+
+size_t text_buf_linelen(text_buf *b, size_t ln);
+size_t text_buf_len(text_buf *b);
+
 
 #endif /* TEXT_H */
 

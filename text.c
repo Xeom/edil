@@ -1,15 +1,31 @@
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "cli.h"
 #include "vec.h"
 
 #include "text.h"
 
+#define USING_MTX(mtx, code)          \
+        pthread_mutex_lock(&(mtx));   \
+        do { code } while (0);        \
+        pthread_mutex_unlock(&(mtx)); \
+
 text_buf *text_cur_buf;
 
-int text_utf8_len(char utf8)
+void text_buf_setfg(text_buf *b, size_t cn, size_t ln, size_t maxcn, text_col col);
+void text_buf_ins(text_buf *b, size_t cn, size_t ln, vec *chrs);
+void text_buf_del(text_buf *b, size_t cn, size_t ln, size_t n);
+void text_buf_del_line(text_buf *b, size_t ln);
+void text_buf_ins_line(text_buf *b, size_t ln);
+
+int text_utf8_len(char c)
 {
+    unsigned char utf8;
+
+    utf8 = *(unsigned char *)(&c);
+
     if (utf8 <= 0x7f) return 1;
     if (utf8 <= 0xbf) return 1; /* This is an error :( */
     if (utf8 <= 0xdf) return 2;
@@ -49,13 +65,41 @@ void text_buf_cmd(text_buf *b, text_cmd *cmd)
     }
 }
 
+void text_buf_getcur(text_buf *b, text_cur *cur)
+{
+    USING_MTX(
+        b->mtx,
+        memcpy(cur, &(b->cur), sizeof(text_cur));
+    );
+}
+
+void text_buf_setcur(text_buf *b, text_cur *cur)
+{
+    USING_MTX(
+        b->mtx,
+        memcpy(&(b->cur), cur, sizeof(text_cur));
+    );
+}
+
+text_flag text_buf_getflag(text_buf *b)
+{
+    text_flag rtn;
+
+    USING_MTX(
+        b->mtx,
+        rtn = b->flags;
+    );
+    
+    return rtn;
+}
+
 void text_cur_cmd_pair(size_t *cn, size_t *ln, text_cmd *cmd)
 {
     switch (cmd->type)
     {
     case text_cmd_ins:
         if (*ln == cmd->args.ins.ln 
-                && cmd->args.ins.cn <= *cn)
+                && cmd->args.ins.cn < *cn)
             *cn += vec_len(&(cmd->args.ins.chrs));
         break;
 
@@ -79,10 +123,16 @@ void text_cur_cmd_pair(size_t *cn, size_t *ln, text_cmd *cmd)
     }
 }
 
-void text_cur_cmd(text_cur *cur, text_cmd *cmd)
+void text_cur_cmd(text_buf *b, text_cmd *cmd)
 {
-    text_cur_cmd_pair(&(cur->cn1), &(cur->ln1), cmd);
-    text_cur_cmd_pair(&(cur->cn2), &(cur->ln2), cmd);
+    text_cur cur;
+
+    text_buf_getcur(b, &cur);
+
+    text_cur_cmd_pair(&(cur.cn1), &(cur.ln1), cmd);
+    text_cur_cmd_pair(&(cur.cn2), &(cur.ln2), cmd);
+
+    text_buf_setcur(b, &cur);
 }
 
 void text_buf_update_cur(text_buf *b, text_cur *orig)
@@ -114,6 +164,7 @@ void text_buf_update_cur(text_buf *b, text_cur *orig)
 void text_buf_init(text_buf *b)
 {
     vec      *line;
+    pthread_mutex_init(&(b->mtx), NULL);
 
     vec_init(&(b->lines), sizeof(vec));
     line = vec_ins(&(b->lines), 0, 1, NULL);
@@ -129,8 +180,8 @@ void text_buf_init(text_buf *b)
 
     b->x = 0;
     b->y = 0;
-    b->w = 30;
-    b->h = 10;
+    b->w = 64;
+    b->h = 16;
 
     b->scrollx = 0;
     b->scrolly = 0; 
@@ -152,86 +203,115 @@ void text_buf_setfg(text_buf *b, size_t cn, size_t ln, size_t maxcn, text_col co
     size_t curcn;
     vec   *line;
 
-    line = vec_get(&(b->lines), ln);
+    USING_MTX(
+        b->mtx,
+        line = vec_get(&(b->lines), ln);
   
-    if (!line) return;
+        if (line)
+        {
+            for (curcn = cn; curcn <= maxcn; curcn++)
+            {
+                text_char *chr;
+                chr = vec_get(line, cn);
 
-    for (curcn = cn; curcn <= maxcn; curcn++)
-    {
-        text_char *chr;
-        chr = vec_get(line, cn);
+                if (!chr) break;
 
-        if (!chr) break;
-
-        chr->fg = col;
-    }   
+                chr->fg = col;
+            }
+        }
+    );
+  
 }
 
-#include <stdio.h>
 void text_buf_ins(text_buf *b, size_t cn, size_t ln, vec *chrs)
 {
     vec       *line;
     size_t     len;
-    text_col   bg, fg;
-    text_char *chr;
-    text_char  chrtemplate;
 
-    line = vec_get(&(b->lines), ln);
-    if (!line) return;
- 
-    chr = vec_get(line, cn);
-
-    len = vec_len(chrs);
-    fprintf(stderr, "%lu %lu %lu\n", cn, ln, len);
-    vec_ins(line, cn, len, vec_get(chrs, 0));
+    USING_MTX(
+        b->mtx,
+        line = vec_get(&(b->lines), ln);
+        if (line)
+        {
+            len = vec_len(chrs);
+            vec_ins(line, cn, len, vec_get(chrs, 0));
+        }
+    );
 }
 
 void text_buf_del(text_buf *b, size_t cn, size_t ln, size_t n)
 {
     vec *line;
 
-    line = vec_get(&(b->lines), ln);
-    if (!line) return;
-
-    vec_del(line, cn, n);
+    USING_MTX(
+        b->mtx,
+        line = vec_get(&(b->lines), ln);
+        if (line)
+            vec_del(line, cn, n);
+    );
 }
-#include <stdio.h>
+
 void text_buf_ins_line(text_buf *b, size_t ln)
 {
     vec *line;
 
-    line = vec_ins(&(b->lines), ln, 1, NULL);
-    if (!line) return;
-
-    vec_init(line, sizeof(text_char));
+    USING_MTX(
+        b->mtx,
+        line = vec_ins(&(b->lines), ln, 1, NULL);
+        if (line)
+            vec_init(line, sizeof(text_char));
+    );
 }
 
 void text_buf_del_line(text_buf *b, size_t ln)
 {
-    if (vec_del(&(b->lines), ln, 1) == -1) return;
+    USING_MTX(
+        b->mtx,
+        vec_del(&(b->lines), ln, 1);
+    );
 }
 
-void text_buf_split(text_buf *b, size_t cn, size_t ln)
+void text_buf_get(text_buf *b, size_t ln, vec *v)
 {
-    vec *newline, *oldline;
+    vec *line;
 
-    oldline = vec_get(&(b->lines), ln);
-    if (!oldline) return;
+    vec_init(v, sizeof(text_char));
 
-    newline = vec_ins(&(b->lines), ln + 1, 1, NULL);
-    if (!newline) return;
-
-    vec_init(newline, sizeof(text_char));
-    
-    if (cn > vec_len(oldline)) return;
-
-    if (cn < vec_len(oldline))
-    {
-        size_t splitlen;
-        splitlen = vec_len(oldline) - cn;
-        vec_ins(newline, 0, splitlen, vec_get(oldline, cn)); 
-        vec_del(oldline, cn, splitlen);
-    }
-
-    cli_lines_after(b, ln);
+    USING_MTX(
+        b->mtx,
+        line = vec_get(&(b->lines), ln);
+        if (line) 
+            vec_ins(v, 0, vec_len(line), vec_get(line, 0));
+    );
 }
+
+size_t text_buf_linelen(text_buf *b, size_t ln)
+{
+    vec *line;
+    size_t rtn;
+
+    USING_MTX(
+        b->mtx,   
+        line = vec_get(&(b->lines), ln);
+        if (line) 
+            rtn = vec_len(line);
+    );
+   
+    if (line) return rtn;
+
+    return 0;
+}
+
+size_t text_buf_len(text_buf *b)
+{
+    size_t rtn;
+
+    USING_MTX(
+        b->mtx,
+        rtn = vec_len(&(b->lines));
+    );
+
+    return rtn;
+}
+
+
