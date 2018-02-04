@@ -4,6 +4,7 @@
 
 void cmd_init(void);
 
+void text_buf_update_cur(text_buf *b, text_cur *cur);
 void cmd_arrow(cli_key key);
 void cmd_ins(cli_key key);
 

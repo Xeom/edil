@@ -4,7 +4,8 @@
 # include "text.h"
 
 typedef enum
-{
+{   
+    cli_key_back  = 0x07f,
     cli_key_tab   = 0x449,
     cli_key_enter = 0x44a,
     cli_key_esc   = 0x200,
@@ -55,5 +56,5 @@ void cli_line_here(text_buf *b, size_t cn, size_t ln, size_t len);
 void cli_line(text_buf *b, size_t cn, size_t ln);
 void cli_lines_after(text_buf *b, size_t ln);
 
-#endif /* PRINT_H */
+#endif /* CLI_H */
 

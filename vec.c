@@ -26,10 +26,10 @@ static void vec_resize_longer(vec *v)
     if (v->usage <= v->capacity) return;
 
     if (v->capacity == 0) v->capacity = 1;
-
     /* Increase the capacity until the data fits */
     do
     {
+ //  printf("%lu %lu\n", v->usage, v->capacity);
         v->capacity <<= 1;
     } while (v->usage > v->capacity);
 
@@ -114,6 +114,7 @@ void *vec_ins(vec *v, size_t ind, size_t n, const void *data)
     size_t bytesafter, offset, bytesins;
 
     if (!v) return NULL;
+    if (n == 0) return NULL;
 
     offset     = ind * v->width;
     bytesins   = n * v->width;
@@ -141,7 +142,9 @@ void *vec_ins(vec *v, size_t ind, size_t n, const void *data)
 int vec_del(vec *v, size_t ind, size_t n)
 {
     size_t bytesafter, bytesdead, offset;
-
+    
+    if (n == 0) return 0;
+    
     offset     = ind * v->width;
     bytesdead  = n   * v->width;
     bytesafter = v->usage - offset - bytesdead;

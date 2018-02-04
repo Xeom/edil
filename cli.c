@@ -10,8 +10,8 @@
 
 #include "cli.h"
 
-#define CLI_COL_CUR1  text_col_rev
-#define CLI_COL_CUR2  text_col_under
+#define CLI_COL_CUR1  text_col_rev|text_col_bold
+#define CLI_COL_CUR2  text_col_under|text_col_bold
 
 #define CLI_COL_BLANK text_col_black|text_col_bold
 #define CLI_STR_BLANK "\xc2\xbb"
@@ -186,6 +186,9 @@ void cli_fg(text_col col)
     if (col & text_col_rev)
         fputs(";7", stdout);
 
+    if (col & text_col_blink)
+        fputs(";5", stdout);
+
     fputs("m", stdout);
 }
 
@@ -198,20 +201,30 @@ void cli_line_blank(void)
 
 void cli_line_here(text_buf *b, size_t cn, size_t ln, size_t len)
 {
+    text_char space = {.utf8 = " ", .fg = text_col_none};
     text_col nextcol, col = -1;
     vec *line;
+    int looping;
+
+    fputs("\033[K", stdout);
 
     if (!(b->flags & text_flag_vis)) return;
 
     line = vec_get(&(b->lines), ln);
     if (!line) cli_line_blank();
-   
-    for (;; cn++)
-    {
+
+    looping = 1;
+
+    while (looping)
+      {
         text_char *chr;
 
         chr = vec_get(line, cn);
-        if (chr == NULL) break;
+        if (chr == NULL) 
+        {
+            chr = &space;
+            looping = 0;
+        }
 
         if (--len == 0)  break;
 
@@ -228,6 +241,8 @@ void cli_line_here(text_buf *b, size_t cn, size_t ln, size_t len)
 
         col = nextcol;
         fwrite(chr->utf8, 1, text_utf8_len(chr->utf8[0]), stdout);
+
+        cn += 1;
     }
     
     cli_fg(text_col_none);
@@ -278,9 +293,9 @@ void *cli_input_listen(void *arg)
         len = vec_len(v);
         vec_ins(v, len, 1, &chr);
 
-        pthread_cond_signal(&cli_input_cond);
         pthread_mutex_unlock(&cli_input_mtx);
-   }
+        pthread_cond_signal(&cli_input_cond);
+    }
 }
 
 void cli_input(void)
@@ -294,11 +309,11 @@ void cli_input(void)
     
     pthread_mutex_lock(&cli_input_mtx);
     pthread_cond_wait(&cli_input_cond, &cli_input_mtx);
-    pthread_mutex_unlock(&cli_input_mtx);
+    pthread_mutex_unlock(&cli_input_mtx);    
 
     do
     {
-         pthread_mutex_lock(&cli_input_mtx);
+        pthread_mutex_lock(&cli_input_mtx);
         chr = *((char *)vec_get(v, 0));
         vec_del(v, 0, 1);
         len = vec_len(v);
@@ -342,7 +357,7 @@ void cli_input(void)
 }
 */
 #include <unistd.h>
-void main(void)
+int main(void)
 {
     text_buf b;
 
@@ -356,11 +371,13 @@ void main(void)
     cmd_init();
     cli_init();
     cli_lines_after(&b, 0);
-    text_buf_ins(&b, 0, 0, "Hello");
+
     fflush(stdout);
 
     pthread_create(&cli_input_thread, NULL, cli_input_listen, NULL);
 
     while (cli_alive) cli_input();
     cli_kill();
+
+    return 0;
 }
