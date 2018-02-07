@@ -3,7 +3,6 @@
 
 #include "vec.h"
 
-
 /* Call after operations that might shorten a vec */
 static void vec_resize_shorter(vec *v)
 {
@@ -52,6 +51,35 @@ void vec_kill(vec *v)
     v->data     = NULL;
     v->usage    = 0;
     v->capacity = 0;
+}
+
+/* Use qsort on a vector */
+void vec_sort(vec *v, int (*cmpfunc)(const void *a, const void *b))
+{
+    if (!v || !cmpfunc) return;
+    if (v->usage == 0)  return;
+
+    qsort(vec_get(v, 0), vec_len(v), v->width, cmpfunc);
+}
+
+/* Reverse a vector */
+void vec_rev(vec *v)
+{
+    size_t lind, len, mid;
+
+    len = vec_len(v);
+    mid = len / 2;
+
+    for (lind = 0; lind < mid; lind++)
+    {
+        char swap[v->width];
+        size_t rind;
+        rind = len - lind - 1;
+
+        memcpy(swap,             vec_get(v, lind), v->width);
+        memcpy(vec_get(v, lind), vec_get(v, rind), v->width);
+        memcpy(vec_get(v, rind), swap,             v->width);
+    }
 }
 
 /* BISECTION */

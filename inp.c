@@ -7,6 +7,7 @@
 
 #include "util.h"
 #include "cmd.h"
+#include "bar.h"
 #include "text.h"
 
 #include "inp.h"
@@ -16,11 +17,6 @@
 
 #define INP_COL_BLANK text_col_black|text_col_bold
 #define INP_STR_BLANK "\xc2\xbb"
-
-#define USING_MTX(mtx, code)          \
-        pthread_mutex_lock(&(mtx));   \
-        do { code } while (0);        \
-        pthread_mutex_unlock(&(mtx)); \
 
 vec inp_keycodes;
 
@@ -128,7 +124,6 @@ pthread_t inp_listen_thread;
 
 void *inp_listen(void *arg)
 {
-    char   chr;
     tqueue *tq;
 
     tq = &inp_queue;
@@ -158,6 +153,7 @@ void inp_loop(void)
     } while (!tqueue_empty(tq));
 
     cmd_ins_flush();
+    bar_update();
     fflush(stdout);        
 }
 

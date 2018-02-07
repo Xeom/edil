@@ -76,7 +76,7 @@ void cli_chrs_here(vec *chrs, size_t len)
         text_char *chr;
 
         chr = vec_get(chrs, ind);
-        if (--len == 0) break;
+        if (len-- == 0) break;
 
         col = chr->fg;
         if (col != prevcol) cli_fg(col);
@@ -156,22 +156,21 @@ void cli_lines_after(text_buf *b, size_t ln)
         cli_line(b, 0, ln++);
 }
 
-int cli_needs_resize = 0;
-
 void cli_handle_winch(int sig)
-{
-    cli_needs_resize = 1;
-}
-
-void cli_resize(void)
 {
     struct winsize w;
 
     ioctl(STDIN_FILENO, TIOCGWINSZ, &w);
     cli_h = w.ws_row;
     cli_w = w.ws_col;
-}
 
+    text_cur_buf->w = cli_w;
+    text_cur_buf->h = cli_h - 1;
+
+    cli_lines_after(text_cur_buf, 0);
+
+    fflush(stdout);
+}
 
 void cli_init(void)
 {
@@ -192,7 +191,7 @@ void cli_init(void)
     tcsetattr(STDIN_FILENO, TCSANOW, &tinfo);
     
     /* Get window size */
-    cli_resize();
+    cli_handle_winch(0);
 
     /* Clear sreen and hide cursor */
     fputs("\033[2J\033[?25l", stdout);
@@ -206,8 +205,6 @@ void cli_init(void)
 
     /* It's alive! */
     cli_alive = 1;
-
-
 }
 
 void cli_kill(void)
@@ -237,10 +234,7 @@ int main(void)
 
     while (cli_alive) 
     {
-        if (cli_needs_resize)
-            cli_resize();
-        else
-            inp_loop();
+       inp_loop();
     }
     cli_kill();
     inp_kill();

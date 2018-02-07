@@ -19,6 +19,10 @@ void vec_init(vec *v, size_t width);
 
 void vec_kill(vec *v);
 
+void vec_sort(vec *v, int (*cmpfunc)(const void *a, const void *b));
+
+void vec_rev(vec *v);
+
 size_t vec_bst(
     vec *v,
     const void *item,

@@ -104,20 +104,24 @@ void text_cur_cmd_pair(size_t *cn, size_t *ln, text_cmd *cmd)
         break;
 
     case text_cmd_del:
-        if (*ln == cmd->args.del.ln
-                && cmd->args.del.cn < *cn)
-            *cn -= cmd->args.del.n;
+        if (*ln == cmd->args.del.ln && *cn > cmd->args.del.cn)
+        {
+            if (*cn > cmd->args.del.cn + cmd->args.del.n)
+                *cn -= cmd->args.del.n;
+            else
+                *cn  = cmd->args.del.cn;
+        }
         break;
 
     case text_cmd_ins_line:
-        if (*ln >= cmd->args.ins.ln)
+        if (*ln >= cmd->args.ins_line.ln)
             *ln += 1;
         break;
 
     case text_cmd_del_line:
-        if (*ln >= cmd->args.del.ln)
+        if (*ln >= cmd->args.del_line.ln)
             *ln -= 1;
-        if (*ln == cmd->args.del.ln)
+        if (*ln == cmd->args.del_line.ln)
             *cn  = 0;
         break;
     }

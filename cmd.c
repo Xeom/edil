@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <string.h>
 
 #include "cli.h"
@@ -5,12 +6,14 @@
 
 #include "cmd.h"
 
-typedef enum
+char *cmd_mode_names[] =
 {
-    cmd_mode_bar,
-    cmd_mode_buf,
-    cmd_mode_opt
-} cmd_mode;
+    [cmd_mode_bar] = "bar",
+    [cmd_mode_buf] = "ins",
+    [cmd_mode_opt] = "opt",
+    [cmd_mode_sel] = "sel",
+    [cmd_mode_rct] = "rct"
+};
 
 cmd_mode cmd_cur_mode = cmd_mode_buf;
 
@@ -59,6 +62,11 @@ static vec cmd_ins_buf;
 void cmd_init(void)
 {
     vec_init(&cmd_ins_buf, sizeof(text_char));
+}
+
+void cmd_kill(void)
+{
+    vec_kill(&cmd_ins_buf);
 }
 
 void cmd_ins(cli_key key)
@@ -178,7 +186,6 @@ void cmd_del(cli_key key)
             if (cn == 0)
             {
                 cmd_del_line();
-                text_buf_update_cur(text_cur_buf, &orig);
                 return;
             }
 
@@ -264,12 +271,11 @@ void cmd_enter(cli_key key)
         }
  
         text_buf_getcur(text_cur_buf, &cur);
-        cur.cn1  = 0;
-        cur.ln1 += 1;
+        cur.cn1 = 0;
+        cur.ln1 = ln + 1;
         text_buf_setcur(text_cur_buf, &cur);
 
-        cli_line(text_cur_buf, cn, ln);
-        cli_lines_after(text_cur_buf, ln + 1);
+       cli_lines_after(text_cur_buf, ln);
     }
 }
 
