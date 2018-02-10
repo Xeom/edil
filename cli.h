@@ -52,6 +52,7 @@ void cli_kill(void);
 cli_key cli_get_key(char chr);
 void cli_goto(size_t cn, size_t ln);
 void cli_fg(text_col col);
+void cli_chrs_here(vec *chrs, size_t len);
 void cli_line_here(text_buf *b, size_t cn, size_t ln, size_t len);
 void cli_line(text_buf *b, size_t cn, size_t ln);
 void cli_lines_after(text_buf *b, size_t ln);

@@ -10,9 +10,11 @@
 #include <pthread.h>
 #include <sys/ioctl.h>
 
+#include "files.h"
 #include "inp.h"
 #include "cmd.h"
 #include "text.h"
+#include "bar.h"
 
 #include "cli.h"
 
@@ -221,12 +223,14 @@ int main(void)
     text_buf b;
 
     text_buf_init(&b);
+    files_load(&b, fopen("test.txt", "r"));
     b.flags |= text_flag_vis;
     text_cur_buf = &b;
 
     cmd_init();
     cli_init(); 
     inp_init();
+    bar_init();
 
     cli_lines_after(&b, 0);
 

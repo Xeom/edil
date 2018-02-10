@@ -81,6 +81,7 @@ struct text_dims_s
 struct text_buf_s
 {
     pthread_mutex_t mtx;
+    vec       name;
     vec       lines;
     text_cur  cur;
     text_flag flags;
@@ -103,6 +104,9 @@ void text_buf_cmd(text_buf *b, text_cmd *cmd);
 void text_cur_cmd(text_buf *b, text_cmd *cmd);
 
 void text_buf_get(text_buf *b, size_t ln, vec *v);
+
+void text_buf_getname(text_buf *b, vec *v);
+void text_buf_setname(text_buf *b, vec *v);
 
 void text_buf_getcur(text_buf *b, text_cur *cur);
 void text_buf_setcur(text_buf *b, text_cur *cur);

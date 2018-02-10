@@ -7,13 +7,15 @@ typedef enum
     cmd_mode_bar,
     cmd_mode_buf,
     cmd_mode_opt,
+    cmd_mode_mnu,
     cmd_mode_sel,
     cmd_mode_rct,
     cmd_mode_nummodes
 } cmd_mode;
 
-char *cmd_mode_names[cmd_mode_nummodes];
-cmd_mode cmd_cur_mode;
+extern char *cmd_mode_names[cmd_mode_nummodes];
+extern cmd_mode cmd_cur_mode;
+extern vec cmd_bar_str;
 
 void cmd_init(void);
 void cmd_kill(void);

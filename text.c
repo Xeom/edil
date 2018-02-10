@@ -4,13 +4,10 @@
 
 #include "cli.h"
 #include "vec.h"
+#include "util.h"
+#include "bar.h"
 
 #include "text.h"
-
-#define USING_MTX(mtx, code)          \
-        pthread_mutex_lock(&(mtx));   \
-        do { code } while (0);        \
-        pthread_mutex_unlock(&(mtx)); \
 
 text_buf *text_cur_buf;
 
@@ -63,6 +60,25 @@ void text_buf_cmd(text_buf *b, text_cmd *cmd)
         cmd->args.del_line.ln);
         break;
     }
+}
+
+void text_buf_getname(text_buf *b, vec *v)
+{
+    vec_init(v, sizeof(text_char));
+    
+    USING_MTX(b->mtx,
+        vec_ins(v, 0, vec_len(&(b->name)), vec_get(&(b->name), 0));
+    );
+}
+
+void text_buf_setname(text_buf *b, vec *v)
+{
+    USING_MTX(b->mtx,
+        vec_del(&(b->name), 0, vec_len(&(b->name)));
+        vec_ins(&(b->name), 0, vec_len(v), vec_get(v, 0));
+    );
+
+    bar_update();
 }
 
 void text_buf_getcur(text_buf *b, text_cur *cur)
@@ -207,8 +223,7 @@ void text_buf_setfg(text_buf *b, size_t cn, size_t ln, size_t maxcn, text_col co
     size_t curcn;
     vec   *line;
 
-    USING_MTX(
-        b->mtx,
+    USING_MTX(b->mtx,
         line = vec_get(&(b->lines), ln);
   
         if (line)
@@ -232,8 +247,7 @@ void text_buf_ins(text_buf *b, size_t cn, size_t ln, vec *chrs)
     vec       *line;
     size_t     len;
 
-    USING_MTX(
-        b->mtx,
+    USING_MTX(b->mtx,
         line = vec_get(&(b->lines), ln);
         if (line)
         {
@@ -247,8 +261,7 @@ void text_buf_del(text_buf *b, size_t cn, size_t ln, size_t n)
 {
     vec *line;
 
-    USING_MTX(
-        b->mtx,
+    USING_MTX(b->mtx,
         line = vec_get(&(b->lines), ln);
         if (line)
             vec_del(line, cn, n);
@@ -259,8 +272,7 @@ void text_buf_ins_line(text_buf *b, size_t ln)
 {
     vec *line;
 
-    USING_MTX(
-        b->mtx,
+    USING_MTX(b->mtx,
         line = vec_ins(&(b->lines), ln, 1, NULL);
         if (line)
             vec_init(line, sizeof(text_char));
@@ -269,9 +281,23 @@ void text_buf_ins_line(text_buf *b, size_t ln)
 
 void text_buf_del_line(text_buf *b, size_t ln)
 {
-    USING_MTX(
-        b->mtx,
-        vec_del(&(b->lines), ln, 1);
+    vec *line;
+    USING_MTX(b->mtx,
+        line = vec_get(&(b->lines), ln);
+
+        if (line)
+        {
+            vec_kill(line);
+            vec_del(&(b->lines), ln, 1);
+        }
+
+        if (vec_len(&(b->lines)) == 0)
+        {
+            vec *line;
+            line = vec_ins(&(b->lines), 0, 1, NULL);
+            if (line)
+                vec_init(line, sizeof(text_char));
+        }
     );
 }
 
@@ -281,8 +307,7 @@ void text_buf_get(text_buf *b, size_t ln, vec *v)
 
     vec_init(v, sizeof(text_char));
 
-    USING_MTX(
-        b->mtx,
+    USING_MTX(b->mtx,
         line = vec_get(&(b->lines), ln);
         if (line) 
             vec_ins(v, 0, vec_len(line), vec_get(line, 0));
@@ -294,8 +319,7 @@ size_t text_buf_linelen(text_buf *b, size_t ln)
     vec *line;
     size_t rtn;
 
-    USING_MTX(
-        b->mtx,   
+    USING_MTX(b->mtx,   
         line = vec_get(&(b->lines), ln);
         if (line) 
             rtn = vec_len(line);
@@ -310,8 +334,7 @@ size_t text_buf_len(text_buf *b)
 {
     size_t rtn;
 
-    USING_MTX(
-        b->mtx,
+    USING_MTX(b->mtx,
         rtn = vec_len(&(b->lines));
     );
 

@@ -3,6 +3,8 @@
 
 #include "cli.h"
 #include "vec.h"
+#include "bar.h"
+#include "files.h"
 
 #include "cmd.h"
 
@@ -16,6 +18,7 @@ char *cmd_mode_names[] =
 };
 
 cmd_mode cmd_cur_mode = cmd_mode_buf;
+vec cmd_bar_str;
 
 void cmd_move(text_buf *b, size_t *cn, size_t *ln, ssize_t cols, ssize_t lines)
 {
@@ -42,7 +45,7 @@ void cmd_arrow(cli_key key)
     text_buf_getcur(text_cur_buf, &cur);
     memcpy(&orig, &cur, sizeof(text_cur));
 
-    if (cmd_cur_mode == cmd_mode_buf)
+    if (cmd_cur_mode == cmd_mode_buf || cmd_cur_mode == cmd_mode_bar)
     {
         switch (key)
         {
@@ -62,6 +65,8 @@ static vec cmd_ins_buf;
 void cmd_init(void)
 {
     vec_init(&cmd_ins_buf, sizeof(text_char));
+    vec_init(&cmd_bar_str, sizeof(char));
+    vec_ins(&cmd_bar_str, 0, 1, NULL);
 }
 
 void cmd_kill(void)
@@ -120,7 +125,11 @@ void cmd_ins_flush(void)
         text_buf_setcur(text_cur_buf, &cur);
 
         cli_line(text_cur_buf, cn, ln);
-   }
+    }
+    else if (cmd_cur_mode == cmd_mode_bar)
+    {
+        bar_cmd_ins(vec_get(&cmd_ins_buf, 0), vec_len(&cmd_ins_buf));
+    }
 
    vec_del(&cmd_ins_buf, 0, len);
 } 
@@ -206,6 +215,10 @@ void cmd_del(cli_key key)
            break;
         }
     }
+    else if (cmd_cur_mode == cmd_mode_bar)
+    {
+        bar_cmd_del();
+    }
 } 
 
 void cmd_swap(cli_key key)
@@ -269,13 +282,17 @@ void cmd_enter(cli_key key)
             text_buf_cmd(text_cur_buf, &cmd);
             text_cur_cmd(text_cur_buf, &cmd);
         }
- 
+
         text_buf_getcur(text_cur_buf, &cur);
         cur.cn1 = 0;
         cur.ln1 = ln + 1;
         text_buf_setcur(text_cur_buf, &cur);
 
        cli_lines_after(text_cur_buf, ln);
+    }
+    else if (cmd_cur_mode == cmd_mode_bar)
+    {
+        bar_query_run();
     }
 }
 
@@ -299,8 +316,17 @@ void cmd_handle_key(cli_key key)
         cmd_swap(key);
         break;
 
+    case ('X' | cli_key_esc):
+        if (cmd_cur_mode == cmd_mode_bar) cmd_cur_mode = cmd_mode_buf;
+        else                              cmd_cur_mode = cmd_mode_bar;
+        break;
+
     case ('X' | cli_key_ctrl):
         cli_alive = 0;
+        break;
+
+    case ('f' | cli_key_esc):
+        files_load_query(text_cur_buf);
         break;
 
     case cli_key_enter:
