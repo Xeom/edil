@@ -10,6 +10,8 @@
          pthread_mutex_unlock(&(mtx)); \
          } while (0);                   
 
+void util_str2vec(char *str, vec *v);
+
 typedef struct tqueue_s tqueue;
 
 struct tqueue_s

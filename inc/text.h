@@ -35,7 +35,8 @@ typedef enum
 {
     text_flag_vis = 0x1,
     text_flag_lns = 0x2,
-    text_flag_ro  = 0x4
+    text_flag_ro  = 0x4,
+    text_flag_mod = 0x8
 } text_flag;
 
 typedef struct text_cmd_s  text_cmd;
@@ -111,7 +112,12 @@ void text_buf_setname(text_buf *b, vec *v);
 void text_buf_getcur(text_buf *b, text_cur *cur);
 void text_buf_setcur(text_buf *b, text_cur *cur);
 
+void text_buf_getdims(text_buf *b, text_dims *dims);
+void text_buf_setdims(text_buf *b, text_dims *dims);
+
 text_flag text_buf_getflag(text_buf *b);
+void text_buf_delflag(text_buf *b, text_flag f);
+void text_buf_setflag(text_buf *b, text_flag f);
 
 size_t text_buf_linelen(text_buf *b, size_t ln);
 size_t text_buf_len(text_buf *b);
