@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "chr.h"
 
 int chr_utf8_len(char c)
@@ -18,7 +20,7 @@ int chr_utf8_len(char c)
 
 int chr_len(chr *c)
 {
-    return chr_utf8_len(chr->utf8[0]);
+    return chr_utf8_len(c->utf8[0]);
 }
 
 void chr_print(chr *c, FILE *f)
@@ -26,33 +28,39 @@ void chr_print(chr *c, FILE *f)
     size_t len;
     len = chr_len(c);
 
-    fwrite(chr->utf8 1, len, f);
+    fwrite(c->utf8, 1, len, f);
 }
 
 void chr_from_str(vec *chrs, vec *str)
-
+{
     size_t ind, len;
 
-    len = vec_len(&str);
+    len = vec_len(str);
 
     for (ind = 0; ind < len;)
     {
         size_t width;
-        char  *str;
+        char  *bytes;
+        chr    c = { .fnt = { .attr = 0, .fg = col_none, .bg = col_none } };
 
-        str = vec_get(str, ind);
+        bytes = vec_get(str, ind);
         if (!str) break;
 
-        width = chr_utf8_len(*str);
+        width = chr_utf8_len(*bytes);
         if (width + ind > len) break;
 
-        vec_ins(chrs, vec_len(chrs), width, str);
+        memcpy(c.utf8, bytes, width);
+
+        vec_ins(chrs, vec_len(chrs), 1, &c);
 
         ind += width;
     }
+
+    vec_del(str, 0, ind);
 }
 
-void chr_set_cols(chr *c, chr_coldesc d)
+void chr_set_cols(chr *c, col_desc d)
 { 
     c->fnt = col_update(c->fnt, d);
 }
+

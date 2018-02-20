@@ -1,22 +1,26 @@
 #if !defined(CUR_H)
 # define CUR_H
+# include <unistd.h>
 
 typedef enum
 {
-    cmd_mode_bar;
-    cmd_mode_buf;
-    cmd_mode_mnu;
-    cmd_mode_sel;
-    cmd_mode_rct;   
+    cmd_mode_bar,
+    cmd_mode_buf,
+    cmd_mode_mnu,
+    cmd_mode_sel,
+    cmd_mode_rct   
 } cur_mode_type;
 
 typedef struct cur_s cur;
+
 struct cur_s
 {
     ssize_t cn, ln;
 };
 
 extern cur_mode_type cur_mode;
+
+# include "buf.h"
 
 cur cur_enter(cur c, buf *b);
 

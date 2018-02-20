@@ -1,3 +1,5 @@
+#include "col.h"
+
 col col_update(col c, col_desc d)
 {
     c.attr &= ~(d.del);
@@ -7,28 +9,31 @@ col col_update(col c, col_desc d)
     if (d.fg != col_null) c.fg = d.fg;
     if (d.bg != col_null) c.bg = d.bg;
 
-    return f;
+    return c;
 }
 
 void col_print(col c, FILE *f)
 {
     fputs("\033[0", f);
 
-    if (col.fg < col_none)
+    if (c.fg < col_none)
     {
-        if (col.fg & col_bright) fputs(";1", f);
-        fprintf(f, ";%d", (col & col_allcols) + 30);
+        if (c.fg & col_bright) fputs(";1", f);
+        fprintf(f, ";%d", (c.fg & col_allcols) + 30);
     }
 
-    if (col.attrs & col_under) fputs(";4", f);
-    if (col.attrs & col_rev)   fputs(";7", f);
-    if (col.attrs & col_blink) fputs(";5", f);
+    if (c.attr & col_under) fputs(";4", f);
+    if (c.attr & col_rev)   fputs(";7", f);
+    if (c.attr & col_blink) fputs(";5", f);
 
-    if (col.bg < col_none)
+    if (c.bg < col_none)
     {
-        if (col.bg & col_bright) 
-            fprintf(f, ";%d", (col & col_allcols) + 100);
+        if (c.bg & col_bright) 
+            fprintf(f, ";%d", (c.fg & col_allcols) + 100);
         else
-            fprintf(f, ";%d", (col & col_allcols) + 40);
+            fprintf(f, ";%d", (c.fg & col_allcols) + 40);
     }
+
+    fputs("m", f);
 }
+

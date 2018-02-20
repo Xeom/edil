@@ -1,3 +1,20 @@
+#if !defined(_POSIX_C_SOURCE)
+# define _POSIX_C_SOURCE 199309L
+# include <sys/types.h>
+# include <signal.h>
+# undef _POSIC_C_SOURCE
+#else
+# include <sys/types.h>
+# include <signal.h>
+#endif
+
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <string.h>
+#include <sys/types.h>
+#include <stdio.h>
+
 #include "out.h"
 
 #define GOTO(cn, ln) "\033[" #ln ";" #cn "H"
@@ -5,9 +22,12 @@
 #define CLR_SCREEN "\033[2J"
 #define HIDE_CUR   "\033[?25l"
 #define SHOW_CUR   "\033[?25h"
+#define RESET_COL  "\033[0m"
 
-col out_blank_line_col = { .fg = col_yellow, .bg = col_none, .attr = none }
-char *out_blank_line_text = "\xc2\xbb"
+ssize_t out_cols, out_rows;
+
+col out_blank_line_col = { .fg = col_yellow, .bg = col_none, .attr = 0 };
+char *out_blank_line_text = "\xc2\xbb";
 
 col_desc out_cur1_col_desc = { .inv = col_rev,   .fg = col_null, .bg = col_null };
 col_desc out_cur2_col_desc = { .inv = col_under, .fg = col_null, .bg = col_null };
@@ -27,96 +47,44 @@ void out_blank_line(FILE *f)
     fputs(out_blank_line_text,    f);
 }
 
-void out_chrs(vec *chrs, size_t len, FILE *f)
+void out_chrs(chr *chrs, size_t n, size_t len, FILE *f)
 {
-    text_col prevcol = { .fg = col_none, .bg = col_none};
-    text_col col;
+    col prevcol = { .fg = col_none, .bg = col_none, .attr = 0 };
+    col currcol;
     size_t ind;
 
-    fputs(CLR_LINE, f);
+    fputs(CLR_LINE RESET_COL, f);
 
     if (len == 0) return;
 
-    for (ind = 0; ind < vec_len(chrs); ind++)
+    for (ind = 0; ind < n; ind++)
     {
-        text_char *chr;
+        chr *c;
 
-        chr = vec_get(chrs, ind);
+        c = chrs + ind;
         if (len-- == 0) break;
 
-        col = chr->fg;
-        if (col != prevcol) col_print(col, f);
+        currcol = c->fnt;
+        if (memcmp(&currcol, &prevcol, sizeof(col))) col_print(currcol, f);
 
-        chr_print(chr, f);
+        chr_print(c, f);
 
-        prevcol = col;
+        prevcol = currcol;
     }
-
-    cli_fg(text_col_none);
 }
 
-void out_line(buf *b, size_t len, cur c, FILE *f)
+void out_handle_winch(int sign)
 {
-    chr space = { .utf8 = " ", .fnt = { .fg = col_none, .bg = col_none } };
-    vec     *line, modline;
-    size_t   linelen;
+    struct winsize w;
 
-    if (ln > text_buf_len(b)) return;
+    ioctl(fileno(stdin), TIOCGWINSZ, &w);
 
-    line = vec_get(&(b->lines), ln);
-    if (!line) return;
+    out_cols = w.ws_col;
+    out_rows = w.ws_row;
 
-    if (c.cn || b->pri.ln == c.ln || b->sec.ln == c.ln)
-    {
-        linelen = vec_len(&line);
+//    out_lines_after();
 
-        vec_init(&modline, sizeof(chr));
-        vec_ins(&modline, 0, linelen, vec_get(line, 0));
-
-        line = &modline;
-    }
-  
-    if (b->pri.ln == c.ln)
-    {
-        chr *curchr;
-
-        if (b->pri.cn == linelen) vec_ins(line, linelen, 1, &space);
-
-        curchr = vec_get(&line, cur.cn1);
-        if (curchr) chr_set_cols(curchr, out_cur1_col_desc);
-    }
-
-    if (b->sec.ln == c.ln && !(b->pri.cn == b->sec.cn && b->pri.ln == b->sec.ln))
-    {
-        chr *curchr;
-
-        if (cur.cn2 == linelen) vec_ins(&line, linelen, 1, &space);
-
-        curchr = vec_get(&line, cur.cn2);
-        if (curchr) chr_set_cols(curchr, out_cur2_col_desc);
-    }
-
-    if (cn) vec_del(line, 0, cn);
-
-    cli_chrs_here(line, len, f);
-
-    if (line == &modline) vec_kill(&line);
-}
-
-void out_lines_after(buf *b, cur c, FILE *f)
-{
-    if (c.ln < b->scrolly)
-    {
-        c.ln = b->scrolly;
-        c.cn = 0;
-    }
-
-    while (c.ln <= b->h + b->scrolly)
-    {
-        out_line(b, c, f);
-        c.ln += 1;
-        c.cn  = 0;
-    }
+    fflush(stdout);
 }
 
 void out_init(FILE *f)
@@ -138,22 +106,61 @@ void out_init(FILE *f)
     tcsetattr(fileno(f), TCSANOW, &tattr);
     
     /* Get window size */
-//    cli_handle_winch(0);
+    out_handle_winch(0);
 
     /* Clear sreen and hide cursor */
     fputs(CLR_SCREEN HIDE_CUR, f);
-/*
-    /* Mount window size handler 
-    act.sa_handler = cli_handle_winch;
+
+    /* Mount window size handler */
+    act.sa_handler = out_handle_winch;
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
 
-    sigaction(SIGWINCH, &act, NULL);*/}
+    sigaction(SIGWINCH, &act, NULL);
+}
 
 void out_kill(FILE *f)
 {
     tcsetattr(fileno(f), TCSANOW, &out_tattr_orig);
 
-    fputs(CLR_SCREEN SHOW_CUR, f);
+    fputs(CLR_SCREEN SHOW_CUR RESET_COL, f);
 }
 
+#include "win.h"
+
+int main(void)
+{
+    buf b;
+    win w;
+    vec text, str;
+
+    vec_init(&str,  sizeof(char));
+    vec_init(&text, sizeof(chr));
+
+    vec_ins(&str, 0, 12, "Hello World!");
+    chr_from_str(&text, &str);
+
+    buf_init(&b);
+    win_init(&w, &b);
+
+    w.pri = cur_ins(b.pri, &b, &text);
+    w.pri = cur_enter(b.pri, &b);
+    w.pri = cur_ins(b.pri, &b, &text);
+    out_init(stdout);
+
+    w.cols = out_cols;
+    w.rows = out_rows;
+
+    win_out_after(&w, (cur){0, 0}, stdout);
+    fflush(stdout);
+    sleep(1);
+
+    out_kill(stdout);
+
+    buf_kill(&b);
+
+    vec_kill(&str);
+    vec_kill(&text);
+
+    return 0;
+}

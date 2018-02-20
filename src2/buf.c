@@ -1,12 +1,31 @@
+#include <string.h>
+
 #include "buf.h"
 
-void buf_setcol(buf *b, cur loc, size_t n, col_desc *col)
+void buf_init(buf *b)
 {
-    size_t cn;
+    vec_init(&(b->lines), sizeof(vec));
+    memset(&(b->pri), 0, sizeof(cur));
+    memset(&(b->sec), 0, sizeof(cur));
+    b->flags = 0;
+
+    buf_ins_line(b, (cur){0, 0});
+}
+
+void buf_kill(buf *b)
+{
+    vec_kill(&(b->lines));
+}
+
+void buf_setcol(buf *b, cur loc, size_t n, col_desc col)
+{
+    size_t cn, len;
     vec *line;
 
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;
+
+    len = vec_len(line);
 
     for (cn = loc.cn; cn < len + loc.cn; cn++)
     {
@@ -18,14 +37,14 @@ void buf_setcol(buf *b, cur loc, size_t n, col_desc *col)
     }
 }
 
-void buf_ins(buf *b, cur loc, text_char *chrs, size_t n)
+void buf_ins(buf *b, cur loc, chr *chrs, size_t n)
 {
-    size_t len;
+    vec *line;
 
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;
 
-    vec_ins(line, cn, n, chrs);
+    vec_ins(line, loc.cn, n, chrs);
 }
 
 void buf_del(buf *b, cur loc, size_t n)
@@ -42,7 +61,7 @@ void buf_ins_line(buf *b, cur loc)
 {
     vec *line;
 
-    line = vec_ins(&(b->lines), loc.ln);
+    line = vec_ins(&(b->lines), loc.ln, 1, NULL);
     if (!line) return;
 
     vec_init(line, sizeof(chr));
@@ -52,13 +71,13 @@ void buf_del_line(buf *b, cur loc)
 {
     vec *line;
 
-    line = vec_get(&(b->lines), loc.ln)
+    line = vec_get(&(b->lines), loc.ln);
     if (!line) return;
 
     vec_kill(line);
-    vec_del(&(b->lines), loc.ln);
+    vec_del(&(b->lines), loc.ln, 1);
 
-    if (vec_len(&(b->lines) == 0))
+    if (vec_len(&(b->lines)) == 0)
     {
         line = vec_ins(&(b->lines), 0, 1, NULL);
         if (!line) return;

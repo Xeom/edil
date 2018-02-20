@@ -1,5 +1,8 @@
 #if !defined(CHR_H)
 # define CHR_H
+# include "col.h"
+# include "vec.h"
+
 typedef struct chr_s chr;
 
 struct chr_s
@@ -16,6 +19,6 @@ void chr_print(chr *c, FILE *f);
 
 void chr_from_str(vec *chrs, vec *str);
 
-void chr_set_cols(chr *c, chr_coldesc c);
+void chr_set_cols(chr *c, col_desc d);
 
 #endif
