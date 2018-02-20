@@ -1,10 +1,4 @@
-typedef struct chr_s chr;
-
-struct chr_s
-{
-    char utf8[6];
-    col  fnt;
-};
+#include "chr.h"
 
 int chr_utf8_len(char c)
 {
@@ -58,14 +52,7 @@ void chr_from_str(vec *chrs, vec *str)
     }
 }
 
-void chr_set_cols(chr *c, chr_coldesc cs)
+void chr_set_cols(chr *c, chr_coldesc d)
 { 
-    c->fg &= ~c->fg.del;
-    c->fg &= ~c->fg.del;
-
-    c->fg |= c->fg.set;
-    c->bg |= c->bg.set;
-
-    c->fg ^= c->fg.rev;
-    c->fg ^= c->bg.rev;
+    c->fnt = col_update(c->fnt, d);
 }

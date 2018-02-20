@@ -1,18 +1,6 @@
-typedef enum
-{
-    cmd_mode_bar;
-    cmd_mode_buf;
-    cmd_mode_mnu;
-    cmd_mode_sel;
-    cmd_mode_rct;   
-} cur_mode_type;
+#include "cur.h"
 
 cur_mode_type cur_mode;
-
-struct cur_s
-{
-    ssize_t cn, ln;
-};
 
 cur cur_enter(cur c, buf *b)
 {

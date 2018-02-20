@@ -1,3 +1,5 @@
+#include "out.h"
+
 #define GOTO(cn, ln) "\033[" #ln ";" #cn "H"
 #define CLR_LINE   "\033[K"
 #define CLR_SCREEN "\033[2J"
@@ -7,13 +9,10 @@
 col out_blank_line_col = { .fg = col_yellow, .bg = col_none, .attr = none }
 char *out_blank_line_text = "\xc2\xbb"
 
-
 col_desc out_cur1_col_desc = { .inv = col_rev,   .fg = col_null, .bg = col_null };
 col_desc out_cur2_col_desc = { .inv = col_under, .fg = col_null, .bg = col_null };
 
-struct termios out_tattr_orig;
-
-FILE *out_f = stdout;
+static struct termios out_tattr_orig;
 
 void out_goto(int cn, int ln, FILE *f)
 {
@@ -56,7 +55,7 @@ void out_chrs(vec *chrs, size_t len, FILE *f)
     cli_fg(text_col_none);
 }
 
-void out_line(buf *b, size_t len, cur c)
+void out_line(buf *b, size_t len, cur c, FILE *f)
 {
     chr space = { .utf8 = " ", .fnt = { .fg = col_none, .bg = col_none } };
     vec     *line, modline;
@@ -84,8 +83,7 @@ void out_line(buf *b, size_t len, cur c)
         if (b->pri.cn == linelen) vec_ins(line, linelen, 1, &space);
 
         curchr = vec_get(&line, cur.cn1);
-        if (curchr)
-            curchr.fnt = col_update(curchr.fnt, out_cur1_col_desc);
+        if (curchr) chr_set_cols(curchr, out_cur1_col_desc);
     }
 
     if (b->sec.ln == c.ln && !(b->pri.cn == b->sec.cn && b->pri.ln == b->sec.ln))
@@ -95,18 +93,17 @@ void out_line(buf *b, size_t len, cur c)
         if (cur.cn2 == linelen) vec_ins(&line, linelen, 1, &space);
 
         curchr = vec_get(&line, cur.cn2);
-        if (curchr) 
-            curchr.fnt = col_update(curchr.fnt, out_cur2_col_desc);
+        if (curchr) chr_set_cols(curchr, out_cur2_col_desc);
     }
 
     if (cn) vec_del(line, 0, cn);
 
-    cli_chrs_here(line, len);
+    cli_chrs_here(line, len, f);
 
     if (line == &modline) vec_kill(&line);
 }
 
-void out_lines_after(buf *b, cur c)
+void out_lines_after(buf *b, cur c, FILE *f)
 {
     if (c.ln < b->scrolly)
     {
@@ -116,7 +113,7 @@ void out_lines_after(buf *b, cur c)
 
     while (c.ln <= b->h + b->scrolly)
     {
-        out_line(b, c);
+        out_line(b, c, f);
         c.ln += 1;
         c.cn  = 0;
     }
@@ -151,8 +148,7 @@ void out_init(FILE *f)
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
 
-    sigaction(SIGWINCH, &act, NULL);*/
-}
+    sigaction(SIGWINCH, &act, NULL);*/}
 
 void out_kill(FILE *f)
 {

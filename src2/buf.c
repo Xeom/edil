@@ -1,28 +1,6 @@
-typedef struct buf_s buf;
-typedef struct cur_s cur;
+#include "buf.h"
 
-typedef enum
-{
-    buf_readonly = 0x01;
-    buf_modified = 0x02;
-} buf_flags;
-
-struct buf_chr_s
-{
-    char len;
-    char utf8[6];
-    text_col bg;
-    text_col fg;
-}
-
-struct buf_s
-{
-    vec       lines;
-    buf_cur   pri, sec;
-    buf_flags flags;
-};
-
-void buf_setcol(buf *b, cur loc, size_t n, chr_coldesc *col)
+void buf_setcol(buf *b, cur loc, size_t n, col_desc *col)
 {
     size_t cn;
     vec *line;
