@@ -18,10 +18,10 @@ cur cur_enter(cur c, buf *b)
         line = vec_get(&(b->lines), c.ln);
         if (!line) return c;
 
-        num = len - b->pri.cn;
+        num = len - c.cn;
 
         buf_ins(b, rtn, vec_get(line, c.cn), num);
-	buf_del(b, c,   num);
+	    buf_del(b, c,   num);
     }
 
     return rtn;

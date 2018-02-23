@@ -26,7 +26,7 @@
 
 ssize_t out_cols, out_rows;
 
-col out_blank_line_col = { .fg = col_yellow, .bg = col_none, .attr = 0 };
+col out_blank_line_col = { .fg = col_black | col_bright, .bg = col_none, .attr = 0 };
 char *out_blank_line_text = "\xc2\xbb";
 
 col_desc out_cur1_col_desc = { .inv = col_rev,   .fg = col_null, .bg = col_null };
@@ -47,7 +47,7 @@ void out_blank_line(FILE *f)
     fputs(out_blank_line_text,    f);
 }
 
-void out_chrs(chr *chrs, size_t n, size_t len, FILE *f)
+void out_chrs(chr *chrs, size_t n, FILE *f)
 {
     col prevcol = { .fg = col_none, .bg = col_none, .attr = 0 };
     col currcol;
@@ -55,14 +55,11 @@ void out_chrs(chr *chrs, size_t n, size_t len, FILE *f)
 
     fputs(CLR_LINE RESET_COL, f);
 
-    if (len == 0) return;
-
     for (ind = 0; ind < n; ind++)
     {
         chr *c;
 
         c = chrs + ind;
-        if (len-- == 0) break;
 
         currcol = c->fnt;
         if (memcmp(&currcol, &prevcol, sizeof(col))) col_print(currcol, f);
@@ -127,7 +124,7 @@ void out_kill(FILE *f)
 }
 
 #include "win.h"
-
+/*
 int main(void)
 {
     buf b;
@@ -163,4 +160,4 @@ int main(void)
     vec_kill(&text);
 
     return 0;
-}
+}*/

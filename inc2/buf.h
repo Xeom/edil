@@ -17,7 +17,6 @@ typedef enum
 struct buf_s
 {
     vec       lines;
-    cur       pri, sec;
     buf_flags flags;
 };
 

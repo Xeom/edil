@@ -2,6 +2,14 @@
 
 #include "win.h"
 
+win *win_cur;
+
+chr      win_pri_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
+col_desc win_pri_col = { .inv = col_rev,   .fg = col_null, .bg = col_null };
+
+chr      win_sec_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
+col_desc win_sec_col = { .inv = col_under, .fg = col_null, .bg = col_null };
+
 void win_init(win *w, buf *b)
 {
     w->scrx = 0;
@@ -52,14 +60,13 @@ int win_out_goto(win *w, cur *c, FILE *f)
     if (c->cn < win_min_cn(w))
         c->cn = win_min_cn(w);
 
-    out_goto(c->cn - w->scrx + w->xpos, c->ln - w->scry + w->ypos, f);
+    out_goto(c->cn - w->scrx + w->xpos + 1, c->ln - w->scry + w->ypos + 1, f);
 
     return 1;
 }
 
 void win_out_line(win *w, cur c, FILE *f)
 {
-    chr space = { .utf8 = " ", .fnt = { .fg = col_none, .bg = col_none } };
     vec     *line, modline;
     size_t   linelen;
 
@@ -74,10 +81,10 @@ void win_out_line(win *w, cur c, FILE *f)
     line = win_line(w, c.ln);
     if (!line) return;
 
+    linelen = vec_len(line);
+
     if (w->pri.ln == c.ln || w->sec.ln == c.ln)
     {
-        linelen = vec_len(line);
-
         vec_init(&modline, sizeof(chr));
         vec_ins(&modline, 0, linelen, vec_get(line, 0));
 
@@ -88,25 +95,30 @@ void win_out_line(win *w, cur c, FILE *f)
     {
         chr *curchr;
 
-        if (w->pri.cn == (ssize_t)linelen) vec_ins(line, linelen, 1, &space);
+        if (w->pri.cn == (ssize_t)linelen)
+            vec_ins(line, linelen++, 1, &win_pri_chr);
 
         curchr = vec_get(line, w->pri.cn);
-        if (curchr) chr_set_cols(curchr, out_cur1_col_desc);
+        if (curchr)
+            chr_set_cols(curchr, win_pri_col);
     }
 
     if (w->sec.ln == c.ln && !(w->pri.cn == w->sec.cn && w->pri.ln == w->sec.ln))
     {
         chr *curchr;
 
-        if (w->sec.cn == (ssize_t)linelen) vec_ins(line, linelen, 1, &space);
+        if (w->sec.cn == (ssize_t)linelen)
+            vec_ins(line, linelen++, 1, &win_sec_chr);
 
         curchr = vec_get(line, w->sec.cn);
-        if (curchr) chr_set_cols(curchr, out_cur2_col_desc);
+        if (curchr) 
+            chr_set_cols(curchr, win_sec_col);
     }
 
-    out_chrs(vec_get(line, c.cn + w->scrx), linelen - c.cn - w->scrx, win_max_cn(w) - c.cn, f);
+    out_chrs(vec_get(line, c.cn + w->scrx), linelen - c.cn - w->scrx, f);
 
     if (line == &modline) vec_kill(line);
+
 }
 
 void win_out_after(win *w, cur c, FILE *f)
@@ -120,5 +132,4 @@ void win_out_after(win *w, cur c, FILE *f)
         c = (cur){ .ln = c.ln + 1, .cn = 0 };
     }
 }
-
 

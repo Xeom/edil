@@ -11,11 +11,13 @@ extern char *out_blank_line_text;
 extern col_desc out_cur1_col_desc;
 extern col_desc out_cur2_col_desc;
 
+extern ssize_t out_rows, out_cols;
+
 void out_goto(int cn, int ln, FILE *f);
 
 void out_blank_line(FILE *f);
 
-void out_chrs(chr *chrs, size_t n, size_t len, FILE *f);
+void out_chrs(chr *chrs, size_t n, FILE *f);
 
 void out_init(FILE *f);
 

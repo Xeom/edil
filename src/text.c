@@ -33,6 +33,31 @@ int text_utf8_len(char c)
     return 1;
 }
 
+void text_buf_setflag(text_buf *b, text_flag f)
+{
+    USING_MTX(b->mtx,
+        b->flags |= f;
+    );
+}
+
+void text_buf_delflag(text_buf *b, text_flag f)
+{
+    USING_MTX(b->mtx,
+        b->flags &= ~f;
+    );
+}
+
+text_flag text_buf_getflag(text_buf *b)
+{
+    text_flag rtn;
+
+    USING_MTX(b->mtx,
+        rtn = b->flags;
+    );
+
+    return rtn;
+}
+
 void text_buf_cmd(text_buf *b, text_cmd *cmd)
 {
     switch (cmd->type)
@@ -95,18 +120,6 @@ void text_buf_setcur(text_buf *b, text_cur *cur)
         b->mtx,
         memcpy(&(b->cur), cur, sizeof(text_cur));
     );
-}
-
-text_flag text_buf_getflag(text_buf *b)
-{
-    text_flag rtn;
-
-    USING_MTX(
-        b->mtx,
-        rtn = b->flags;
-    );
-    
-    return rtn;
 }
 
 void text_cur_cmd_pair(size_t *cn, size_t *ln, text_cmd *cmd)

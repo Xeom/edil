@@ -15,6 +15,8 @@ struct win_s
     cur pri, sec;
 };
 
+extern win *win_cur;
+
 void win_init(win *w, buf *b);
 
 vec *win_line(win *w, size_t ln);

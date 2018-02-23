@@ -5,8 +5,6 @@
 void buf_init(buf *b)
 {
     vec_init(&(b->lines), sizeof(vec));
-    memset(&(b->pri), 0, sizeof(cur));
-    memset(&(b->sec), 0, sizeof(cur));
     b->flags = 0;
 
     buf_ins_line(b, (cur){0, 0});
@@ -53,7 +51,7 @@ void buf_del(buf *b, cur loc, size_t n)
 
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;
-
+    
     vec_del(line, loc.cn, n);
 }
 

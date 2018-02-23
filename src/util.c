@@ -1,4 +1,29 @@
+#include "text.h"
+
 #include "util.h"
+
+void util_str2vec(char *str, vec *v)
+{
+    size_t width = 1, utf8ind = 1;
+    text_char *chr;
+
+    if (!str) return;
+    while (*str)
+    {
+        if (utf8ind == width)
+        {
+            width = text_utf8_len(*str);
+            chr = vec_ins(v, vec_len(v), 1, NULL);
+            chr->fg = text_col_none;
+            utf8ind = 0;
+        }
+
+        chr->utf8[utf8ind]  = *str;
+        utf8ind            += 1;
+        str++;
+    }
+}
+
 
 void tqueue_init(tqueue *tq, size_t width)
 {

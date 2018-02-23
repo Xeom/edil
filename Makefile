@@ -1,4 +1,4 @@
-FILES=buf chr col cur out vec
+FILES=buf chr col con cur inp out vec win
 
 HFILES=$(addprefix inc2/, $(addsuffix .h, $(FILES)))
 CFILES=$(addprefix src2/, $(addsuffix .c, $(FILES)))

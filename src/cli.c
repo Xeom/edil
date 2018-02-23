@@ -7,9 +7,8 @@
 #include <termios.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <pthread.h>
+#include <pthread.h
 #include <sys/ioctl.h>
-
 #include "files.h"
 #include "inp.h"
 #include "cmd.h"
@@ -193,13 +192,13 @@ void cli_init(void)
     tcsetattr(STDIN_FILENO, TCSANOW, &tinfo);
     
     /* Get window size */
-    cli_handle_winch(0);
+    out_handle_winch(0);
 
     /* Clear sreen and hide cursor */
     fputs("\033[2J\033[?25l", stdout);
 
     /* Mount window size handler */
-    act.sa_handler = cli_handle_winch;
+    act.sa_handler = out_handle_winch;
     sigemptyset(&act.sa_mask);
     act.sa_flags = 0;
 
