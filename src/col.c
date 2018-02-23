@@ -29,9 +29,9 @@ void col_print(col c, FILE *f)
     if (c.bg < col_none)
     {
         if (c.bg & col_bright) 
-            fprintf(f, ";%d", (c.fg & col_allcols) + 100);
+            fprintf(f, ";%d", (c.bg & col_allcols) + 100);
         else
-            fprintf(f, ";%d", (c.fg & col_allcols) + 40);
+            fprintf(f, ";%d", (c.bg & col_allcols) + 40);
     }
 
     fputs("m", f);
