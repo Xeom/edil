@@ -1,22 +1,24 @@
-#include <stdio.h>
+#if !defined(_GNU_SOURCE)
+# define _GNU_SOURCE
+# include <fcntl.h>
+# include <stdio.h>
+# undef _GNU_SOURCE
+#else
+# include <fcntl.h>
+# include <stdio.h>
+#endif
+
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <pthread.h>
+#include <sys/types.h>
 
-#include "util.h"
-#include "cmd.h"
-#include "bar.h"
-#include "text.h"
+#include "con.h"
+#include "vec.h"
+#include "out.h"
 
 #include "inp.h"
-
-#define INP_COL_CUR1  text_col_rev|text_col_bold
-#define INP_COL_CUR2  text_col_under|text_col_bold
-
-#define INP_COL_BLANK text_col_black|text_col_bold
-#define INP_STR_BLANK "\xc2\xbb"
 
 vec inp_keycodes;
 
@@ -48,7 +50,7 @@ inp_keycode inp_keycodes_static[] =
 
 static int inp_keycode_cmp(const void *a, const void *b)
 {
-    return strcmp(((const inp_keycode *)a)->code, ((const cli_keycode *)b)->code);
+    return strcmp(((const inp_keycode *)a)->code, ((const inp_keycode *)b)->code);
 }
 
 static inp_key inp_get_escaped_key(char chr)
@@ -118,65 +120,128 @@ inp_key inp_get_key(char chr)
     return rtn;
 }
 
-tqueue inp_queue;
-
 pthread_t inp_listen_thread;
+int inp_fd_in;
+int inp_fd_out;
 
 void *inp_listen(void *arg)
 {
-    tqueue *tq;
-
-    tq = &inp_queue;
-
     while (1)
     {
-        char chr;
+        int chr;
         inp_key key;
-
+   
         chr = getchar();
-        key = inp_get_key(chr);               
-        tqueue_in(tq, &key);
+        key = inp_get_key(chr);
+
+        if (key == inp_key_none) continue;
+
+        write(inp_fd_in, &key, sizeof(inp_key));
     }
 }
 
-void inp_loop(void)
-{   
-    tqueue *tq;
-    inp_key *key;
 
-    tq = &inp_queue;    
+void inp_empty_pipe(void)
+{
+    inp_key key;
+    struct timeval tout;
 
-    do
+    tout.tv_sec  = 0;
+    tout.tv_usec = 100000;
+
+    while (1)
     {
-        key = tqueue_out(tq);
-        cmd_handle_key(*key);
-    } while (!tqueue_empty(tq));
+        fd_set fds;
+        FD_ZERO(&fds);
+        FD_SET(inp_fd_out, &fds);
+        select(inp_fd_out + 1, &fds, NULL, NULL, &tout);
 
-    cmd_ins_flush();
-    bar_update();
-    fflush(stdout);        
+        if (FD_ISSET(inp_fd_out, &fds))
+        {
+            read(inp_fd_out, &key, sizeof(inp_key));
+            con_handle(key);
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    /* Flush */
 }
 
 void inp_init(void)
 {
     size_t numkeys;
+    int pipefds[2];
 
     /* Load the keycodes */
-    numkeys = sizeof(inp_keycodes_static) / sizeof(cli_keycode);
+    numkeys = sizeof(inp_keycodes_static) / sizeof(inp_keycode);
 
-    vec_init(&inp_keycodes, sizeof(cli_keycode));
+    vec_init(&inp_keycodes, sizeof(inp_keycode));
     vec_ins(&inp_keycodes, 0, numkeys, &inp_keycodes_static);
     vec_sort(&inp_keycodes, inp_keycode_cmp);
 
-    tqueue_init(&inp_queue, sizeof(inp_key));
+    pipe(pipefds);
+    inp_fd_in  = pipefds[1];
+    inp_fd_out = pipefds[0];
+
+    fcntl(inp_fd_in,  F_SETFL, O_NONBLOCK | O_DIRECT | fcntl(inp_fd_in,  F_GETFL));
+    fcntl(inp_fd_out, F_SETFL, O_NONBLOCK | O_DIRECT | fcntl(inp_fd_out, F_GETFL));
 
     /* Create the input listener thread */
     pthread_create(&inp_listen_thread, NULL, inp_listen, NULL);
-}    
-
+}
 
 void inp_kill(void)
 {
     vec_kill(&inp_keycodes);
 }
 
+#include "win.h"
+#include "out.h"
+int main(void)
+{
+    inp_init();
+    out_init(stdout);
+
+    buf b;
+    win w;
+    vec text, str;
+
+    vec_init(&str,  sizeof(char));
+    vec_init(&text, sizeof(chr));
+
+    vec_ins(&str, 0, 12, "Hello World!");
+    chr_from_str(&text, &str);
+
+    buf_init(&b);
+    win_init(&w, &b);
+
+    win_cur = &w;
+
+    w.pri = cur_ins(w.pri, &b, &text);
+    w.pri = cur_move(w.pri, &b, (cur){.cn = -3});
+    w.pri = cur_enter(w.pri, &b);
+    w.pri = cur_move(w.pri, &b, (cur){.ln = -1});
+    out_init(stdout);
+
+    w.cols = out_cols;
+    w.rows = out_rows;
+
+    win_out_after(&w, (cur){0, 0}, stdout);
+
+    while (1)
+    {
+        inp_empty_pipe();
+        fflush(stdout);
+    }
+
+    return 0;
+    out_kill(stdout);
+
+    buf_kill(&b);
+
+    vec_kill(&str);
+    vec_kill(&text);
+}

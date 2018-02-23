@@ -41,10 +41,4 @@ struct inp_keycode_s
     char code[16];
 };
 
-void inp_init(void);
-
-void inp_loop(void);
-
-void inp_kill(void);
-
-#endif /* INP_H */
+#endif
