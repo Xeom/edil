@@ -7,9 +7,11 @@ BINDIR=bin/
 DEPDIR=dep/
 
 WARNINGS=all no-unused-parameter no-switch extra
+DEFINES=
 
+DFLAGS=$(addprefix -D, $(DEFINES))
 WFLAGS=$(addprefix -W, $(WARNINGS))
-FLAGS=$(WFLAGS) --std=c99 -pedantic -g -pthread -I$(INCDIR) -fdiagnostics-color=always
+FLAGS= $(WFLAGS) --std=c99 -pedantic -g -pthread -I$(INCDIR) -fdiagnostics-color=always $(DFLAGS)
 
 HFILES=$(addprefix $(INCDIR), $(addsuffix .h, $(FILES)))
 CFILES=$(addprefix $(SRCDIR), $(addsuffix .c, $(FILES)))

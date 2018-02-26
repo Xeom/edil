@@ -17,7 +17,7 @@ clean_obj:
 clean_dep:
 	@rm -rf dep/*
 
-$(OBJDIR)%.o: $(SRCDIR)%.c
+$(OBJDIR)%.o: $(SRCDIR)%.c conf.mk
 	@printf "Building $@ ... "
 	@mkdir -p $(@D)
 	@gcc -c $(FLAGS) $< -o $@ 2>>errs.txt || (less -r errs.txt && /bin/false)
