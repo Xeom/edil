@@ -4,7 +4,7 @@
 
 win *win_cur;
 
-chr      win_pri_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
+chr      win_pri_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_black | col_bright } };
 col_desc win_pri_col = { .inv = col_rev,   .fg = col_null, .bg = col_null };
 
 chr      win_sec_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
