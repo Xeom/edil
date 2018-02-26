@@ -24,6 +24,8 @@
 #define SHOW_CUR   "\033[?25h"
 #define RESET_COL  "\033[0m"
 
+static void out_handle_winch(int sign);
+
 ssize_t out_cols, out_rows;
 
 col out_blank_line_col = { .fg = col_black | col_bright, .bg = col_none, .attr = 0 };
@@ -70,7 +72,7 @@ void out_chrs(chr *chrs, size_t n, FILE *f)
     }
 }
 
-void out_handle_winch(int sign)
+static void out_handle_winch(int sign)
 {
     struct winsize w;
 

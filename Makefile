@@ -5,6 +5,8 @@ ifeq (,$(findstring clean,$(MAKECMDGOALS)))
   include $(DFILES)
 endif
 
+ERRPIPE=$(2>>errs.txt || (less -r errs.txt && /bin/false)
+
 clean_err:
 	@rm -f errs.txt
 
@@ -20,17 +22,29 @@ clean_dep:
 $(OBJDIR)%.o: $(SRCDIR)%.c conf.mk
 	@printf "Building $@ ... "
 	@mkdir -p $(@D)
-	@gcc -c $(FLAGS) $< -o $@ 2>>errs.txt || (less -r errs.txt && /bin/false)
+	@gcc -c $(FLAGS) $< -o $@ $(ERRPIPE)
 	@printf "Done\n"
 
-bin/edil: $(OFILES)
+$(BINDIR)libedil.so: $(OFILES)
+	@printf "Linking $@ ... "
+	@mkdir -p $(@D)
+	@gcc $(FLAGS) -g -shared $^ -o $@ $(ERRPIPE)
+	@printf "Done\n"
+
+$(BINDIR)libedil.a: $(OFILES)
+	@printf "Linking $@ ... "
+	@mkdir -p $(@D)
+	@ar rcs $@ $^ $(ERRPIPE)
+	@printf "Done\n"
+
+$(BINDIR)edil: $(SRCDIR)edil.c $(BINDIR)libedil.a
 	@printf "Building $@ ... "
 	@mkdir -p $(@D)
-	@gcc $(FLAGS) $^ -o $@ 2>>errs.txt || (less -r errs.txt && /bin/false)
+	@gcc $(FLAGS) -static $^ -o $@ $(ERRPIPE)
 	@printf "Done\n"
 
-all: clean_err bin/edil
-	if [ -s errs.txt ]; then cat errs.txt | less -r; fi
+all: clean_err $(BINDIR)libedil.a $(BINDIR)libedil.so $(BINDIR)edil
+	@if [ -s errs.txt ]; then cat errs.txt | less -r; fi
 
 clean: clean_err clean_bin clean_obj clean_dep
 

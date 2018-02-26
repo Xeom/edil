@@ -4,6 +4,8 @@
 
 void con_init(void);
 
+int con_is_typable(inp_key key);
+
 void con_ins_flush(void);
 
 void con_flush(void);

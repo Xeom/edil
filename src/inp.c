@@ -20,6 +20,12 @@
 
 #include "inp.h"
 
+static void *inp_listen(void *arg);
+
+static pthread_t inp_listen_thread;
+static int inp_fd_in;
+static int inp_fd_out;
+
 vec inp_keycodes;
 
 inp_keycode inp_keycodes_static[] =
@@ -91,23 +97,23 @@ static inp_key inp_get_escaped_key(char chr)
     return rtn;
 }
 
-inp_key inp_get_key(char chr)
+inp_key inp_get_key(char c)
 {
     static int escaped = 0;
     inp_key    rtn;
 
     if (escaped)
     {    
-        rtn = inp_get_escaped_key(chr);
+        rtn = inp_get_escaped_key(c);
         if (rtn == 0) return inp_key_none;
     }
-    else if (chr == '\033')
+    else if (c == '\033')
     {
         escaped = 1;
         return inp_key_none;
     }
     else
-        rtn = chr;
+        rtn = c;
 
     escaped = 0;
 
@@ -120,11 +126,7 @@ inp_key inp_get_key(char chr)
     return rtn;
 }
 
-pthread_t inp_listen_thread;
-int inp_fd_in;
-int inp_fd_out;
-
-void *inp_listen(void *arg)
+static void *inp_listen(void *arg)
 {
     while (1)
     {
@@ -138,6 +140,8 @@ void *inp_listen(void *arg)
 
         write(inp_fd_in, &key, sizeof(inp_key));
     }
+
+    return NULL;
 }
 
 
@@ -180,57 +184,15 @@ void inp_kill(void)
     vec_kill(&inp_keycodes);
 }
 
-#include "win.h"
-#include "out.h"
-int main(void)
+void inp_wait(void)
 {
-    inp_init();
-    out_init(stdout);
+    fd_set fds;
 
-    buf b;
-    win w;
-    vec text, str;
+    FD_ZERO(&fds);
+    FD_SET(inp_fd_out, &fds);
 
-    vec_init(&str,  sizeof(char));
-    vec_init(&text, sizeof(chr));
+    select(inp_fd_out + 1, &fds, NULL, NULL, NULL);
 
-    vec_ins(&str, 0, 12, "Hello World!");
-    chr_from_str(&text, &str);
-
-    buf_init(&b);
-    win_init(&w, &b);
-    con_init();
-
-    win_cur = &w;
-
-    w.pri = cur_ins(w.pri, &b, &text);
-    w.pri = cur_move(w.pri, &b, (cur){.cn = -3});
-    w.pri = cur_enter(w.pri, &b);
-    w.pri = cur_move(w.pri, &b, (cur){.ln = -1});
-    out_init(stdout);
-
-    w.cols = out_cols;
-    w.rows = out_rows;
-
-    win_out_after(&w, (cur){0, 0}, stdout);
-
-    while (1)
-    {
-        fd_set fds;
-        FD_ZERO(&fds);
-        FD_SET(inp_fd_out, &fds);
-        select(inp_fd_out + 1, &fds, NULL, NULL, NULL);
-        if (FD_ISSET(inp_fd_out, &fds))
-            inp_empty_pipe();
-
-        fflush(stdout);
-    }
-
-    return 0;
-    out_kill(stdout);
-
-    buf_kill(&b);
-
-    vec_kill(&str);
-    vec_kill(&text);
+    if (FD_ISSET(inp_fd_out, &fds))
+        inp_empty_pipe();
 }

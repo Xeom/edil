@@ -41,4 +41,13 @@ struct inp_keycode_s
     char code[16];
 };
 
+inp_key inp_get_key(char c);
+
+void inp_empty_pipe(void);
+
+void inp_init(void);
+
+void inp_kill(void);
+
+void inp_wait(void);
 #endif
