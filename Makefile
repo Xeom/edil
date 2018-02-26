@@ -20,17 +20,17 @@ clean_dep:
 $(OBJDIR)%.o: $(SRCDIR)%.c
 	@printf "Building $@ ... "
 	@mkdir -p $(@D)
-	@gcc -c $(FLAGS) $< -o $@ 2>>errs.txt
+	@gcc -c $(FLAGS) $< -o $@ 2>>errs.txt || (less -r errs.txt && /bin/false)
 	@printf "Done\n"
 
 bin/edil: $(OFILES)
 	@printf "Building $@ ... "
 	@mkdir -p $(@D)
-	@gcc $(FLAGS) $^ -o $@ 2>>errs.txt
+	@gcc $(FLAGS) $^ -o $@ 2>>errs.txt || (less -r errs.txt && /bin/false)
 	@printf "Done\n"
 
 all: clean_err bin/edil
-	@if [ -s errs.txt ]; then cat errs.txt | less -r; fi
+	if [ -s errs.txt ]; then cat errs.txt | less -r; fi
 
 clean: clean_err clean_bin clean_obj clean_dep
 
