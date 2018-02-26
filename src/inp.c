@@ -144,29 +144,11 @@ void *inp_listen(void *arg)
 void inp_empty_pipe(void)
 {
     inp_key key;
-    struct timeval tout;
+    
+    while (read(inp_fd_out, &key, sizeof(inp_key)) != -1)
+        con_handle(key);
 
-    tout.tv_sec  = 0;
-    tout.tv_usec = 100000;
-
-    while (1)
-    {
-        fd_set fds;
-        FD_ZERO(&fds);
-        FD_SET(inp_fd_out, &fds);
-        select(inp_fd_out + 1, &fds, NULL, NULL, &tout);
-
-        if (FD_ISSET(inp_fd_out, &fds))
-        {
-            read(inp_fd_out, &key, sizeof(inp_key));
-            con_handle(key);
-        }
-        else
-        {
-            break;
-        }
-    }
-
+    con_flush();
     /* Flush */
 }
 
@@ -186,8 +168,8 @@ void inp_init(void)
     inp_fd_in  = pipefds[1];
     inp_fd_out = pipefds[0];
 
-    fcntl(inp_fd_in,  F_SETFL, O_NONBLOCK | O_DIRECT | fcntl(inp_fd_in,  F_GETFL));
-    fcntl(inp_fd_out, F_SETFL, O_NONBLOCK | O_DIRECT | fcntl(inp_fd_out, F_GETFL));
+    fcntl(inp_fd_in,  F_SETFL, O_NONBLOCK | fcntl(inp_fd_in,  F_GETFL));
+    fcntl(inp_fd_out, F_SETFL, O_NONBLOCK | fcntl(inp_fd_out, F_GETFL));
 
     /* Create the input listener thread */
     pthread_create(&inp_listen_thread, NULL, inp_listen, NULL);
@@ -217,6 +199,7 @@ int main(void)
 
     buf_init(&b);
     win_init(&w, &b);
+    con_init();
 
     win_cur = &w;
 
@@ -233,7 +216,13 @@ int main(void)
 
     while (1)
     {
-        inp_empty_pipe();
+        fd_set fds;
+        FD_ZERO(&fds);
+        FD_SET(inp_fd_out, &fds);
+        select(inp_fd_out + 1, &fds, NULL, NULL, NULL);
+        if (FD_ISSET(inp_fd_out, &fds))
+            inp_empty_pipe();
+
         fflush(stdout);
     }
 
