@@ -8,6 +8,7 @@
 # include <stdio.h>
 #endif
 
+#include <signal.h>
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
@@ -22,7 +23,7 @@
 
 static void *inp_listen(void *arg);
 
-static pthread_t inp_listen_thread;
+pthread_t inp_listen_thread = 0;
 static int inp_fd_in;
 static int inp_fd_out;
 
@@ -213,13 +214,26 @@ void inp_key_name(inp_key key, char *str, size_t len)
         snprintf(str, len, "(%03x %s%02x) ", key, prefix, key & 0xff);
 }
 
+static void inp_listen_term(int sign)
+{
+    pthread_exit(NULL);
+}
+
 static void *inp_listen(void *arg)
 {
+    struct sigaction act;
+
+    act.sa_handler = inp_listen_term;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = 0;
+
+    sigaction(SIGTERM, &act, NULL);
+
     while (1)
     {
         int chr;
         inp_key key;
-   
+
         chr = getchar();
         key = inp_get_key(chr);
 
@@ -269,6 +283,8 @@ void inp_init(void)
 void inp_kill(void)
 {
     vec_kill(&inp_keycodes);
+    pthread_kill(inp_listen_thread, SIGTERM);
+    pthread_join(inp_listen_thread, NULL);
 }
 
 void inp_wait(void)
