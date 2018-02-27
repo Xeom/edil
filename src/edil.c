@@ -32,6 +32,7 @@ int main(void)
     w.rows = out_rows;
 
     win_out_after(&w, (cur){0, 0}, stdout);
+    fflush(stdout);
 
     while (1)
     {

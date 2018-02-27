@@ -43,6 +43,8 @@ struct inp_keycode_s
 
 inp_key inp_get_key(char c);
 
+void inp_key_name(inp_key key, char *str, size_t len);
+
 void inp_empty_pipe(void);
 
 void inp_init(void);

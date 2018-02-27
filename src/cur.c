@@ -56,13 +56,27 @@ cur cur_move(cur c, buf *b, cur dir)
         c.cn  = buf_line_len(b, c);
     }
 
-    if (c.cn > (ssize_t)buf_line_len(b, c))
+    if (c.cn > (ssize_t)buf_line_len(b, c) && c.ln < (ssize_t)buf_len(b) - 1)
     {
         c.ln += 1;
         c.cn  = 0;
     }
 
     c = cur_check_bounds(c, b);
+
+    return c;
+}
+
+cur cur_home(cur c, buf *b)
+{
+    c.cn = 0;
+    
+    return c;
+}
+
+cur cur_end(cur c, buf *b)
+{
+    c.cn = (ssize_t)buf_line_len(b, c);
 
     return c;
 }

@@ -51,7 +51,39 @@ inp_keycode inp_keycodes_static[] =
     {inp_key_f9,     "[20~"},
     {inp_key_f10,    "[21~"},
     {inp_key_f11,    "[23~"},
-    {inp_key_f12,    "[24~"}
+    {inp_key_f12,    "[24~"},
+};
+
+char *inp_key_names[] =
+{
+    [inp_key_back]   = "back",
+    [inp_key_tab]    = "tab",
+    [inp_key_enter]  = "enter",
+    [inp_key_esc]    = "esc",
+    [inp_key_ctrl]   = "ctrl",
+    [inp_key_none]   = "none",
+    [inp_key_up]     = "up",
+    [inp_key_down]   = "down",
+    [inp_key_right]  = "right",
+    [inp_key_left]   = "left",
+    [inp_key_home]   = "home",
+    [inp_key_del]    = "del",
+    [inp_key_end]    = "end",
+    [inp_key_pgup]   = "pgup",
+    [inp_key_pgdn]   = "pgdn",
+    [inp_key_insert] = "insert",
+    [inp_key_f1]     = "f1", 
+    [inp_key_f2]     = "f2",
+    [inp_key_f3]     = "f3",
+    [inp_key_f4]     = "f4",
+    [inp_key_f5]     = "f5",
+    [inp_key_f6]     = "f6",
+    [inp_key_f7]     = "f7",
+    [inp_key_f8]     = "f8",
+    [inp_key_f9]     = "f9",
+    [inp_key_f10]    = "f10",
+    [inp_key_f11]    = "f11",
+    [inp_key_f12]    = "f12"
 };
 
 static int inp_keycode_cmp(const void *a, const void *b)
@@ -65,6 +97,13 @@ static inp_key inp_get_escaped_key(char chr)
     static int  code_ind   = 0;
     static int  search_ind = 0;
     static int  rtn;
+    static int  double_esc = 0;
+
+    if (chr == '\033' && code_ind == 0 && !double_esc)
+    {
+        double_esc = 1;
+        return 0;
+    }
 
     code[code_ind] = chr;
     code[code_ind + 1] = '\0';
@@ -91,8 +130,12 @@ static inp_key inp_get_escaped_key(char chr)
         }
     }
 
+    if (double_esc)
+        rtn |= inp_key_esc;
+
     code_ind   = 0;
     search_ind = 0;
+    double_esc = 0;
 
     return rtn;
 }
@@ -124,6 +167,50 @@ inp_key inp_get_key(char c)
     }
 
     return rtn;
+}
+
+void inp_key_name(inp_key key, char *str, size_t len)
+{
+    char *prefix, *name;
+    char chrname[2];
+    
+    prefix = "";
+    name   = NULL;
+    size_t numnames;
+
+    numnames = sizeof(inp_key_names)/sizeof(char *);
+
+    if (inp_key_names[key] && key < numnames)
+        name = inp_key_names[key];
+
+    else
+    {
+        inp_key basekey;
+        
+        if ((key & inp_key_ctrl) && (key & inp_key_esc))
+            prefix = "Ctrl+Esc+";
+        else if (key & inp_key_ctrl)
+            prefix = "Ctrl+";
+        else if (key & inp_key_esc)
+            prefix = "Esc+";
+
+        basekey = key & ~(inp_key_ctrl | inp_key_esc);
+
+        if (inp_key_names[basekey] && key < numnames)
+            name = inp_key_names[basekey];
+    }
+
+    if (!name && (key & 0xff) > 0x20 && (key & 0xff) < 0x7e)
+    {
+        chrname[0] = key & 0xff;
+        chrname[1] = '\0';
+        name       = chrname;
+    }
+
+    if (name)
+        snprintf(str, len, "(%03x %s%s) ", key, prefix, name);
+    else
+        snprintf(str, len, "(%03x %s%02x) ", key, prefix, key & 0xff);
 }
 
 static void *inp_listen(void *arg)

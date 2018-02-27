@@ -7,7 +7,7 @@ BINDIR=bin/
 DEPDIR=dep/
 
 WARNINGS=all no-unused-parameter no-switch extra missing-prototypes
-DEFINES=
+DEFINES=COL_NONE
 
 DFLAGS=$(addprefix -D, $(DEFINES))
 WFLAGS=$(addprefix -W, $(WARNINGS))

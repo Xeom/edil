@@ -6,7 +6,18 @@
 
 #include "con.h"
 
+static void con_handle_buf(inp_key key);
+static void con_handle_kcd(inp_key key);
+
 vec con_ins_buf;
+
+typedef enum
+{
+    con_mode_buf,
+    con_mode_kcd
+} con_mode_type;
+
+con_mode_type con_mode = con_mode_buf;
 
 void con_init(void)
 {
@@ -62,6 +73,47 @@ void con_ins(inp_key key)
 
 void con_handle(inp_key key)
 {
+    int modechanged;
+    modechanged = 1;
+    switch (key)
+    {
+    case inp_key_ctrl | 'K': con_mode = con_mode_kcd; break;
+    case inp_key_ctrl | 'A': con_mode = con_mode_buf; break;
+    default: modechanged = 0;
+    }
+
+    if (modechanged) return;
+
+    switch (con_mode)
+    {
+    case con_mode_buf: con_handle_buf(key); break;
+    case con_mode_kcd: con_handle_kcd(key); break;
+    }
+}
+
+static void con_handle_kcd(inp_key key)
+{
+    char buf[32];
+    vec str, chrs;
+    win *w;
+    w = win_cur;
+    
+    vec_init(&str,  sizeof(char));
+    vec_init(&chrs, sizeof(chr));
+
+    inp_key_name(key, buf, sizeof(buf));
+
+    vec_ins(&str, 0, strlen(buf), buf);
+    chr_from_str(&chrs, &str);    
+
+    w->pri = cur_ins(w->pri, w->b, &chrs);
+
+    vec_kill(&str);
+    vec_kill(&chrs);
+}
+
+void con_handle_buf(inp_key key)
+{
     win *w;
     w = win_cur;
 
@@ -82,6 +134,9 @@ void con_handle(inp_key key)
     case inp_key_down:  w->pri = cur_move(w->pri, w->b, (cur){ .ln =  1 }); break;
     case inp_key_left:  w->pri = cur_move(w->pri, w->b, (cur){ .cn = -1 }); break;
     case inp_key_right: w->pri = cur_move(w->pri, w->b, (cur){ .cn =  1 }); break;
+
+    case inp_key_home:  w->pri = cur_home(w->pri, w->b); break;
+    case inp_key_end:   w->pri = cur_end (w->pri, w->b); break;
 
     case inp_key_back:  w->pri = cur_move(w->pri, w->b, (cur){ .cn = -1 });
     case inp_key_del:   w->pri = cur_del (w->pri, w->b);  break;

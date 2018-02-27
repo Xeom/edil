@@ -28,6 +28,10 @@ cur cur_check_bounds(cur c, buf *b);
 
 cur cur_move(cur c, buf *b, cur dir);
 
+cur cur_home(cur c, buf *b);
+
+cur cur_end(cur c, buf *b);
+
 cur cur_del(cur c, buf *b);
 
 cur cur_ins(cur c, buf *b, vec *text);

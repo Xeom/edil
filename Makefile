@@ -5,7 +5,8 @@ ifeq (,$(findstring clean,$(MAKECMDGOALS)))
   include $(DFILES)
 endif
 
-ERRPIPE=$(2>>errs.txt || (less -r errs.txt && /bin/false)
+ERRPIPE=2>>errs.txt || (less -r errs.txt && /bin/false)
+
 
 clean_err:
 	@rm -f errs.txt
@@ -22,7 +23,7 @@ clean_dep:
 $(OBJDIR)%.o: $(SRCDIR)%.c conf.mk
 	@printf "Building $@ ... "
 	@mkdir -p $(@D)
-	@gcc -c $(FLAGS) $< -o $@ $(ERRPIPE)
+	gcc -c $(FLAGS) $< -o $@ $(ERRPIPE)
 	@printf "Done\n"
 
 $(BINDIR)libedil.so: $(OFILES)
