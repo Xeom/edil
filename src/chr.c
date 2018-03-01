@@ -64,3 +64,14 @@ void chr_set_cols(chr *c, col_desc d)
     c->fnt = col_update(c->fnt, d);
 }
 
+static char *chr_blank_utf8 = "\377\377\377\377\377\377";
+
+int chr_is_blank(chr *c)
+{
+    return strncmp(c->utf8, chr_blank_utf8, sizeof(c->utf8)) == 0;
+}
+
+void chr_blankify(chr *c)
+{
+    strcpy(c->utf8, chr_blank_utf8);
+}
