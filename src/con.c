@@ -10,13 +10,17 @@ int con_alive = 1;
 
 static void con_handle_buf(inp_key key);
 static void con_handle_kcd(inp_key key);
+static void con_handle_bar(inp_key key);
+
+char *con_cmd_prompt = "$ ";
 
 vec con_ins_buf;
 
 typedef enum
 {
     con_mode_buf,
-    con_mode_kcd
+    con_mode_kcd,
+    con_mode_bar
 } con_mode_type;
 
 con_mode_type con_mode = con_mode_buf;
@@ -41,8 +45,13 @@ void con_ins_flush(void)
     if (len == 0)
         return;
 
-    w      = win_cur;
-    w->pri = cur_ins(w->pri, w->b, &con_ins_buf);
+    w = win_cur;
+
+    switch (con_mode)
+    {
+        case con_mode_buf: w->pri = cur_ins(w->pri, w->b, &con_ins_buf); break;
+        case con_mode_bar: win_bar_ins(w, &con_ins_buf); break;
+    }
 
     vec_del(&con_ins_buf, 0, len);
 }
@@ -81,13 +90,27 @@ void con_ins(inp_key key)
 
 void con_handle(inp_key key)
 {
+    vec cmdprompt;
     int modechanged;
     modechanged = 1;
+
+    if (!con_is_typable(key))
+    {
+        con_ins_flush();
+    }
+
     switch (key)
     {
+    case inp_key_ctrl | 'X': con_mode = con_mode_bar;
+        vec_init(&cmdprompt, sizeof(chr));
+        chr_from_str(&cmdprompt, con_cmd_prompt, strlen(con_cmd_prompt));
+        win_bar_query(win_cur, &cmdprompt, NULL);
+        vec_kill(&cmdprompt);
+        break;
+
     case inp_key_ctrl | 'K': con_mode = con_mode_kcd; break;
     case inp_key_ctrl | 'A': con_mode = con_mode_buf; break;
-    case inp_key_ctrl | 'X': con_alive = 0; break;
+    case inp_key_ctrl | inp_key_esc | 'K': con_alive = 0; break;
     default: modechanged = 0;
     }
 
@@ -97,27 +120,25 @@ void con_handle(inp_key key)
     {
     case con_mode_buf: con_handle_buf(key); break;
     case con_mode_kcd: con_handle_kcd(key); break;
+    case con_mode_bar: con_handle_bar(key); break;
     }
 }
 
 static void con_handle_kcd(inp_key key)
 {
     char buf[32];
-    vec str, chrs;
+    vec chrs;
     win *w;
     w = win_cur;
     
-    vec_init(&str,  sizeof(char));
     vec_init(&chrs, sizeof(chr));
 
     inp_key_name(key, buf, sizeof(buf));
 
-    vec_ins(&str, 0, strlen(buf), buf);
-    chr_from_str(&chrs, &str);    
+    chr_from_str(&chrs, buf, strlen(buf));    
 
     w->pri = cur_ins(w->pri, w->b, &chrs);
 
-    vec_kill(&str);
     vec_kill(&chrs);
 }
 
@@ -129,10 +150,6 @@ void con_handle_buf(inp_key key)
     if (con_is_typable(key))
     {
         con_ins(key);
-    }
-    else
-    {
-        con_ins_flush();
     }
 
     switch (key)
@@ -151,3 +168,25 @@ void con_handle_buf(inp_key key)
     case inp_key_del:   w->pri = cur_del (w->pri, w->b);  break;
     }
 }
+
+static void con_handle_bar(inp_key key)
+{
+    win *w;
+    w = win_cur;
+
+    if (con_is_typable(key))
+    {
+        con_ins(key);   
+    }
+
+    switch (key)
+    {
+    case inp_key_enter: win_bar_run(w); con_mode = con_mode_buf; break;
+
+    case inp_key_left:  win_bar_move(w, -1); break;
+    case inp_key_right: win_bar_move(w,  1); break;
+
+    case inp_key_back:  win_bar_back(w); break;
+    case inp_key_del:   win_bar_del(w);  break;
+    }
+}    

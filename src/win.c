@@ -75,22 +75,27 @@ static int win_out_goto(win *w, cur *c, FILE *f)
 
 void win_bar_fill(win *w, vec *bar)
 {
+    int needsfree;
     char  *fstr = "%ld,%ld ";
     char   curstr[32];
-    vec    curvec;
+    vec   *typed, *prompt;
     size_t len;
 
-    len = snprintf(curstr, sizeof(curstr), fstr, w->pri.ln + 1, w->pri.cn + 1);
+    len = snprintf(curstr, sizeof(curstr), fstr, w->pri.ln + 1, w->pri.cn + 1, vec_len(&(w->bartyped)));
 
-    vec_init(&curvec, sizeof(char));
-    vec_ins(&curvec, 0, len, curstr);
+    chr_from_str(bar, curstr, len);
 
-    chr_from_str(bar, &curvec);
+    typed  = win_add_cur((cur){ .cn = w->barcur }, (cur){ .ln = 1 }, 0, &(w->bartyped), &needsfree);
+    prompt = &(w->barprompt); 
 
-    vec_ins(bar, vec_len(bar), vec_len(&(w->barprompt)), vec_get(&(w->barprompt), 0));
-    vec_ins(bar, vec_len(bar), vec_len(&(w->bartyped)),  vec_get(&(w->bartyped),  0));
+    vec_ins(bar, vec_len(bar), vec_len(prompt), vec_get(prompt, 0));
+    vec_ins(bar, vec_len(bar), vec_len(typed),  vec_get(typed,  0));
 
-    vec_kill(&curvec);
+    if (needsfree)
+    {
+        vec_kill(typed);
+        free(typed);
+    }
 }
 
 void win_out_bar(win *w, FILE *f)
@@ -111,13 +116,72 @@ void win_out_bar(win *w, FILE *f)
     vec_kill(&bar);
 }
 
-static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *needsfree)
+void win_bar_ins(win *w, vec *chrs)
+{
+    vec *v;
+
+    v = &(w->bartyped);
+    vec_ins(v, w->barcur, vec_len(chrs), vec_get(chrs, 0));
+    w->barcur += vec_len(chrs);
+}
+
+
+void win_bar_back(win *w)
+{
+    if (w->barcur == 0) return;
+
+    w->barcur -= 1;
+    win_bar_del(w);
+}
+
+void win_bar_del(win *w)
+{
+    vec *v;
+
+    v = &(w->bartyped);
+    if (w->barcur >= (ssize_t)vec_len(v)) return;
+
+    vec_del(v, w->barcur, 1);
+}
+
+void win_bar_move(win *w, int n)
+{
+    size_t len;
+
+    len = vec_len(&(w->bartyped));
+    w->barcur += n;
+    if (w->barcur < 0)   w->barcur = 0;
+    if (w->barcur > (ssize_t)len) w->barcur = len;
+}
+
+void win_bar_run(win *w)
+{
+    if (w->barcb) w->barcb(w, &(w->barprompt));
+    w->barcb = NULL;
+
+    vec_del(&(w->barprompt), 0, vec_len(&(w->barprompt)));
+    vec_del(&(w->bartyped),  0, vec_len(&(w->bartyped)));
+
+    w->barcur = 0;
+}
+
+void win_bar_query(win *w, vec *prompt, void (*cb)(win *w, vec *chrs))
+{
+    if (w->barcb) (w->barcb(w, NULL));
+
+    vec_del(&(w->barprompt), 0, vec_len(&(w->barprompt)));
+    vec_ins(&(w->barprompt), 0, vec_len(prompt), vec_get(prompt, 0));
+
+    vec_del(&(w->bartyped), 0, vec_len(&(w->bartyped)));
+}
+
+static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
 {
     size_t linelen;
 
     linelen = vec_len(line);
 
-    *needsfree = 0;
+    *mod = 0;
 
     if (pri.ln == ln || sec.ln == ln)
     {
@@ -128,9 +192,9 @@ static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *needsfree)
         vec_ins(modline, 0, linelen, vec_get(line, 0));
 
         line = modline;
-        *needsfree = 1;
+        *mod = 1;
     }
-  
+
     if (pri.ln == ln)
     {
         chr *curchr;
