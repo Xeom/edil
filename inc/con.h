@@ -2,7 +2,11 @@
 # define CON_H
 # include "inp.h"
 
+extern int con_alive;
+
 void con_init(void);
+
+void con_kill(void);
 
 int con_is_typable(inp_key key);
 

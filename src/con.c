@@ -6,6 +6,8 @@
 
 #include "con.h"
 
+int con_alive = 1;
+
 static void con_handle_buf(inp_key key);
 static void con_handle_kcd(inp_key key);
 
@@ -22,6 +24,11 @@ con_mode_type con_mode = con_mode_buf;
 void con_init(void)
 {
     vec_init(&con_ins_buf, sizeof(chr));
+}
+
+void con_kill(void)
+{
+    vec_kill(&con_ins_buf);
 }
 
 void con_ins_flush(void)
@@ -45,6 +52,7 @@ void con_flush(void)
     con_ins_flush();
 
     win_out_after(win_cur, (cur){0, 0}, stdout);
+    win_out_bar(win_cur, stdout);
 }
 
 int con_is_typable(inp_key key)
@@ -79,6 +87,7 @@ void con_handle(inp_key key)
     {
     case inp_key_ctrl | 'K': con_mode = con_mode_kcd; break;
     case inp_key_ctrl | 'A': con_mode = con_mode_buf; break;
+    case inp_key_ctrl | 'X': con_alive = 0; break;
     default: modechanged = 0;
     }
 

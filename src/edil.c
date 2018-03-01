@@ -5,8 +5,6 @@
 
 int main(void)
 {
-    inp_init();
-    out_init(stdout);
 
     buf b;
     win w;
@@ -18,10 +16,11 @@ int main(void)
     vec_ins(&str, 0, 12, "Hello World!");
     chr_from_str(&text, &str);
 
+    inp_init();
+    out_init(stdout);
     buf_init(&b);
     win_init(&w, &b);
     con_init();
-    out_init(stdout);
 
     win_cur = &w;
 
@@ -34,14 +33,15 @@ int main(void)
     win_out_after(&w, (cur){0, 0}, stdout);
     fflush(stdout);
 
-    while (1)
+    while (con_alive)
     {
         inp_wait();
         fflush(stdout);
     }
 
-    return 0;
     out_kill(stdout);
+    inp_kill();
+    con_kill();
 
     buf_kill(&b);
 

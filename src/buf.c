@@ -12,6 +12,11 @@ void buf_init(buf *b)
 
 void buf_kill(buf *b)
 {
+    size_t ln;
+
+    for (ln = 0; ln < buf_len(b); ln++)
+        vec_kill(vec_get(&(b->lines), ln));
+
     vec_kill(&(b->lines));
 }
 
