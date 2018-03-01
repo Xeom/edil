@@ -5,7 +5,7 @@
 #include "win.h"
 
 static int  win_out_goto(win *w, cur *c, FILE *f);
-static vec *win_add_cur(win *w, cur c, vec *line, int *needsfree);
+static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *needsfree);
 
 win *win_cur;
 
@@ -111,7 +111,7 @@ void win_out_bar(win *w, FILE *f)
     vec_kill(&bar);
 }
 
-static vec *win_add_cur(win *w, cur c, vec *line, int *needsfree)
+static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *needsfree)
 {
     size_t linelen;
 
@@ -119,7 +119,7 @@ static vec *win_add_cur(win *w, cur c, vec *line, int *needsfree)
 
     *needsfree = 0;
 
-    if (w->pri.ln == c.ln || w->sec.ln == c.ln)
+    if (pri.ln == ln || sec.ln == ln)
     {
         vec *modline;
 
@@ -131,26 +131,26 @@ static vec *win_add_cur(win *w, cur c, vec *line, int *needsfree)
         *needsfree = 1;
     }
   
-    if (w->pri.ln == c.ln)
+    if (pri.ln == ln)
     {
         chr *curchr;
 
-        if (w->pri.cn == (ssize_t)linelen)
+        if (pri.cn == (ssize_t)linelen)
             vec_ins(line, linelen++, 1, &win_pri_chr);
 
-        curchr = vec_get(line, w->pri.cn);
+        curchr = vec_get(line, pri.cn);
         if (curchr)
             chr_set_cols(curchr, win_pri_col);
     }
 
-    if (w->sec.ln == c.ln && !(w->pri.cn == w->sec.cn && w->pri.ln == w->sec.ln))
+    if (sec.ln == ln && !(pri.cn == sec.cn && pri.ln == sec.ln))
     {
         chr *curchr;
 
-        if (w->sec.cn == (ssize_t)linelen)
+        if (sec.cn == (ssize_t)linelen)
             vec_ins(line, linelen++, 1, &win_sec_chr);
 
-        curchr = vec_get(line, w->sec.cn);
+        curchr = vec_get(line, sec.cn);
         if (curchr) 
             chr_set_cols(curchr, win_sec_col);
     }
@@ -175,15 +175,18 @@ void win_out_line(win *w, cur c, FILE *f)
     line = win_line(w, c.ln);
     if (!line) return;
 
-    line = win_add_cur(w, c, line, &needsfree);
+    line = win_add_cur(w->pri, w->sec, c.ln, line, &needsfree);
 
     outlen = vec_len(line) - c.cn - w->scrx;
     if ((ssize_t)outlen > w->cols) outlen = w->cols;
 
     out_chrs(vec_get(line, c.cn + w->scrx), outlen, f);
 
-    if (needsfree) vec_kill(line);
-
+    if (needsfree) 
+    {
+        vec_kill(line);
+        free(line);
+    }
 }
 
 void win_out_after(win *w, cur c, FILE *f)
