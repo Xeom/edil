@@ -31,11 +31,19 @@ void chr_print(chr *c, FILE *f)
     fwrite(c->utf8, 1, len, f);
 }
 
-void chr_from_str(vec *chrs, vec *str)
+void chr_from_vec(vec *chrs, vec *str)
 {
-    size_t ind, len;
-
+    size_t len, ind;
     len = vec_len(str);
+
+    ind = chr_from_str(chrs, vec_get(str, 0), len);
+
+    vec_del(str, 0, ind);
+}
+
+size_t chr_from_str(vec *chrs, char *str, size_t len)
+{
+    size_t ind;
 
     for (ind = 0; ind < len;)
     {
@@ -43,8 +51,7 @@ void chr_from_str(vec *chrs, vec *str)
         char  *bytes;
         chr    c = { .fnt = { .attr = 0, .fg = col_none, .bg = col_none } };
 
-        bytes = vec_get(str, ind);
-        if (!str) break;
+        bytes = str + ind;
 
         width = chr_utf8_len(*bytes);
         if (width + ind > len) break;
@@ -56,7 +63,7 @@ void chr_from_str(vec *chrs, vec *str)
         ind += width;
     }
 
-    vec_del(str, 0, ind);
+    return ind;
 }
 
 void chr_set_cols(chr *c, col_desc d)

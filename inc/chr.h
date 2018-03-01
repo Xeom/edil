@@ -17,8 +17,14 @@ int chr_len(chr *c);
 
 void chr_print(chr *c, FILE *f);
 
-void chr_from_str(vec *chrs, vec *str);
+void chr_from_vec(vec *chrs, vec *str);
+
+size_t chr_from_str(vec *chrs, char *str, size_t len);
 
 void chr_set_cols(chr *c, col_desc d);
+
+int chr_is_blank(chr *c);
+
+void chr_blankify(chr *c);
 
 #endif
