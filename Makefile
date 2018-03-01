@@ -41,7 +41,7 @@ $(BINDIR)libedil.a: $(OFILES)
 $(BINDIR)edil: $(SRCDIR)edil.c $(BINDIR)libedil.a
 	@printf "Building $@ ... "
 	@mkdir -p $(@D)
-	@gcc $(FLAGS) -static $^ -o $@ $(ERRPIPE)
+	@gcc $(FLAGS) $^ -o $@ $(ERRPIPE)
 	@printf "Done\n"
 
 all: clean_err $(BINDIR)libedil.a $(BINDIR)libedil.so $(BINDIR)edil
