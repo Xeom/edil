@@ -11,6 +11,9 @@ struct win_s
     ssize_t scrx, scry;
     ssize_t rows, cols;
     ssize_t xpos, ypos;
+    vec    bartyped;
+    vec    barprompt;
+    size_t barcur;
     buf   *b;
     cur pri, sec;
 };
@@ -26,7 +29,11 @@ ssize_t win_max_cn(win *w);
 ssize_t win_min_ln(win *w);
 ssize_t win_min_cn(win *w);
 
-int win_out_goto(win *w, cur *c, FILE *f);
+void win_kill(win *w);
+
+void win_bar_fill(win *w, vec *bar);
+
+void win_out_bar(win *w, FILE *f);
 
 void win_out_line(win *w, cur c, FILE *f);
 
