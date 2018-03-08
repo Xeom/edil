@@ -38,7 +38,8 @@ typedef struct inp_keycode_s inp_keycode;
 struct inp_keycode_s
 {
     inp_key key;
-    char code[16];
+    char *code;
+    char *name;
 };
 
 inp_key inp_get_key(char c);

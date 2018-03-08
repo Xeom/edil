@@ -22,6 +22,7 @@
 #include "inp.h"
 
 static void *inp_listen(void *arg);
+static char *inp_key_basename(inp_key key);
 
 pthread_t inp_listen_thread = 0;
 static int inp_fd_in;
@@ -31,65 +32,38 @@ vec inp_keycodes;
 
 inp_keycode inp_keycodes_static[] =
 {
-    {inp_key_up,     "[A"},
-    {inp_key_down,   "[B"},
-    {inp_key_right,  "[C"},
-    {inp_key_left,   "[D"},
-    {inp_key_home,   "[1~"},
-    {inp_key_del,    "[3~"},
-    {inp_key_end,    "[4~"},
-    {inp_key_pgup,   "[5~"},
-    {inp_key_pgdn,   "[6~"},
-    {inp_key_insert, "[4h"},
-    {inp_key_f1,     "OP"},
-    {inp_key_f2,     "OQ"},
-    {inp_key_f3,     "OR"},
-    {inp_key_f4,     "OS"},
-    {inp_key_f5,     "[15~"},
-    {inp_key_f6,     "[17~"},
-    {inp_key_f7,     "[18~"},
-    {inp_key_f8,     "[19~"},
-    {inp_key_f9,     "[20~"},
-    {inp_key_f10,    "[21~"},
-    {inp_key_f11,    "[23~"},
-    {inp_key_f12,    "[24~"},
-};
-
-char *inp_key_names[] =
-{
-    [inp_key_back]   = "back",
-    [inp_key_tab]    = "tab",
-    [inp_key_enter]  = "enter",
-    [inp_key_esc]    = "esc",
-    [inp_key_ctrl]   = "ctrl",
-    [inp_key_none]   = "none",
-    [inp_key_up]     = "up",
-    [inp_key_down]   = "down",
-    [inp_key_right]  = "right",
-    [inp_key_left]   = "left",
-    [inp_key_home]   = "home",
-    [inp_key_del]    = "del",
-    [inp_key_end]    = "end",
-    [inp_key_pgup]   = "pgup",
-    [inp_key_pgdn]   = "pgdn",
-    [inp_key_insert] = "insert",
-    [inp_key_f1]     = "f1", 
-    [inp_key_f2]     = "f2",
-    [inp_key_f3]     = "f3",
-    [inp_key_f4]     = "f4",
-    [inp_key_f5]     = "f5",
-    [inp_key_f6]     = "f6",
-    [inp_key_f7]     = "f7",
-    [inp_key_f8]     = "f8",
-    [inp_key_f9]     = "f9",
-    [inp_key_f10]    = "f10",
-    [inp_key_f11]    = "f11",
-    [inp_key_f12]    = "f12"
+    {inp_key_up,     "[A",   "up"},
+    {inp_key_down,   "[B",   "down"},
+    {inp_key_right,  "[C",   "right"},
+    {inp_key_left,   "[D",   "left"},
+    {inp_key_home,   "[1~",  "home"},
+    {inp_key_del,    "[3~",  "del"},
+    {inp_key_end,    "[4~",  "end"},
+    {inp_key_pgup,   "[5~",  "pgup"},
+    {inp_key_pgdn,   "[6~",  "pgdn"},
+    {inp_key_insert, "[4h",  "insert"},
+    {inp_key_f1,     "OP",   "f1"},
+    {inp_key_f2,     "OQ",   "f2"},
+    {inp_key_f3,     "OR",   "f3"},
+    {inp_key_f4,     "OS",   "f4"},
+    {inp_key_f5,     "[15~", "f5"},
+    {inp_key_f6,     "[17~", "f6"},
+    {inp_key_f7,     "[18~", "f7"},
+    {inp_key_f8,     "[19~", "f8"},
+    {inp_key_f9,     "[20~", "f9"},
+    {inp_key_f10,    "[21~", "f10"},
+    {inp_key_f11,    "[23~", "f11"},
+    {inp_key_f12,    "[24~", "f12"},
 };
 
 static int inp_keycode_cmp(const void *a, const void *b)
 {
-    return strcmp(((const inp_keycode *)a)->code, ((const inp_keycode *)b)->code);
+    const inp_keycode *acode, *bcode;
+
+    acode = a;
+    bcode = b;
+
+    return strcmp(acode->code, bcode->code);
 }
 
 static inp_key inp_get_escaped_key(char chr)
@@ -170,6 +144,25 @@ inp_key inp_get_key(char c)
     return rtn;
 }
 
+static char *inp_key_basename(inp_key key)
+{
+    size_t len, ind;
+    len = vec_len(&inp_keycodes);
+
+    key &= ~(inp_key_ctrl | inp_key_esc);
+
+    for (ind = 0; ind < len; ind++)
+    {
+        inp_keycode *code;
+        code = vec_get(&inp_keycodes, ind);
+
+        if (code && code->key == key)
+            return code->name;
+    }
+
+    return NULL;
+}
+
 void inp_key_name(inp_key key, char *str, size_t len)
 {
     char *prefix, *name;
@@ -177,29 +170,15 @@ void inp_key_name(inp_key key, char *str, size_t len)
     
     prefix = "";
     name   = NULL;
-    size_t numnames;
 
-    numnames = sizeof(inp_key_names)/sizeof(char *);
+    if ((key & inp_key_ctrl) && (key & inp_key_esc))
+        prefix = "Ctrl+Esc+";
+    else if (key & inp_key_ctrl)
+        prefix = "Ctrl+";
+    else if (key & inp_key_esc)
+        prefix = "Esc+";
 
-    if (inp_key_names[key] && key < numnames)
-        name = inp_key_names[key];
-
-    else
-    {
-        inp_key basekey;
-        
-        if ((key & inp_key_ctrl) && (key & inp_key_esc))
-            prefix = "Ctrl+Esc+";
-        else if (key & inp_key_ctrl)
-            prefix = "Ctrl+";
-        else if (key & inp_key_esc)
-            prefix = "Esc+";
-
-        basekey = key & ~(inp_key_ctrl | inp_key_esc);
-
-        if (inp_key_names[basekey] && key < numnames)
-            name = inp_key_names[basekey];
-    }
+    name = inp_key_basename(key);
 
     if (!name && (key & 0xff) > 0x20 && (key & 0xff) < 0x7e)
     {
