@@ -21,6 +21,8 @@ void chr_from_vec(vec *chrs, vec *str);
 
 size_t chr_from_str(vec *chrs, char *str, size_t len);
 
+void chr_to_str(vec *chrs, vec *str);
+
 void chr_set_cols(chr *c, col_desc d);
 
 int chr_is_blank(chr *c);

@@ -66,6 +66,27 @@ size_t chr_from_str(vec *chrs, char *str, size_t len)
     return ind;
 }
 
+void chr_to_str(vec *chrs, vec *str)
+{
+    size_t ind, len;
+    len = vec_len(chrs);
+
+    for (ind = 0; ind < len; ind++)
+    {
+        size_t width;
+
+        chr *c;
+        c = vec_get(chrs, ind);
+        if (!c) break;
+
+        if (chr_is_blank(c)) continue;
+
+        width = chr_len(c);
+
+        vec_ins(str, vec_len(str), width, c->utf8);
+    }
+}
+
 void chr_set_cols(chr *c, col_desc d)
 { 
     c->fnt = col_update(c->fnt, d);
