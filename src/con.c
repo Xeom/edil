@@ -3,18 +3,9 @@
 #include "cur.h"
 #include "win.h"
 #include "chr.h"
+#include "cmd.h"
 
 #include "con.h"
-
-int con_alive = 1;
-
-static void con_handle_buf(inp_key key);
-static void con_handle_kcd(inp_key key);
-static void con_handle_bar(inp_key key);
-
-char *con_cmd_prompt = "$ ";
-
-vec con_ins_buf;
 
 typedef enum
 {
@@ -23,7 +14,30 @@ typedef enum
     con_mode_bar
 } con_mode_type;
 
+static void con_handle_buf(inp_key key);
+static void con_handle_kcd(inp_key key);
+static void con_handle_bar(inp_key key);
+static void con_cmd_cb(win *w, vec *chrs);
+
 con_mode_type con_mode = con_mode_buf;
+int con_alive = 1;
+char *con_cmd_prompt = "$ ";
+vec con_ins_buf;
+
+static void con_cmd_cb(win *w, vec *chrs)
+{
+    vec args, rtn;
+    vec_init(&args, sizeof(vec));
+    vec_init(&rtn,  sizeof(chr));
+
+    cmd_parse(&args, chrs, 0);
+    cmd_run(&args, &rtn);
+
+    out_log(&rtn, stdout);
+
+    vec_kill(&args);
+    vec_kill(&rtn);
+}
 
 void con_init(void)
 {
@@ -104,7 +118,7 @@ void con_handle(inp_key key)
     case inp_key_ctrl | 'X': con_mode = con_mode_bar;
         vec_init(&cmdprompt, sizeof(chr));
         chr_from_str(&cmdprompt, con_cmd_prompt, strlen(con_cmd_prompt));
-        win_bar_query(win_cur, &cmdprompt, NULL);
+        win_bar_query(win_cur, &cmdprompt, con_cmd_cb);
         vec_kill(&cmdprompt);
         break;
 
