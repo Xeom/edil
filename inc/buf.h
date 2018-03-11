@@ -8,18 +8,20 @@ typedef struct buf_s buf;
 
 # include "cur.h"
 
+/* Bit flags describing attributes of buffers */
 typedef enum
 {
-    buf_readonly   = 0x01,
-    buf_modified   = 0x02,
-    buf_associated = 0x04,
+    buf_readonly   = 0x01, /* Don't modify this      (not yet implemented) */
+    buf_modified   = 0x02, /* This has been modified (not yet implemented) */
+    buf_associated = 0x04, /* This buffer is associated with a filename    */
 } buf_flags;
 
+/* A representation of some text */
 struct buf_s
 {
-    vec       lines;
-    vec       fname;
-    buf_flags flags;
+    vec       lines; /* A vector of lines */
+    vec       fname; /* The filename associated with this buffer, NULL terminated */
+    buf_flags flags; /* The flags of the buffer */
 };
 
 void buf_init(buf *b);
