@@ -46,7 +46,6 @@ cur cur_check_bounds(cur c, buf *b)
 
 cur cur_move(cur c, buf *b, cur dir)
 {
-
     c.ln += dir.ln;
     c.cn += dir.cn;
 
@@ -58,8 +57,15 @@ cur cur_move(cur c, buf *b, cur dir)
 
     if (c.cn > (ssize_t)buf_line_len(b, c) && c.ln < (ssize_t)buf_len(b) - 1)
     {
-        c.ln += 1;
-        c.cn  = 0;
+        if (dir.ln == 0)
+        {
+            c.ln += 1;
+            c.cn  = 0;
+        }
+        else
+        {
+            c.cn = buf_line_len(b, c);
+        }
     }
 
     c = cur_check_bounds(c, b);
