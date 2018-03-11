@@ -31,7 +31,9 @@ ssize_t out_cols, out_rows;
 col out_blank_line_col = { .fg = col_black | col_bright, .bg = col_none, .attr = 0 };
 char *out_blank_line_text = "\xc2\xbb";
 
-col_desc out_log_col_desc  = { .inv = col_rev,   .fg = col_null, .bg = col_null };
+col_desc out_log_col_desc  = { .fg = col_null, .bg = col_null };
+col out_log_space_col = { .fg = col_black | col_bright, .bg = col_none, .attr = col_under };
+
 col_desc out_cur1_col_desc = { .inv = col_rev,   .fg = col_null, .bg = col_null };
 col_desc out_cur2_col_desc = { .inv = col_under, .fg = col_null, .bg = col_null };
 
@@ -45,34 +47,34 @@ void out_goto(int cn, int ln, FILE *f)
 void out_log(vec *chrs, FILE *f)
 {
     vec colchrs;
-    size_t ind, len;
+    ssize_t ind, len;
 
-    len = vec_len(chrs);
-
-    if ((ssize_t)len > out_cols) len = out_cols;
+    len = (ssize_t)vec_len(chrs);
 
     vec_init(&colchrs, sizeof(chr));
     vec_ins(&colchrs, 0, len, vec_get(chrs, 0));
 
-    if ((ssize_t)len < out_cols)
-    {
-        chr space = { .utf8 = " " };
-        for (ind = len; (ssize_t)ind < out_cols; ind++)
-            vec_ins(&colchrs, ind, 1, &space);
-
-        len = out_cols;
-    }
-
     for (ind = 0; ind < len; ind++)
     {
         chr *c;
+
         c = vec_get(&colchrs, ind);
         c->fnt = col_update(c->fnt, out_log_col_desc);
     }
 
+    if (len < out_cols)
+    {
+        chr space = { .utf8 = " ", .fnt = out_log_space_col };
+
+        vec_ins(&colchrs, len, out_cols - len, NULL);
+
+        for (ind = len; (ssize_t)ind < out_cols; ind++)
+            memcpy(vec_get(&colchrs, ind), &space, sizeof(chr));
+    }
+
     out_goto(0, out_rows, f);
 
-    out_chrs(vec_get(&colchrs, 0), len, f);
+    out_chrs(vec_get(&colchrs, 0), out_cols, f);
 
     vec_kill(&colchrs);    
 }
@@ -152,6 +154,8 @@ void out_init(FILE *f)
     act.sa_flags = 0;
 
     sigaction(SIGWINCH, &act, NULL);
+
+    out_log(&(vec){ .width = 1 }, stdout);
 }
 
 void out_kill(FILE *f)

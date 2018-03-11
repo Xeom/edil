@@ -2,25 +2,24 @@
 #include "out.h"
 #include "inp.h"
 #include "con.h"
+#include "cmd.h"
 
 int main(void)
 {
-
     buf b;
     win w;
-    vec text, str;
+    vec text;
 
-    vec_init(&str,  sizeof(char));
     vec_init(&text, sizeof(chr));
 
-    vec_ins(&str, 0, 12, "Hello World!");
-    chr_from_str(&text, &str);
+    chr_from_str(&text, "Hello world!", 12);
 
     inp_init();
     out_init(stdout);
     buf_init(&b);
     win_init(&w, &b);
     con_init();
+    cmd_init();
 
     win_cur = &w;
 
@@ -28,7 +27,7 @@ int main(void)
     w.pri = cur_enter(w.pri, &b);
 
     w.cols = out_cols;
-    w.rows = out_rows;
+    w.rows = out_rows - 1;
 
     win_out_after(&w, (cur){0, 0}, stdout);
     fflush(stdout);
@@ -42,9 +41,9 @@ int main(void)
     out_kill(stdout);
     inp_kill();
     con_kill();
+    cmd_kill();
 
     buf_kill(&b);
 
-    vec_kill(&str);
     vec_kill(&text);
 }

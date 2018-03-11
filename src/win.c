@@ -1,15 +1,23 @@
 #include <string.h>
 
 #include "out.h"
+#include "con.h"
 
 #include "win.h"
 
 static int  win_out_goto(win *w, cur *c, FILE *f);
 static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *needsfree);
 
+static void win_bar_fill_fname(win *w, vec *bar);
+static void win_bar_fill_query(win *w, vec *bar);
+static void win_bar_fill_pos(win *w, vec *bar);
+
 win *win_cur;
 
-chr      win_pri_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_black | col_bright } };
+chr      win_bar_chr = { .utf8 = "=", .fnt = { .fg = col_none, .bg = col_none } };
+col_desc win_bar_col = { .inv = col_rev,   .fg = col_null, .bg = col_null };
+
+chr      win_pri_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
 col_desc win_pri_col = { .inv = col_rev,   .fg = col_null, .bg = col_null };
 
 chr      win_sec_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
@@ -73,45 +81,96 @@ static int win_out_goto(win *w, cur *c, FILE *f)
     return 1;
 }
 
-void win_bar_fill(win *w, vec *bar)
+void win_bar_fill_pos(win *w, vec *bar)
 {
-    int needsfree;
-    char  *fstr = "%ld,%ld ";
-    char   curstr[32];
-    vec   *typed, *prompt;
-    size_t len;
+    chr_format(bar, " %ld\xc2\xb7%ld", w->pri.ln + 1, w->pri.cn + 1);   
+}
 
-    len = snprintf(curstr, sizeof(curstr), fstr, w->pri.ln + 1, w->pri.cn + 1, vec_len(&(w->bartyped)));
+void win_bar_fill_fname(win *w, vec *bar)
+{
+    size_t ind;
+    vec *fn;
 
-    chr_from_str(bar, curstr, len);
+    fn = &(w->b->fname);
 
-    typed  = win_add_cur((cur){ .cn = w->barcur }, (cur){ .ln = 1 }, 0, &(w->bartyped), &needsfree);
-    prompt = &(w->barprompt); 
+    if (!(w->b->flags & buf_associated))
+        return;
+
+    ind = vec_len(fn);
+
+    while (ind--)
+    {
+        char *c;
+        c = vec_get(fn, ind);
+        if (*c == '/')
+            break;
+    }
+
+    chr_format(bar, " (%s)", vec_get(&(w->b->fname), ind + 1));
+}
+
+static void win_bar_fill_query(win *w, vec *bar)
+{
+    int tofree;
+    vec *prompt, *typed;
+
+    tofree = 0;
+
+    typed  = &(w->bartyped);
+    prompt = &(w->barprompt);
+
+    if (con_mode == con_mode_bar)
+        typed = win_add_cur((cur){ .cn = w->barcur }, (cur){ .ln = 1 }, 0, typed, &tofree);
+
+    if (vec_len(prompt))
+        chr_format(bar, " ");
 
     vec_ins(bar, vec_len(bar), vec_len(prompt), vec_get(prompt, 0));
     vec_ins(bar, vec_len(bar), vec_len(typed),  vec_get(typed,  0));
 
-    if (needsfree)
+    if (tofree)
     {
         vec_kill(typed);
         free(typed);
     }
+}   
+
+static void win_bar_fill(win *w, vec *bar)
+{
+    win_bar_fill_pos(w, bar);
+    win_bar_fill_fname(w, bar);
+    win_bar_fill_query(w, bar);
+
+    chr_format(bar, " ");
 }
 
-void win_out_bar(win *w, FILE *f)
+static void win_out_bar(win *w, FILE *f)
 {   
     vec    bar;
-    size_t outlen;
+    size_t len, ind;
 
     vec_init(&bar, sizeof(chr));
     win_bar_fill(w, &bar);
 
-    outlen = vec_len(&bar);
-    if (w->cols < (ssize_t)outlen)
-        outlen = w->cols;
+    len = vec_len(&bar);
 
-    out_goto(1 - w->scrx + w->xpos, w->rows - w->scry + w->ypos, f);
-    out_chrs(vec_get(&bar, 0), outlen, f);
+    if (w->cols > (ssize_t)len)
+    {
+        vec_ins(&bar, len, w->cols - len, NULL);
+
+        for (ind = len; (ssize_t)ind < w->cols; ind++)
+            memcpy(vec_get(&bar, ind), &win_bar_chr, sizeof(chr));
+    }
+
+    for (ind = 0; ind < w->cols; ind++)
+    {
+        chr *c;
+        c = vec_get(&bar, ind);
+        c->fnt = col_update(c->fnt, win_bar_col);
+    }
+
+    out_goto(w->xpos + 1, w->ypos + w->rows, f);
+    out_chrs(vec_get(&bar, 0), w->cols, f);
 
     vec_kill(&bar);
 }
@@ -156,7 +215,7 @@ void win_bar_move(win *w, int n)
 
 void win_bar_run(win *w)
 {
-    if (w->barcb) w->barcb(w, &(w->barprompt));
+    if (w->barcb) w->barcb(w, &(w->bartyped));
     w->barcb = NULL;
 
     vec_del(&(w->barprompt), 0, vec_len(&(w->barprompt)));
@@ -167,12 +226,14 @@ void win_bar_run(win *w)
 
 void win_bar_query(win *w, vec *prompt, void (*cb)(win *w, vec *chrs))
 {
-    if (w->barcb) (w->barcb(w, NULL));
+    if (w->barcb) (w->barcb(w, &(w->bartyped)));
 
     vec_del(&(w->barprompt), 0, vec_len(&(w->barprompt)));
     vec_ins(&(w->barprompt), 0, vec_len(prompt), vec_get(prompt, 0));
 
     vec_del(&(w->bartyped), 0, vec_len(&(w->bartyped)));
+
+    w->barcb = cb;
 }
 
 static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
