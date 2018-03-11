@@ -10,13 +10,15 @@ typedef struct buf_s buf;
 
 typedef enum
 {
-    buf_readonly = 0x01,
-    buf_modified = 0x02
+    buf_readonly   = 0x01,
+    buf_modified   = 0x02,
+    buf_associated = 0x04,
 } buf_flags;
 
 struct buf_s
 {
     vec       lines;
+    vec       fname;
     buf_flags flags;
 };
 

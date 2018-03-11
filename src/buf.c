@@ -5,6 +5,7 @@
 void buf_init(buf *b)
 {
     vec_init(&(b->lines), sizeof(vec));
+    vec_init(&(b->fname), sizeof(char));
     b->flags = 0;
 
     buf_ins_line(b, (cur){0, 0});
