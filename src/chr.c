@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdarg.h>
 
 #include "chr.h"
 
@@ -102,4 +103,29 @@ int chr_is_blank(chr *c)
 void chr_blankify(chr *c)
 {
     strcpy(c->utf8, chr_blank_utf8);
+}
+
+void chr_format(vec *chrs, char *fmt, ...)
+{
+    va_list args;
+    char *buf;
+    size_t len, written;
+    len = 32;
+    buf = NULL;
+
+    do
+    {
+        va_start(args, fmt);
+
+        len *= 2;
+        buf = realloc(buf, len);
+
+        written = vsnprintf(buf, len, fmt, args);
+    } while (written >= len);
+
+    va_end(args);
+
+    chr_from_str(chrs, buf, strlen(buf));
+
+    free(buf);
 }

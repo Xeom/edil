@@ -1,46 +1,20 @@
 #include <string.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdarg.h>
 
 #include "tab.h"
 #include "vec.h"
 #include "chr.h"
+#include "cmd/file.h"
 
 #include "cmd.h"
 
 vec cmd_infos;
 
-void cmd_format(vec *chrs, char *fmt, ...)
-{
-    va_list args;
-    char *buf;
-    size_t len, written;
-    len = 32;
-    buf = NULL;
-
-    do
-    {
-        va_start(args, fmt);
-
-        len *= 2;
-        buf = realloc(buf, len);
-
-        written = vsnprintf(buf, len, fmt, args);
-    } while (written >= len);
-
-    va_end(args);
-
-    chr_from_str(chrs, buf, strlen(buf));
-
-    free(buf);
-}
-
 static cmd_info cmd_infos_static[] = 
 {
-    { "r",  file_cmd_read },
-    { "d",  file_cmd_dump },
-    { "cd", file_cmd_chdir }
+//    { "revert", file_cmd_revert },
+    { "load",  file_cmd_load },
+    { "dump",  file_cmd_dump },
+    { "cd", file_cmd_chdir },
 };
 
 /* Check whether a cmd name starts with a string */
@@ -96,7 +70,7 @@ void cmd_kill(void)
     vec_kill(&cmd_infos);
 }
 
-void cmd_run(vec *args, vec *rtn)
+void cmd_run(vec *args, vec *rtn, win *w)
 {
     size_t len, ind;
     vec name;
@@ -118,12 +92,28 @@ void cmd_run(vec *args, vec *rtn)
     if (cmd_info_startswith(info, namestr))
     {
         cmd_info *next;
-        next = vec_get(&cmd_infos, ind + 1);
+        next = vec_get(&cmd_infos, ++ind);
         if (cmd_info_startswith(next, namestr))
+        {
+            chr_format(rtn, "err: %s is ambiguous (%s", namestr, info->name);
+
+            while (next && cmd_info_startswith(next, namestr))
+            {
+                chr_format(rtn, ", %s", next->name);
+                next = vec_get(&cmd_infos, ++ind);
+            }
+
+            chr_format(rtn, ")");
+
             return; /* Not a unique name */
+        }
         else
-            info->funct(rtn, args);
-    }           
+            info->funct(rtn, args, w);
+    }
+    else
+    {   
+        chr_format(rtn, "err: %s is not a known command", namestr);
+    }
 }
 
 void cmd_parse(vec *args, vec *chrs, size_t ind)
