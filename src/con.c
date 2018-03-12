@@ -4,15 +4,10 @@
 #include "win.h"
 #include "chr.h"
 #include "cmd.h"
+#include "out.h"
 
 #include "con.h"
 
-typedef enum
-{
-    con_mode_buf,
-    con_mode_kcd,
-    con_mode_bar
-} con_mode_type;
 
 static void con_handle_buf(inp_key key);
 static void con_handle_kcd(inp_key key);
@@ -31,7 +26,7 @@ static void con_cmd_cb(win *w, vec *chrs)
     vec_init(&rtn,  sizeof(chr));
 
     cmd_parse(&args, chrs, 0);
-    cmd_run(&args, &rtn);
+    cmd_run(&args, &rtn, w);
 
     out_log(&rtn, stdout);
 

@@ -2,7 +2,15 @@
 # define CON_H
 # include "inp.h"
 
+typedef enum
+{
+    con_mode_buf,
+    con_mode_kcd,
+    con_mode_bar
+} con_mode_type;
+
 extern int con_alive;
+extern con_mode_type con_mode;
 
 void con_init(void);
 
