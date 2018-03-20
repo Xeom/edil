@@ -1,4 +1,5 @@
-FILES=buf chr col con cur inp out vec win
+FILES=buf chr cmd col con cur inp out tab vec win \
+      cmd/file
 
 SRCDIR=src/
 INCDIR=inc/
@@ -7,7 +8,7 @@ BINDIR=bin/
 DEPDIR=dep/
 
 WARNINGS=all no-unused-parameter no-switch extra missing-prototypes
-DEFINES=COL_NONE
+DEFINES=
 
 DFLAGS=$(addprefix -D, $(DEFINES))
 WFLAGS=$(addprefix -W, $(WARNINGS))
