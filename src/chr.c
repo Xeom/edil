@@ -37,12 +37,21 @@ void chr_from_vec(vec *chrs, vec *str)
     size_t len, ind;
     len = vec_len(str);
 
-    ind = chr_from_str(chrs, vec_get(str, 0), len);
+    ind = chr_from_mem(chrs, vec_get(str, 0), len);
 
     vec_del(str, 0, ind);
 }
 
-size_t chr_from_str(vec *chrs, char *str, size_t len)
+size_t chr_from_str(vec *chrs, char *str)
+{
+    size_t len;
+
+    len = strlen(str);
+
+    return chr_from_mem(chrs, str, len);
+}
+
+size_t chr_from_mem(vec *chrs, char *str, size_t len)
 {
     size_t ind;
 
@@ -125,7 +134,7 @@ void chr_format(vec *chrs, char *fmt, ...)
 
     va_end(args);
 
-    chr_from_str(chrs, buf, strlen(buf));
+    chr_from_str(chrs, buf);
 
     free(buf);
 }

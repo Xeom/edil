@@ -24,7 +24,8 @@ void chr_print(chr *c, FILE *f);
  * the chr representation of the chars in str. These are assumed to  *
  * be appropriately initialized.                                     */
 void chr_from_vec(vec *chrs, vec *str);
-size_t chr_from_str(vec *chrs, char *str, size_t len);
+size_t chr_from_str(vec *chrs, char *str);
+size_t chr_from_mem(vec *chrs, char *str, size_t len);
 
 /* Turn a vec of chrs back into utf8 chars. */
 void chr_to_str(vec *chrs, vec *str);

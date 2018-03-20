@@ -112,7 +112,7 @@ void con_handle(inp_key key)
     {
     case inp_key_ctrl | 'X': con_mode = con_mode_bar;
         vec_init(&cmdprompt, sizeof(chr));
-        chr_from_str(&cmdprompt, con_cmd_prompt, strlen(con_cmd_prompt));
+        chr_from_str(&cmdprompt, con_cmd_prompt);
         win_bar_query(win_cur, &cmdprompt, con_cmd_cb);
         vec_kill(&cmdprompt);
         break;
@@ -144,7 +144,7 @@ static void con_handle_kcd(inp_key key)
 
     inp_key_name(key, buf, sizeof(buf));
 
-    chr_from_str(&chrs, buf, strlen(buf));    
+    chr_from_str(&chrs, buf);    
 
     w->pri = cur_ins(w->pri, w->b, &chrs);
 
