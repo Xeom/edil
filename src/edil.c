@@ -42,6 +42,7 @@ int main(void)
     inp_kill();
     con_kill();
     cmd_kill();
+    win_kill(&w);
 
     buf_kill(&b);
 

@@ -85,7 +85,7 @@ static int win_out_goto(win *w, cur *c, FILE *f)
 
 void win_bar_fill_pos(win *w, vec *bar)
 {
-    chr_format(bar, " %ld\xc2\xb7%ld", w->pri.ln + 1, w->pri.cn + 1);   
+    chr_format(bar, "%ld|%ld\xc2\xb7%ld", w->scry, w->pri.ln + 1, w->pri.cn + 1);   
 }
 
 void win_bar_fill_fname(win *w, vec *bar)
@@ -328,3 +328,24 @@ void win_out_after(win *w, cur c, FILE *f)
     }
 }
 
+void win_show_cur(win *w, cur c, FILE *f)
+{
+    int needsupdate = 0;
+
+    if (c.cn < win_min_cn(w) || c.cn > win_max_cn(w))
+    {
+        w->scrx = c.cn - w->cols / 2;
+        if (w->scrx < 0) w->scrx = 0;
+        needsupdate = 1;
+    }
+
+    if (c.ln < win_min_ln(w) || c.ln > win_max_ln(w))
+    {
+        w->scry = c.ln - w->rows / 2;
+        if (w->scry < 0) w->scry = 0;
+        needsupdate = 1;
+    }
+
+    if (needsupdate)
+        win_out_after(w, (cur){0, 0}, f);
+}

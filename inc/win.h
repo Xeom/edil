@@ -50,4 +50,6 @@ void win_out_line(win *w, cur c, FILE *f);
 
 void win_out_after(win *w, cur c, FILE *f);
 
+void win_show_cur(win *w, cur c, FILE *f);
+
 #endif

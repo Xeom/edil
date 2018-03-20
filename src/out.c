@@ -93,7 +93,7 @@ void out_chrs(chr *chrs, size_t n, FILE *f)
     col currcol;
     size_t ind;
 
-    fputs(CLR_LINE RESET_COL, f);
+    fputs(RESET_COL, f);
 
     for (ind = 0; ind < n; ind++)
     {
@@ -108,6 +108,8 @@ void out_chrs(chr *chrs, size_t n, FILE *f)
 
         prevcol = currcol;
     }
+
+    fputs(CLR_LINE, f);
 }
 
 static void out_handle_winch(int sign)

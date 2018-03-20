@@ -22,6 +22,8 @@ vec con_ins_buf;
 static void con_cmd_cb(win *w, vec *chrs)
 {
     vec args, rtn;
+    size_t    argind;
+
     vec_init(&args, sizeof(vec));
     vec_init(&rtn,  sizeof(chr));
 
@@ -29,6 +31,9 @@ static void con_cmd_cb(win *w, vec *chrs)
     cmd_run(&args, &rtn, w);
 
     out_log(&rtn, stdout);
+
+    for (argind = 0; argind < vec_len(&args); ++argind)
+        vec_kill(vec_get(&args, argind));
 
     vec_kill(&args);
     vec_kill(&rtn);
@@ -176,6 +181,8 @@ void con_handle_buf(inp_key key)
     case inp_key_back:  w->pri = cur_move(w->pri, w->b, (cur){ .cn = -1 });
     case inp_key_del:   w->pri = cur_del (w->pri, w->b);  break;
     }
+
+    win_show_cur(w, w->pri, stdout);
 }
 
 static void con_handle_bar(inp_key key)

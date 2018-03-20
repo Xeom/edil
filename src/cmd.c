@@ -104,6 +104,7 @@ void cmd_run(vec *args, vec *rtn, win *w)
             }
 
             chr_format(rtn, ")");
+            vec_kill(&name);
 
             return; /* Not a unique name */
         }
@@ -114,6 +115,8 @@ void cmd_run(vec *args, vec *rtn, win *w)
     {   
         chr_format(rtn, "err: %s is not a known command", namestr);
     }
+
+    vec_kill(&name);
 }
 
 void cmd_parse(vec *args, vec *chrs, size_t ind)

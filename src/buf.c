@@ -19,6 +19,7 @@ void buf_kill(buf *b)
         vec_kill(vec_get(&(b->lines), ln));
 
     vec_kill(&(b->lines));
+    vec_kill(&(b->fname));
 }
 
 void buf_setcol(buf *b, cur loc, size_t n, col_desc col)

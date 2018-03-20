@@ -44,10 +44,12 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
         if (realpath(vec_get(&relpath, 0), fullpath) == NULL)
         {
             chr_format(rtn, "err: Parsing '%s' [%d] %s", vec_get(&relpath, 0), errno, strerror(errno));
+            vec_kill(&relpath);
             return;
         }
 
         vec_ins(fn, 0, strlen(fullpath) + 1, fullpath);
+        vec_kill(&relpath);
 
         w->b->flags |= buf_associated;
     }
@@ -66,10 +68,13 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
             file_load_win(w, f);
 
             if (ferror(f))
+            {
+                fclose(f);
                 chr_format(rtn, "err Reading '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
+            }
         }
-            
-                /* Reload */
+        
+        fclose(f);
     }
     else
         chr_format(rtn, "err: No associated file");
@@ -161,4 +166,6 @@ static void file_load_win(win *w, FILE *f)
         loc.ln += 1;
         buf_ins_line(w->b, loc);
     }
+
+    vec_kill(&line);
 }
