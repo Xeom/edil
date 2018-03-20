@@ -12,7 +12,7 @@ int main(void)
 
     vec_init(&text, sizeof(chr));
 
-    chr_from_str(&text, "Hello world!", 12);
+    chr_from_str(&text, "Hello world!");
 
     inp_init();
     out_init(stdout);

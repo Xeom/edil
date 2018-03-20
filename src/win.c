@@ -12,9 +12,11 @@ static void win_bar_fill_fname(win *w, vec *bar);
 static void win_bar_fill_query(win *w, vec *bar);
 static void win_bar_fill_pos(win *w, vec *bar);
 
+static void win_bar_fill(win *w, vec *bar);
+
 win *win_cur;
 
-chr      win_bar_chr = { .utf8 = "=", .fnt = { .fg = col_none, .bg = col_none } };
+chr      win_bar_chr = { .utf8 = "-", .fnt = { .fg = col_black | col_bright, .bg = col_none } };
 col_desc win_bar_col = { .inv = col_rev,   .fg = col_null, .bg = col_null };
 
 chr      win_pri_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
@@ -144,7 +146,7 @@ static void win_bar_fill(win *w, vec *bar)
     chr_format(bar, " ");
 }
 
-static void win_out_bar(win *w, FILE *f)
+void win_out_bar(win *w, FILE *f)
 {   
     vec    bar;
     size_t len, ind;
@@ -162,7 +164,7 @@ static void win_out_bar(win *w, FILE *f)
             memcpy(vec_get(&bar, ind), &win_bar_chr, sizeof(chr));
     }
 
-    for (ind = 0; ind < w->cols; ind++)
+    for (ind = 0; (ssize_t)ind < w->cols; ind++)
     {
         chr *c;
         c = vec_get(&bar, ind);

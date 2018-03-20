@@ -44,8 +44,6 @@ void win_bar_query(win *w, vec *prompt, void (*cb)(win *w, vec *chrs));
 
 void win_kill(win *w);
 
-void win_bar_fill(win *w, vec *bar);
-
 void win_out_bar(win *w, FILE *f);
 
 void win_out_line(win *w, cur c, FILE *f);

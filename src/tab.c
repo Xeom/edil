@@ -194,7 +194,6 @@ void *tab_get(tab *t, const void *k)
 void tab_del(tab *t, const void *k)
 {
     int    new;
-    char  *item;
     size_t ind;
 
     ind = tab_find_blk(t, k, &new);
@@ -203,6 +202,7 @@ void tab_del(tab *t, const void *k)
 
     tab_blk_setnull(t, ind);
 
+    /* This is very inefficient, but whatever */
     for (;;)
     {
         ind++;
