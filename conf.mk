@@ -8,7 +8,8 @@ BINDIR=bin/
 DEPDIR=dep/
 
 WARNINGS=all no-unused-parameter no-switch extra missing-prototypes
-DEFINES=
+DEFINES=VERSION=0.0.1 \
+        COMPILETIME='$(shell date +"%Y-%m-%d %H:%M %z")'
 
 DFLAGS=$(addprefix -D, $(DEFINES))
 WFLAGS=$(addprefix -W, $(WARNINGS))

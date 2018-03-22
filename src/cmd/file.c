@@ -21,10 +21,7 @@
 static int file_get_fullpath(vec *chrs, vec *fullpath);
 static void file_clr_win(win *w);
 
-static void file_save_win(win *w, FILE *f);
 static void file_save_line(vec *line, FILE *f);
-
-static void file_load_win(win *w, FILE *f);
 static void file_load_line(vec *line, FILE *f);
 
 /* chrs is a vec of chrs, fullpath is of chars */
@@ -299,7 +296,7 @@ static void file_load_line(vec *line, FILE *f)
     }
 }
 
-static void file_load_win(win *w, FILE *f)
+void file_load_win(win *w, FILE *f)
 {
     cur loc = { .cn = 0, .ln = 0 };
     vec line;

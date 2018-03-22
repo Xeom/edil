@@ -9,4 +9,6 @@ void file_cmd_assoc   (vec *rtn, vec *args, win *w);
 void file_cmd_discard (vec *rtn, vec *args, win *w);
 void file_cmd_chdir   (vec *rtn, vec *args, win *w);
 
+void file_load_win(win *w, FILE *f);
+void file_save_win(win *w, FILE *f);
 #endif
