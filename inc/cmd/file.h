@@ -3,9 +3,10 @@
 # include "win.h"
 # include "vec.h"
 
-void file_cmd_load  (vec *rtn, vec *args, win *w);
-void file_cmd_revert(vec *rtn, vec *args, win *w);
-void file_cmd_dump  (vec *rtn, vec *args, win *w);
-void file_cmd_chdir(vec *rtn, vec *args, win *w);
+void file_cmd_load    (vec *rtn, vec *args, win *w);
+void file_cmd_save    (vec *rtn, vec *args, win *w);
+void file_cmd_assoc   (vec *rtn, vec *args, win *w);
+void file_cmd_discard (vec *rtn, vec *args, win *w);
+void file_cmd_chdir   (vec *rtn, vec *args, win *w);
 
 #endif

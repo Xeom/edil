@@ -85,7 +85,7 @@ static int win_out_goto(win *w, cur *c, FILE *f)
 
 void win_bar_fill_pos(win *w, vec *bar)
 {
-    chr_format(bar, "%ld|%ld\xc2\xb7%ld", w->scry, w->pri.ln + 1, w->pri.cn + 1);   
+    chr_format(bar, " %ld %ld\xc2\xb7%ld", w->scry, w->pri.ln + 1, w->pri.cn + 1);   
 }
 
 void win_bar_fill_fname(win *w, vec *bar)
@@ -289,7 +289,7 @@ void win_out_line(win *w, cur c, FILE *f)
 {
     int      needsfree;
     vec     *line;
-    size_t   outlen;
+    ssize_t   outlen;
 
     if (win_out_goto(w, &c, f) == 0) return;
 
@@ -305,7 +305,8 @@ void win_out_line(win *w, cur c, FILE *f)
     line = win_add_cur(w->pri, w->sec, c.ln, line, &needsfree);
 
     outlen = vec_len(line) - c.cn - w->scrx;
-    if ((ssize_t)outlen > w->cols) outlen = w->cols;
+    if (outlen < 0)       outlen = 0;
+    if (outlen > w->cols) outlen = w->cols;
 
     out_chrs(vec_get(line, c.cn + w->scrx), outlen, f);
 

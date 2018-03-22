@@ -11,10 +11,11 @@ vec cmd_infos;
 
 static cmd_info cmd_infos_static[] = 
 {
-//    { "revert", file_cmd_revert },
-    { "load",  file_cmd_load },
-    { "dump",  file_cmd_dump },
-    { "cd", file_cmd_chdir },
+    { "load",      file_cmd_load    },
+    { "save",      file_cmd_save    },
+    { "discard",   file_cmd_discard },
+    { "associate", file_cmd_assoc   },
+    { "cd",        file_cmd_chdir   },
 };
 
 /* Check whether a cmd name starts with a string */
