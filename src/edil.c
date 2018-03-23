@@ -112,7 +112,7 @@ static void load_string(win *w, char *str)
     if (pipe(fds) != 0)
         return;
 
-    if (write(fds[1], str, strlen(str)) != strlen(str))
+    if (write(fds[1], str, strlen(str)) != (int)strlen(str))
         return;
 
     close(fds[1]);
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 
     win_out_after(&w, (cur){0, 0}, stdout);
     win_out_bar(&w, stdout);
-    
+
     loop();
 
     win_kill(&w);

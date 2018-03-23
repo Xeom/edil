@@ -55,7 +55,7 @@ cur cur_check_blank(cur c, buf *b, cur dir)
 
     len  = vec_len(line);
 
-    while (c.cn > 0 && c.cn < len)
+    while (c.cn != 0 && c.cn != (ssize_t)len)
     {
         if (!chr_is_blank(vec_get(line, c.cn)))
             break;

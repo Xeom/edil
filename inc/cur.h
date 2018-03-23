@@ -25,6 +25,7 @@ extern cur_mode_type cur_mode;
 cur cur_enter(cur c, buf *b);
 
 cur cur_check_bounds(cur c, buf *b);
+cur cur_check_blank(cur c, buf *b, cur dir);
 
 cur cur_move(cur c, buf *b, cur dir);
 
