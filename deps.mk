@@ -1,4 +1,4 @@
-include conf.mk
+include common.mk
 
 deps_print:
 	@printf "Building deps ... "
@@ -6,7 +6,7 @@ deps_print:
 deps: deps_print $(DFILES)
 	@printf "Done\n"
 
-$(DEPDIR)%.d: $(SRCDIR)%.c $(HFILES)
+$(DEPDIR)%.d: $(SRCDIR)%.c $(HFILES) conf.mk
 	@mkdir -p $(@D)
 	@printf $(OBJDIR) > $@
 	@gcc -MM $(FLAGS) $< >> $@

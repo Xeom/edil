@@ -40,13 +40,71 @@ static char *welcome =
 "    by Francis Wharf\n\n"
 "    - Copyright 2017\n";
 
-static char *help =
-"Edil - My text editor. v" STRIFY(VERSION) "\n\n";
+static char *help = "\n"
+"Edil - My text editor. v" STRIFY(VERSION) "\n\n"
+
+"More complete documentation can be found in the README.md \n"
+"file, available in my repo at http://github.com/Xeom/edil.\n\n"
+
+"Options:\n"
+"    --help     -h    Display this help message.\n"
+"    --version  -v    Show the current version of edil, and\n"
+"                     its compilation time\n";
 
 static char *version =
-"Edil v" STRIFY(VERSION) " Compiled " STRIFY(COMPILETIME) "\n";
+"Edil v" STRIFY(VERSION) ", -- Compiled (" STRIFY(COMPILETIME) ")\n";
+
+static char *argerror =
+"Unknown argument.\n"
+"Try 'edil --help' for usage information.\n";
 
 static void load_string(win *w, char *str);
+static void init_all(void);
+static void kill_all(void);
+static void loop(void);
+static void process_arg(int argc, char **argv, int *n);
+
+#define argis(a) (strcmp(argv[*n], #a) == 0)
+
+static void process_arg(int argc, char **argv, int *n)
+{
+    if (argis(--help) || argis(-h))
+    {
+        fputs(help, stdout);
+        exit(0);
+    }
+
+    else if (argis(--version) || argis(-v))
+    {
+        fputs(version, stdout);
+        exit(0);
+    }
+
+    else
+    {
+        fputs(argerror, stdout);
+        exit(0);
+    }    
+
+    *n += 1;
+}
+
+static void init_all(void)
+{
+    out_init(stdout);
+    inp_init();
+    con_init();
+    cmd_init();
+}
+
+static void kill_all(void)
+{
+    out_kill(stdout);
+    inp_kill();
+    con_kill();
+    cmd_kill();
+}
+
 static void load_string(win *w, char *str)
 {
     int fds[2];
@@ -58,18 +116,30 @@ static void load_string(win *w, char *str)
     file_load_win(w, fdopen(fds[0], "r"));
 }
 
+static void loop(void)
+{
+    while (con_alive)
+    {
+        fflush(stdout);
+        inp_wait();
+    }
+}
 
-int main(void)
+int main(int argc, char **argv)
 {
     buf b;
     win w;
+    int argind;
 
-    inp_init();
-    out_init(stdout);
+    argind = 1;
+
+    while (argind < argc)
+        process_arg(argc, argv, &argind);
+    
+
     buf_init(&b);
     win_init(&w, &b);
-    con_init();
-    cmd_init();
+    init_all();
 
     win_cur = &w;
 
@@ -82,19 +152,11 @@ int main(void)
     w.sec = (cur){0, 13};
 
     win_out_after(&w, (cur){0, 0}, stdout);
-    fflush(stdout);
+    win_out_bar(&w, stdout);
+    
+    loop();
 
-    while (con_alive)
-    {
-        inp_wait();
-        fflush(stdout);
-    }
-
-    out_kill(stdout);
-    inp_kill();
-    con_kill();
-    cmd_kill();
     win_kill(&w);
-
     buf_kill(&b);
+    kill_all();
 }

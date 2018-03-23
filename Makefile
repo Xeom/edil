@@ -1,4 +1,4 @@
-include conf.mk
+include common.mk
 
 ifeq (,$(findstring clean,$(MAKECMDGOALS)))
   $(shell make -f deps.mk -j8 1>&2)
@@ -23,7 +23,7 @@ clean_dep:
 $(OBJDIR)%.o: $(SRCDIR)%.c conf.mk
 	@printf "Building $@ ... "
 	@mkdir -p $(@D)
-	gcc -c $(FLAGS) $< -o $@ $(ERRPIPE)
+	@gcc -c $(FLAGS) $< -o $@ $(ERRPIPE)
 	@printf "Done\n"
 
 $(BINDIR)libedil.so: $(OFILES)
