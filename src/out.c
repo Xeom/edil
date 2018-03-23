@@ -25,7 +25,6 @@
 #define HIDE_CUR   "\033[?25l"
 #define SHOW_CUR   "\033[?25h"
 #define RESET_COL  "\033[0m"
-#define FORWARD    "\033[C"
 
 static void out_handle_winch(int sign);
 
@@ -36,9 +35,6 @@ char *out_blank_line_text = "\xc2\xbb";
 
 col_desc out_log_col_desc  = { .fg = col_null, .bg = col_null };
 col out_log_space_col = { .fg = col_black | col_bright, .bg = col_none, .attr = col_under };
-
-col_desc out_cur1_col_desc = { .inv = col_rev,   .fg = col_null, .bg = col_null };
-col_desc out_cur2_col_desc = { .inv = col_under, .fg = col_null, .bg = col_null };
 
 static struct termios out_tattr_orig;
 

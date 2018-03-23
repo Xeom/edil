@@ -46,6 +46,8 @@ Each mode can be entered into by pressing control plus a key.
 
 *Edil* has various commands that can be accessed in bar mode.
 
+#### Files
+
 * `load [file]` - Associate a file with the currently selected buffer,
                   and load that file's contents to the buffer. If no
                   file is specified, and one is already associated, reload
@@ -62,3 +64,10 @@ Each mode can be entered into by pressing control plus a key.
 
 * `associate [file]` - Associate the current buffer with a specific file. Then
                        return the current file associated with the current buffer.
+
+#### Navigation
+
+* `goto [line] [col]` - Goto the specified line and column, if given. Then return
+                        the new location of the cursor.
+
+* `swap` - Swap the position of the primary and secondary cursors.

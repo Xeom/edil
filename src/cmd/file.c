@@ -36,7 +36,7 @@ static int file_get_fullpath(vec *chrs, vec *fullpath)
     vec_ins(&str, vec_len(&str), 1, NULL);
 
     dir = dirname(vec_get(&str, 0));
-    path = realpath(dir, NULL);    
+    path = realpath(dir, NULL);
 
     if (path == NULL)
     {
@@ -103,7 +103,7 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
             {
                 chr_format(rtn, "New file");
                 file_clr_win(w);
-            }         
+            }
             else
                 chr_format(rtn, "err Opening '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
         }
@@ -124,7 +124,6 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
 
             fclose(f);
         }
-        
     }
     else
         chr_format(rtn, "err: No associated file");

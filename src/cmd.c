@@ -2,19 +2,23 @@
 
 #include "vec.h"
 #include "chr.h"
+
 #include "cmd/file.h"
+#include "cmd/nav.h"
 
 #include "cmd.h"
 
 vec cmd_infos;
 
-static cmd_info cmd_infos_static[] = 
+static cmd_info cmd_infos_static[] =
 {
     { "load",      file_cmd_load    },
     { "save",      file_cmd_save    },
     { "discard",   file_cmd_discard },
     { "associate", file_cmd_assoc   },
     { "cd",        file_cmd_chdir   },
+    { "goto",      nav_cmd_goto     },
+    { "swap",      nav_cmd_swap     }
 };
 
 /* Check whether a cmd name starts with a string */
@@ -122,7 +126,7 @@ void cmd_run(vec *args, vec *rtn, win *w)
 void cmd_parse(vec *args, vec *chrs, size_t ind)
 {
     size_t len;
-    
+
     len = vec_len(chrs);
 
     for (; ind < len; ind++)
@@ -130,7 +134,7 @@ void cmd_parse(vec *args, vec *chrs, size_t ind)
         chr *c;
         vec *arg;
         ind = cmd_eat_whitespace(chrs, ind);
-    
+
         c = vec_get(chrs, ind);
         if (!c) break;
 
@@ -169,7 +173,7 @@ static size_t cmd_parse_str(vec *str, vec *chrs, size_t ind)
     size_t len;
 
     len = vec_len(chrs);
-  
+
     for (; ind < len; ind++)
     {
         chr *c;
