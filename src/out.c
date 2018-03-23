@@ -116,6 +116,7 @@ void out_chrs(chr *chrs, size_t n, FILE *f)
         }
     }
 
+    col_print(col_default, f);
     fputs(CLR_LINE, f);
 }
 
@@ -148,7 +149,7 @@ void out_init(FILE *f)
     tattr.c_cc[VTIME] = 0;
 
     tcsetattr(fileno(f), TCSANOW, &tattr);
-    
+
     /* Get window size */
     out_handle_winch(0);
 

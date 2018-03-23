@@ -41,6 +41,10 @@ Each mode can be entered into by pressing control plus a key.
                               the currently selected buffer.
 * `Ctrl+X` - **bar mode**: This mode allows the user to type and run
                            commands for the currently selected window.
+* `Ctrl+K` - **key mode**: This mode types ascii representations of user
+                           keystrokes into the current buffer. e.g. 
+                           `(031 1)`, `(106 del)`, `(657 Ctrl+Esc+W)`
+
 
 ### Commands
 
