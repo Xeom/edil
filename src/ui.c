@@ -6,20 +6,19 @@
 #include "cmd.h"
 #include "out.h"
 
-#include "con.h"
+#include "ui.h"
 
+static void ui_handle_buf(inp_key key);
+static void ui_handle_kcd(inp_key key);
+static void ui_handle_bar(inp_key key);
+static void ui_cmd_cb(win *w, vec *chrs);
 
-static void con_handle_buf(inp_key key);
-static void con_handle_kcd(inp_key key);
-static void con_handle_bar(inp_key key);
-static void con_cmd_cb(win *w, vec *chrs);
+ui_mode_type ui_mode = ui_mode_buf;
+int ui_alive = 1;
+char *ui_cmd_prompt = "$ ";
+vec ui_ins_buf;
 
-con_mode_type con_mode = con_mode_buf;
-int con_alive = 1;
-char *con_cmd_prompt = "$ ";
-vec con_ins_buf;
-
-static void con_cmd_cb(win *w, vec *chrs)
+static void ui_cmd_cb(win *w, vec *chrs)
 {
     vec args, rtn;
     size_t    argind;
@@ -39,51 +38,51 @@ static void con_cmd_cb(win *w, vec *chrs)
     vec_kill(&rtn);
 }
 
-void con_init(void)
+void ui_init(void)
 {
-    vec_init(&con_ins_buf, sizeof(chr));
+    vec_init(&ui_ins_buf, sizeof(chr));
 }
 
-void con_kill(void)
+void ui_kill(void)
 {
-    vec_kill(&con_ins_buf);
+    vec_kill(&ui_ins_buf);
 }
 
-void con_ins_flush(void)
+void ui_ins_flush(void)
 {
     win *w;
     size_t len;
 
-    len = vec_len(&con_ins_buf);
+    len = vec_len(&ui_ins_buf);
 
     if (len == 0)
         return;
 
     w = win_cur;
 
-    switch (con_mode)
+    switch (ui_mode)
     {
-        case con_mode_buf: w->pri = cur_ins(w->pri, w->b, &con_ins_buf); break;
-        case con_mode_bar: win_bar_ins(w, &con_ins_buf); break;
+        case ui_mode_buf: w->pri = cur_ins(w->pri, w->b, &ui_ins_buf); break;
+        case ui_mode_bar: win_bar_ins(w, &ui_ins_buf); break;
     }
 
-    vec_del(&con_ins_buf, 0, len);
+    vec_del(&ui_ins_buf, 0, len);
 }
 
-void con_flush(void)
+void ui_flush(void)
 {
-    con_ins_flush();
+    ui_ins_flush();
 
     win_out_after(win_cur, (cur){0, 0}, stdout);
     win_out_bar(win_cur, stdout);
 }
 
-int con_is_typable(inp_key key)
+int ui_is_typable(inp_key key)
 {
     return (key < 0x100 && key != inp_key_back);
 }
 
-void con_ins(inp_key key)
+void ui_ins(inp_key key)
 {
     static chr c = { .fnt = { .fg = col_none, .bg = col_none } };
     static int utf8ind = 0, width;
@@ -98,72 +97,72 @@ void con_ins(inp_key key)
     if (++utf8ind == width)
     {
         utf8ind = 0;
-        vec_ins(&con_ins_buf, vec_len(&con_ins_buf), 1, &c);
+        vec_ins(&ui_ins_buf, vec_len(&ui_ins_buf), 1, &c);
     }
 }
 
-void con_handle(inp_key key)
+void ui_handle(inp_key key)
 {
     vec cmdprompt;
     int modechanged;
     modechanged = 1;
 
-    if (!con_is_typable(key))
+    if (!ui_is_typable(key))
     {
-        con_ins_flush();
+        ui_ins_flush();
     }
 
     switch (key)
     {
-    case inp_key_ctrl | 'X': con_mode = con_mode_bar;
+    case inp_key_ctrl | 'X': ui_mode = ui_mode_bar;
         vec_init(&cmdprompt, sizeof(chr));
-        chr_from_str(&cmdprompt, con_cmd_prompt);
-        win_bar_query(win_cur, &cmdprompt, con_cmd_cb);
+        chr_from_str(&cmdprompt, ui_cmd_prompt);
+        win_bar_query(win_cur, &cmdprompt, ui_cmd_cb);
         vec_kill(&cmdprompt);
         break;
 
-    case inp_key_ctrl | 'K': con_mode = con_mode_kcd; break;
-    case inp_key_ctrl | 'A': con_mode = con_mode_buf; break;
-    case inp_key_ctrl | inp_key_esc | 'K': con_alive = 0; break;
+    case inp_key_ctrl | 'K': ui_mode = ui_mode_kcd; break;
+    case inp_key_ctrl | 'A': ui_mode = ui_mode_buf; break;
+    case inp_key_ctrl | inp_key_esc | 'K': ui_alive = 0; break;
     default: modechanged = 0;
     }
 
     if (modechanged) return;
 
-    switch (con_mode)
+    switch (ui_mode)
     {
-    case con_mode_buf: con_handle_buf(key); break;
-    case con_mode_kcd: con_handle_kcd(key); break;
-    case con_mode_bar: con_handle_bar(key); break;
+    case ui_mode_buf: ui_handle_buf(key); break;
+    case ui_mode_kcd: ui_handle_kcd(key); break;
+    case ui_mode_bar: ui_handle_bar(key); break;
     }
 }
 
-static void con_handle_kcd(inp_key key)
+static void ui_handle_kcd(inp_key key)
 {
     char buf[32];
     vec chrs;
     win *w;
     w = win_cur;
-    
+
     vec_init(&chrs, sizeof(chr));
 
     inp_key_name(key, buf, sizeof(buf));
 
-    chr_from_str(&chrs, buf);    
+    chr_from_str(&chrs, buf);
 
     w->pri = cur_ins(w->pri, w->b, &chrs);
 
     vec_kill(&chrs);
 }
 
-void con_handle_buf(inp_key key)
+void ui_handle_buf(inp_key key)
 {
     win *w;
     w = win_cur;
 
-    if (con_is_typable(key))
+    if (ui_is_typable(key))
     {
-        con_ins(key);
+        ui_ins(key);
     }
 
     switch (key)
@@ -185,19 +184,19 @@ void con_handle_buf(inp_key key)
     win_show_cur(w, w->pri, stdout);
 }
 
-static void con_handle_bar(inp_key key)
+static void ui_handle_bar(inp_key key)
 {
     win *w;
     w = win_cur;
 
-    if (con_is_typable(key))
+    if (ui_is_typable(key))
     {
-        con_ins(key);   
+        ui_ins(key);
     }
 
     switch (key)
     {
-    case inp_key_enter: win_bar_run(w); con_mode = con_mode_buf; break;
+    case inp_key_enter: win_bar_run(w); ui_mode = ui_mode_buf; break;
 
     case inp_key_left:  win_bar_move(w, -1); break;
     case inp_key_right: win_bar_move(w,  1); break;
@@ -205,4 +204,4 @@ static void con_handle_bar(inp_key key)
     case inp_key_back:  win_bar_back(w); break;
     case inp_key_del:   win_bar_del(w);  break;
     }
-}    
+}

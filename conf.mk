@@ -1,4 +1,4 @@
-FILES=buf chr cmd col con cur inp out vec win \
+FILES=buf chr cmd col cur inp out vec ui win \
       cmd/file
 
 SRCDIR=src/
