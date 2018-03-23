@@ -1,5 +1,7 @@
 #include "col.h"
 
+col col_default = { .fg = col_none, .bg = col_none, .attr = 0 };
+
 col col_update(col c, col_desc d)
 {
     c.attr &= ~(d.del);

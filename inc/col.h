@@ -47,6 +47,8 @@ struct col_desc_s
     col_value bg;
 };
 
+extern col col_default;
+
 col col_update(col c, col_desc d);
 
 void col_print(col c, FILE *f);
