@@ -1,7 +1,5 @@
-FILES=buf chr cmd col con cur inp out tab vec win \
+FILES=buf chr cmd col con cur inp out vec win \
       cmd/file
-
-DEBUG=yes
 
 SRCDIR=src/
 INCDIR=inc/
@@ -12,4 +10,5 @@ DEPDIR=dep/
 VERSION=0.0.1
 
 WARNINGS=all no-unused-parameter no-switch extra missing-prototypes
+
 DEFINES=

@@ -29,7 +29,7 @@ $(OBJDIR)%.o: $(SRCDIR)%.c conf.mk
 $(BINDIR)libedil.so: $(OFILES)
 	@printf "Linking $@ ... "
 	@mkdir -p $(@D)
-	@gcc $(FLAGS) -g -shared $^ -o $@ $(ERRPIPE)
+	@gcc $(FLAGS) -shared $^ -o $@ $(ERRPIPE)
 	@printf "Done\n"
 
 $(BINDIR)libedil.a: $(OFILES)

@@ -1,5 +1,9 @@
 include conf.mk
 
+ifndef DEBUG
+  DEBUG=yes
+endif
+
 ifeq ($(DEBUG), yes)
   FLAGS += -g
   VERSION:=$(VERSION)-debug
