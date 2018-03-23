@@ -1,6 +1,5 @@
 #include <string.h>
 
-#include "tab.h"
 #include "vec.h"
 #include "chr.h"
 #include "cmd/file.h"

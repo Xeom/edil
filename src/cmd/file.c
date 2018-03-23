@@ -15,6 +15,7 @@
 
 #include "cmd.h"
 #include "chr.h"
+#include "indent.h"
 
 #include "cmd/file.h"
 
@@ -196,7 +197,7 @@ void file_save_win(win *w, FILE *f)
 
     for (ind = 0; ind < numlines; ind++)
     {
-        if (ind) 
+        if (ind)
         {
             if (fwrite("\n", 1, 1, f) != 1)
                 break;
@@ -205,7 +206,7 @@ void file_save_win(win *w, FILE *f)
         file_save_line(vec_get(lines, ind), f);
 
         if (ferror(f)) break;
-    } 
+    }
 }
 
 void file_save_line(vec *line, FILE *f)
@@ -230,7 +231,8 @@ void file_save_line(vec *line, FILE *f)
 
 void file_cmd_chdir(vec *rtn, vec *args, win *w)
 {
-    char cwd[64];
+    char *cwd;
+    cwd = malloc(PATH_MAX);
 
     if (vec_len(args) == 2)
     {
@@ -248,8 +250,16 @@ void file_cmd_chdir(vec *rtn, vec *args, win *w)
         vec_kill(&dir);
     }
 
-    getcwd(cwd, sizeof(cwd));
-    chr_format(rtn, "cwd: %s", cwd);
+    if (getcwd(cwd, sizeof(cwd)) == NULL)
+    {
+        chr_format(rtn, "err: [%d] %s", errno, strerror(errno));
+    }
+    else
+    {
+        chr_format(rtn, "cwd: %s", cwd);
+    }
+
+    free(cwd);
 }
 
 static void file_clr_win(win *w)
@@ -315,6 +325,8 @@ void file_load_win(win *w, FILE *f)
         loc.ln += 1;
         buf_ins_line(w->b, loc);
     }
+
+    indent_add_blanks_buf(w->b);
 
     vec_kill(&line);
 }

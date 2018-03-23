@@ -15,6 +15,8 @@
 #include <sys/types.h>
 #include <stdio.h>
 
+#include "indent.h"
+
 #include "out.h"
 
 #define GOTO(cn, ln) "\033[" #ln ";" #cn "H"
@@ -23,12 +25,13 @@
 #define HIDE_CUR   "\033[?25l"
 #define SHOW_CUR   "\033[?25h"
 #define RESET_COL  "\033[0m"
+#define FORWARD    "\033[C"
 
 static void out_handle_winch(int sign);
 
 ssize_t out_cols, out_rows;
 
-col out_blank_line_col = { .fg = col_black | col_bright, .bg = col_none, .attr = 0 };
+col   out_blank_line_col = { .fg = col_black | col_bright, .bg = col_none, .attr = 0 };
 char *out_blank_line_text = "\xc2\xbb";
 
 col_desc out_log_col_desc  = { .fg = col_null, .bg = col_null };
@@ -76,7 +79,7 @@ void out_log(vec *chrs, FILE *f)
 
     out_chrs(vec_get(&colchrs, 0), out_cols, f);
 
-    vec_kill(&colchrs);    
+    vec_kill(&colchrs);
 }
 
 void out_blank_line(FILE *f)
@@ -89,7 +92,7 @@ void out_blank_line(FILE *f)
 
 void out_chrs(chr *chrs, size_t n, FILE *f)
 {
-    col prevcol = { .fg = col_none, .bg = col_none, .attr = 0 };
+    col prevcol = col_default;
     col currcol;
     size_t ind;
 
@@ -99,14 +102,22 @@ void out_chrs(chr *chrs, size_t n, FILE *f)
     {
         chr *c;
 
-        c = chrs + ind;
+        c = &chrs[ind];
 
-        currcol = c->fnt;
-        if (memcmp(&currcol, &prevcol, sizeof(col))) col_print(currcol, f);
+        if (strcmp(c->utf8, "\t") == 0)
+        {
+            indent_print_tab(ind, f, c->fnt);
+            prevcol = c->fnt;
+        }
+        else if (!chr_is_blank(c))
+        {
+            currcol = c->fnt;
+            if (memcmp(&currcol, &prevcol, sizeof(col)) != 0) 
+                col_print(currcol, f);
 
-        chr_print(c, f);
-
-        prevcol = currcol;
+            chr_print(c, f);
+            prevcol = currcol;
+        }
     }
 
     fputs(CLR_LINE, f);
@@ -120,8 +131,6 @@ static void out_handle_winch(int sign)
 
     out_cols = w.ws_col;
     out_rows = w.ws_row;
-
-//    out_lines_after();
 
     fflush(stdout);
 }

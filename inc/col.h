@@ -25,7 +25,7 @@ typedef enum
     col_allcols = 0x07,
     col_none    = 0x10,
     col_null    = 0x11
-} col_value; 
+} col_value;
 
 typedef struct col_s       col;
 typedef struct col_delta_s col_delta;

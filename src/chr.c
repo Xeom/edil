@@ -29,6 +29,9 @@ void chr_print(chr *c, FILE *f)
     size_t len;
     len = chr_len(c);
 
+    if (chr_is_blank(c))
+        return;
+
     fwrite(c->utf8, 1, len, f);
 }
 
@@ -111,7 +114,7 @@ int chr_is_blank(chr *c)
 
 void chr_blankify(chr *c)
 {
-    strcpy(c->utf8, chr_blank_utf8);
+    memcpy(c->utf8, chr_blank_utf8, sizeof(c->utf8));
 }
 
 void chr_format(vec *chrs, char *fmt, ...)

@@ -12,10 +12,11 @@
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
+#include <errno.h>
 #include <pthread.h>
 #include <sys/types.h>
 
-#include "con.h"
+#include "ui.h"
 #include "vec.h"
 #include "out.h"
 
@@ -23,6 +24,8 @@
 
 static void *inp_listen(void *arg);
 static char *inp_key_basename(inp_key key);
+
+void inp_nonblockify(int fd);
 
 pthread_t inp_listen_thread = 0;
 static int inp_fd_in;
@@ -99,7 +102,7 @@ static inp_key inp_get_escaped_key(char chr)
         {
             if (memcmp(code, curr->code, code_ind) == 0)
                 return 0;
-            
+
             rtn = inp_key_esc | code[0];
             break;
         }
@@ -121,7 +124,7 @@ inp_key inp_get_key(char c)
     inp_key    rtn;
 
     if (escaped)
-    {    
+    {
         rtn = inp_get_escaped_key(c);
         if (rtn == 0) return inp_key_none;
     }
@@ -167,7 +170,7 @@ void inp_key_name(inp_key key, char *str, size_t len)
 {
     char *prefix, *name;
     char chrname[2];
-    
+
     prefix = "";
     name   = NULL;
 
@@ -218,7 +221,11 @@ static void *inp_listen(void *arg)
 
         if (key == inp_key_none) continue;
 
-        write(inp_fd_in, &key, sizeof(inp_key));
+        if (write(inp_fd_in, &key, sizeof(inp_key)) != sizeof(inp_key))
+        {
+            printf("Could not write input key to pipe: [%d] '%s'\n", errno, strerror(errno));
+            continue;
+        }
     }
 
     return NULL;
@@ -228,11 +235,11 @@ static void *inp_listen(void *arg)
 void inp_empty_pipe(void)
 {
     inp_key key;
-    
-    while (read(inp_fd_out, &key, sizeof(inp_key)) != -1)
-        con_handle(key);
 
-    con_flush();
+    while (read(inp_fd_out, &key, sizeof(inp_key)) != -1)
+        ui_handle(key);
+
+    ui_flush();
     /* Flush */
 }
 
@@ -248,15 +255,41 @@ void inp_init(void)
     vec_ins(&inp_keycodes, 0, numkeys, &inp_keycodes_static);
     vec_sort(&inp_keycodes, inp_keycode_cmp);
 
-    pipe(pipefds);
+    if (pipe(pipefds) == -1)
+    {
+        printf("Could not open input pipes: [%d] '%s'\n", errno, strerror(errno));
+        exit(-1);
+    }
+
     inp_fd_in  = pipefds[1];
     inp_fd_out = pipefds[0];
 
-    fcntl(inp_fd_in,  F_SETFL, O_NONBLOCK | fcntl(inp_fd_in,  F_GETFL));
-    fcntl(inp_fd_out, F_SETFL, O_NONBLOCK | fcntl(inp_fd_out, F_GETFL));
+    inp_nonblockify(inp_fd_in);
+    inp_nonblockify(inp_fd_out);
 
     /* Create the input listener thread */
     pthread_create(&inp_listen_thread, NULL, inp_listen, NULL);
+}
+
+void inp_nonblockify(int fd)
+{
+    int rtn, flags;
+    rtn = fcntl(fd, F_GETFL);
+
+    if (rtn == -1)
+    {
+        printf("Could not get inp pipe flags: [%d] '%s'\n", errno, strerror(errno));
+        exit(-1);
+    }
+
+    flags = rtn | O_NONBLOCK;
+    rtn   = fcntl(fd, F_SETFL, flags);
+
+    if (rtn == -1)
+    {
+        printf("Could not set inp pipe flags: [%d] '%s'\n", errno, strerror(errno));
+        exit(-1);
+    }
 }
 
 void inp_kill(void)

@@ -9,7 +9,7 @@
 #include "win.h"
 #include "out.h"
 #include "inp.h"
-#include "con.h"
+#include "ui.h"
 #include "cmd.h"
 #include "cmd/file.h"
 
@@ -84,7 +84,7 @@ static void process_arg(int argc, char **argv, int *n)
     {
         fputs(argerror, stdout);
         exit(0);
-    }    
+    }
 
     *n += 1;
 }
@@ -93,7 +93,7 @@ static void init_all(void)
 {
     out_init(stdout);
     inp_init();
-    con_init();
+    ui_init();
     cmd_init();
 }
 
@@ -101,16 +101,20 @@ static void kill_all(void)
 {
     out_kill(stdout);
     inp_kill();
-    con_kill();
+    ui_kill();
     cmd_kill();
 }
 
 static void load_string(win *w, char *str)
 {
     int fds[2];
-    pipe(fds);
 
-    write(fds[1], str, strlen(str));
+    if (pipe(fds) != 0)
+        return;
+
+    if (write(fds[1], str, strlen(str)) != strlen(str))
+        return;
+
     close(fds[1]);
 
     file_load_win(w, fdopen(fds[0], "r"));
@@ -118,7 +122,7 @@ static void load_string(win *w, char *str)
 
 static void loop(void)
 {
-    while (con_alive)
+    while (ui_alive)
     {
         fflush(stdout);
         inp_wait();
@@ -135,7 +139,6 @@ int main(int argc, char **argv)
 
     while (argind < argc)
         process_arg(argc, argv, &argind);
-    
 
     buf_init(&b);
     win_init(&w, &b);

@@ -44,6 +44,31 @@ cur cur_check_bounds(cur c, buf *b)
     return c;
 }
 
+cur cur_check_blank(cur c, buf *b, cur dir)
+{
+    vec *line;
+    size_t len;
+
+    line = vec_get(&(b->lines), c.ln);
+
+    if (!line) return c;
+
+    len  = vec_len(line);
+
+    while (c.cn > 0 && c.cn < len)
+    {
+        if (!chr_is_blank(vec_get(line, c.cn)))
+            break;
+
+        if (dir.ln != 0 || dir.cn < 0)
+            c.cn -= 1;
+        else
+            c.cn += 1;
+    }
+
+    return c;
+}
+
 cur cur_move(cur c, buf *b, cur dir)
 {
     c.ln += dir.ln;
@@ -69,6 +94,7 @@ cur cur_move(cur c, buf *b, cur dir)
     }
 
     c = cur_check_bounds(c, b);
+    c = cur_check_blank(c, b, dir);
 
     return c;
 }
@@ -76,7 +102,7 @@ cur cur_move(cur c, buf *b, cur dir)
 cur cur_home(cur c, buf *b)
 {
     c.cn = 0;
-    
+
     return c;
 }
 
@@ -98,7 +124,7 @@ cur cur_del(cur c, buf *b)
         vec *line;
         size_t num;
         cur delcur = { .ln = c.ln + 1, .cn = 0 };
-        
+
         line = vec_get(&(b->lines), c.ln + 1);
         if (!line) return c;
 

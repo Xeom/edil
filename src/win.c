@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "out.h"
-#include "con.h"
+#include "ui.h"
 
 #include "win.h"
 
@@ -121,7 +121,7 @@ static void win_bar_fill_query(win *w, vec *bar)
     typed  = &(w->bartyped);
     prompt = &(w->barprompt);
 
-    if (con_mode == con_mode_bar)
+    if (ui_mode == ui_mode_bar)
         typed = win_add_cur((cur){ .cn = w->barcur }, (cur){ .ln = 1 }, 0, typed, &tofree);
 
     if (vec_len(prompt))
