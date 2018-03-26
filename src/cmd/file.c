@@ -64,9 +64,22 @@ static int file_get_fullpath(vec *chrs, vec *fullpath)
 
 void file_cmd_discard(vec *rtn, vec *args, win *w)
 {
-    file_clr_win(w);
-    w->b->flags &= ~buf_modified;
-    chr_format(rtn, "Contents of buffer discarded");
+    if (vec_len(args))
+    {
+        chr_format(rtn, "err: Command takes no arguments");
+        return;
+    }
+
+    if (w->b->flags & buf_readonly)
+    {
+        chr_format(rtn, "err: Buffer read-only");
+    }
+    else
+    {
+        file_clr_win(w);
+        w->b->flags &= ~buf_modified;
+        chr_format(rtn, "Contents of buffer discarded");
+    }
 }
 
 void file_cmd_load(vec *rtn, vec *args, win *w)
@@ -77,6 +90,12 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
     if (w->b->flags & buf_modified)
     {
         chr_format(rtn, "err: Buffer modified");
+        return;
+    }
+
+    if (w->b->flags & buf_readonly)
+    {
+        chr_format(rtn, "err: Buffer read-only");
         return;
     }
 
@@ -193,7 +212,6 @@ void file_save_win(win *w, FILE *f)
 
     lines = &(w->b->lines);
     numlines = vec_len(lines);
-
     for (ind = 0; ind < numlines; ind++)
     {
         if (ind)

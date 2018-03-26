@@ -52,7 +52,7 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
     }
 
     w->pri = cur_check_bounds(w->pri, w->b);
-
+    w->pri = cur_check_blank(w->pri, w->b, (cur){0, 0});
     chr_format(rtn, "Cursor at line %ld, col %ld.", w->pri.ln + 1, w->pri.cn + 1);
 }
 

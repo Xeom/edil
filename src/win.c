@@ -19,11 +19,11 @@ win *win_cur;
 chr      win_bar_chr = { .utf8 = "-", .fnt = { .fg = col_black | col_bright, .bg = col_none } };
 col_desc win_bar_col = { .inv = col_rev,   .fg = col_null, .bg = col_null };
 
-chr      win_pri_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
+chr      win_pri_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_blue } };
 col_desc win_pri_col = { .inv = col_rev,   .fg = col_null, .bg = col_null };
 
 chr      win_sec_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
-col_desc win_sec_col = { .inv = col_under, .fg = col_null, .bg = col_null };
+col_desc win_sec_col = { .inv = col_under, .fg = col_blue, .bg = col_null };
 
 void win_init(win *w, buf *b)
 {
@@ -135,7 +135,7 @@ static void win_bar_fill_query(win *w, vec *bar)
         vec_kill(typed);
         free(typed);
     }
-}   
+}
 
 static void win_bar_fill(win *w, vec *bar)
 {
@@ -147,7 +147,7 @@ static void win_bar_fill(win *w, vec *bar)
 }
 
 void win_out_bar(win *w, FILE *f)
-{   
+{
     vec    bar;
     size_t len, ind;
 
@@ -228,13 +228,14 @@ void win_bar_run(win *w)
 
 void win_bar_query(win *w, vec *prompt, void (*cb)(win *w, vec *chrs))
 {
-    if (w->barcb) (w->barcb(w, &(w->bartyped)));
-
     vec_del(&(w->barprompt), 0, vec_len(&(w->barprompt)));
     vec_ins(&(w->barprompt), 0, vec_len(prompt), vec_get(prompt, 0));
 
     vec_del(&(w->bartyped), 0, vec_len(&(w->bartyped)));
 
+    if (w->barcb) (w->barcb(w, &(w->bartyped)));
+
+    w->barcur = 0;
     w->barcb = cb;
 }
 

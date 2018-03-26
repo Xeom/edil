@@ -32,7 +32,9 @@ void buf_setcol(buf *b, cur loc, size_t n, col_desc col)
 
     len = vec_len(line);
 
-    for (cn = loc.cn; cn < len + loc.cn; cn++)
+    if (n + loc.cn > len) n = len - loc.cn;
+
+    for (cn = loc.cn; cn < n + loc.cn; cn++)
     {
         chr *c;
         c = vec_get(line, cn);
@@ -46,6 +48,8 @@ void buf_ins(buf *b, cur loc, chr *chrs, size_t n)
 {
     vec *line;
 
+    b->flags |= buf_modified;
+
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;
 
@@ -56,15 +60,19 @@ void buf_del(buf *b, cur loc, size_t n)
 {
     vec *line;
 
+    b->flags |= buf_modified;
+
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;
-    
+
     vec_del(line, loc.cn, n);
 }
 
 void buf_ins_line(buf *b, cur loc)
 {
     vec *line;
+
+    b->flags |= buf_modified;
 
     line = vec_ins(&(b->lines), loc.ln, 1, NULL);
     if (!line) return;
@@ -75,6 +83,8 @@ void buf_ins_line(buf *b, cur loc)
 void buf_del_line(buf *b, cur loc)
 {
     vec *line;
+
+    b->flags |= buf_modified;
 
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;

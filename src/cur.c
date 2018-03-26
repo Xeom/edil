@@ -2,31 +2,6 @@
 
 cur_mode_type cur_mode;
 
-cur cur_enter(cur c, buf *b)
-{
-    size_t len;
-    len = buf_line_len(b, c);
-    cur rtn = { .ln = c.ln + 1, .cn = 0 };
-
-    buf_ins_line(b, rtn);
-
-    if ((ssize_t)len > c.cn)
-    {
-        vec *line;
-        size_t num;
-
-        line = vec_get(&(b->lines), c.ln);
-        if (!line) return c;
-
-        num = len - c.cn;
-
-        buf_ins(b, rtn, vec_get(line, c.cn), num);
-	    buf_del(b, c,   num);
-    }
-
-    return rtn;
-}
-
 cur cur_check_bounds(cur c, buf *b)
 {
     size_t len;
@@ -117,6 +92,9 @@ cur cur_del(cur c, buf *b)
 {
     size_t len;
 
+    if (b->flags & buf_readonly) return c;
+    b->flags |= buf_modified;
+
     len = buf_line_len(b, c);
 
     if ((ssize_t)len == c.cn)
@@ -144,6 +122,10 @@ cur cur_del(cur c, buf *b)
 cur cur_ins(cur c, buf *b, vec *text)
 {
     size_t num;
+
+    if (b->flags & buf_readonly) return c;
+    b->flags |= buf_modified;
+
     num = vec_len(text);
 
     buf_ins(b, c, vec_get(text, 0), num);
@@ -151,3 +133,32 @@ cur cur_ins(cur c, buf *b, vec *text)
 
     return c;
 }
+
+cur cur_enter(cur c, buf *b)
+{
+    size_t len;
+    len = buf_line_len(b, c);
+    cur rtn = { .ln = c.ln + 1, .cn = 0 };
+
+    if (b->flags & buf_readonly) return c;
+    b->flags |= buf_modified;
+
+    buf_ins_line(b, rtn);
+
+    if ((ssize_t)len > c.cn)
+    {
+        vec *line;
+        size_t num;
+
+        line = vec_get(&(b->lines), c.ln);
+        if (!line) return c;
+
+        num = len - c.cn;
+
+        buf_ins(b, rtn, vec_get(line, c.cn), num);
+	    buf_del(b, c,   num);
+    }
+
+    return rtn;
+}
+

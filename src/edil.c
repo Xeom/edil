@@ -27,17 +27,17 @@
 #endif
 
 static char *welcome =
-"      __ Welcome, to ___________\n"
+"         Welcome, to            \n"
 "      _____   ___      __   __  \n"
-"     / ___/  / _ \\    / /  / / \n"
+"     / ___/  / _ \\    / /  / /  \n"
 "    / /_    / / | |  / /  / /   \n"
 "   / __/   / / / /  / /  / /    \n"
 "  / /__   / /_/ /  / /  / /__   \n"
 " /____/  /_____/  /_/  /____/   \n"
-"______________________ v" STRIFY(VERSION) "\n\n"
+"                     v" STRIFY(VERSION) "            \n\n"
 
-"My text editor,\n"
-"    by Francis Wharf\n\n"
+" My text editor,\n"
+"     by Francis Wharf\n\n"
 "    - Copyright 2017\n";
 
 static char *help = "\n"
@@ -129,6 +129,27 @@ static void loop(void)
     }
 }
 
+static void colour_edil(buf *b)
+{
+    size_t ln;
+    col_desc textfnt = { .fg = col_cyan, .bg = col_null };
+    col_desc linefnt = { .fg = col_cyan | col_bright, .bg = col_null, .set = col_under };
+    col_desc copyfnt = { .fg = col_black | col_bright, .bg = col_null };
+
+    for (ln = 1; ln < 7; ln++)
+    {
+        cur loc = { .ln = ln };
+        buf_setcol(b, loc, buf_line_len(b, loc), textfnt);
+    }
+
+    buf_setcol(b, (cur){ .cn = 7 }, 25, linefnt);
+    buf_setcol(b, (cur){ .ln = 7 }, 27, linefnt);
+
+    buf_setcol(b, (cur){ .ln = 12 }, 20, copyfnt);
+
+    b->flags |= buf_readonly;
+}
+
 int main(int argc, char **argv)
 {
     buf b;
@@ -147,6 +168,7 @@ int main(int argc, char **argv)
     win_cur = &w;
 
     load_string(&w, welcome);
+    colour_edil(&b);
 
     w.cols = out_cols;
     w.rows = out_rows - 1;

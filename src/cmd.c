@@ -116,7 +116,7 @@ void cmd_run(vec *args, vec *rtn, win *w)
             info->funct(rtn, args, w);
     }
     else
-    {   
+    {
         chr_format(rtn, "err: %s is not a known command", namestr);
     }
 
@@ -219,7 +219,6 @@ static size_t cmd_parse_word(vec *str, vec *chrs, size_t ind)
             break;
         else
             vec_ins(str, vec_len(str), 1, c);
-        
     }
 
     return ind;
