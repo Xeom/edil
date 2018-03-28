@@ -20,7 +20,7 @@ typedef enum
 struct buf_s
 {
     vec       lines; /* A vector of lines */
-    vec       fname; /* The filename associated with this buffer, NULL terminated */
+    vec       fname; /* The filename associated with this buf, NULL term. */
     buf_flags flags; /* The flags of the buffer */
 };
 

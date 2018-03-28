@@ -107,7 +107,11 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
         path = vec_get(args, 1);
         if (file_get_fullpath(path, fn) == -1)
         {
-            chr_format(rtn, "err Parsing path: [%d] %s", errno, strerror(errno));
+            chr_format(
+                rtn,
+                "err Parsing path: [%d] %s",
+                errno, strerror(errno)
+            );
             return;
         }
 
@@ -126,7 +130,11 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
                 file_clr_win(w);
             }
             else
-                chr_format(rtn, "err Opening '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
+                chr_format(
+                    rtn,
+                    "err Opening '%s': [%d] %s",
+                    vec_get(fn, 0), errno, strerror(errno)
+                );
         }
         else
         {
@@ -138,7 +146,11 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
             if (ferror(f))
             {
                 fclose(f);
-                chr_format(rtn, "err Reading '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
+                chr_format(
+                    rtn,
+                    "err Reading '%s': [%d] %s",
+                    vec_get(fn, 0), errno, strerror(errno)
+                );
 
                 return;
             }
@@ -161,7 +173,12 @@ void file_cmd_assoc(vec *rtn, vec *args, win *w)
         path = vec_get(args, 1);
         if (file_get_fullpath(path, fn))
         {
-            chr_format(rtn, "err Parsing path: [%d] %s, ", errno, strerror(errno));
+            chr_format(
+                rtn,
+                "err Parsing path: [%d] %s, ",
+                errno, strerror(errno)
+            );
+
             return;
         }
 
@@ -191,14 +208,24 @@ void file_cmd_save(vec *rtn, vec *args, win *w)
 
     if (!f)
     {
-        chr_format(rtn, "err Opening '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
+        chr_format(
+            rtn,
+            "err Opening '%s': [%d] %s",
+            vec_get(fn, 0), errno, strerror(errno)
+        );
+
         return;
     }
 
     file_save_win(w, f);
 
     if (ferror(f))
-        chr_format(rtn, "err Writing '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
+        chr_format(
+            rtn,
+            "err Writing '%s': [%d] %s",
+            vec_get(fn, 0), errno, strerror(errno)
+        );
+
     else
         chr_format(rtn, "Wrote '%s'", vec_get(fn, 0));
 

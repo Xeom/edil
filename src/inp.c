@@ -223,7 +223,11 @@ static void *inp_listen(void *arg)
 
         if (write(inp_fd_in, &key, sizeof(inp_key)) != sizeof(inp_key))
         {
-            printf("Could not write input key to pipe: [%d] '%s'\n", errno, strerror(errno));
+            printf(
+                "Could not write input key to pipe: [%d] '%s'\n",
+                errno, strerror(errno)
+            );
+
             continue;
         }
     }
@@ -257,7 +261,11 @@ void inp_init(void)
 
     if (pipe(pipefds) == -1)
     {
-        printf("Could not open input pipes: [%d] '%s'\n", errno, strerror(errno));
+        printf(
+            "Could not open input pipes: [%d] '%s'\n",
+            errno, strerror(errno)
+        );
+
         exit(-1);
     }
 
@@ -278,7 +286,11 @@ void inp_nonblockify(int fd)
 
     if (rtn == -1)
     {
-        printf("Could not get inp pipe flags: [%d] '%s'\n", errno, strerror(errno));
+        printf(
+            "Could not get inp pipe flags: [%d] '%s'\n",
+            errno, strerror(errno)
+        );
+
         exit(-1);
     }
 
@@ -287,7 +299,11 @@ void inp_nonblockify(int fd)
 
     if (rtn == -1)
     {
-        printf("Could not set inp pipe flags: [%d] '%s'\n", errno, strerror(errno));
+        printf(
+            "Could not set inp pipe flags: [%d] '%s'\n",
+            errno, strerror(errno)
+        );
+
         exit(-1);
     }
 }

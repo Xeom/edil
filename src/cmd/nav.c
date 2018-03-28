@@ -22,7 +22,12 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
 
         if (sscanf(vec_get(&strarg, 0), "%ld", &(w->pri.cn)) != 1)
         {
-            chr_format(rtn, "err: Could nor parse number '%s'", vec_get(&strarg, 0));
+            chr_format(
+                rtn,
+                "err: Could nor parse number '%s'",
+                vec_get(&strarg, 0)
+            );
+
             vec_kill(&strarg);
             return;
         }
@@ -41,7 +46,12 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
 
         if (sscanf(vec_get(&strarg, 0), "%ld", &(w->pri.ln)) != 1)
         {
-            chr_format(rtn, "err: Could nor parse number '%s'", vec_get(&strarg, 0));
+            chr_format(
+                rtn,
+                "err: Could nor parse number '%s'",
+                vec_get(&strarg, 0)
+            );
+
             vec_kill(&strarg);
             return;
         }
@@ -53,7 +63,11 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
 
     w->pri = cur_check_bounds(w->pri, w->b);
 
-    chr_format(rtn, "Cursor at line %ld, col %ld.", w->pri.ln + 1, w->pri.cn + 1);
+    chr_format(
+        rtn,
+        "Cursor at line %ld, col %ld.",
+        w->pri.ln + 1, w->pri.cn + 1
+    );
 }
 
 void nav_cmd_swap(vec *rtn, vec *args, win *w)

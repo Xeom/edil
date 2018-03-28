@@ -167,20 +167,31 @@ void ui_handle_buf(inp_key key)
 
     switch (key)
     {
-    case inp_key_enter: w->pri = cur_enter(w->pri, w->b); break;
+    case inp_key_enter:
+        w->pri = cur_enter(w->pri, w->b); break;
 
-    case inp_key_up:    w->pri = cur_move(w->pri, w->b, (cur){ .ln = -1 }); break;
-    case inp_key_down:  w->pri = cur_move(w->pri, w->b, (cur){ .ln =  1 }); break;
-    case inp_key_left:  w->pri = cur_move(w->pri, w->b, (cur){ .cn = -1 }); break;
-    case inp_key_right: w->pri = cur_move(w->pri, w->b, (cur){ .cn =  1 }); break;
+    case inp_key_up:
+        w->pri = cur_move(w->pri, w->b, (cur){ .ln = -1 }); break;
+    case inp_key_down:
+        w->pri = cur_move(w->pri, w->b, (cur){ .ln =  1 }); break;
+    case inp_key_left:
+        w->pri = cur_move(w->pri, w->b, (cur){ .cn = -1 }); break;
+    case inp_key_right:
+        w->pri = cur_move(w->pri, w->b, (cur){ .cn =  1 }); break;
 
-    case inp_key_home:  w->pri = cur_home(w->pri, w->b); break;
-    case inp_key_end:   w->pri = cur_end (w->pri, w->b); break;
-    case inp_key_pgdn:  w->pri = cur_pgdn(w->pri, w); break;
-    case inp_key_pgup:  w->pri = cur_pgup(w->pri, w); break;
+    case inp_key_home:
+        w->pri = cur_home(w->pri, w->b); break;
+    case inp_key_end:
+        w->pri = cur_end (w->pri, w->b); break;
+    case inp_key_pgdn:
+        w->pri = cur_pgdn(w->pri, w); break;
+    case inp_key_pgup:
+        w->pri = cur_pgup(w->pri, w); break;
 
-    case inp_key_back:  w->pri = cur_move(w->pri, w->b, (cur){ .cn = -1 });
-    case inp_key_del:   w->pri = cur_del (w->pri, w->b);  break;
+    case inp_key_back:
+        w->pri = cur_move(w->pri, w->b, (cur){ .cn = -1 });
+    case inp_key_del:
+        w->pri = cur_del (w->pri, w->b);  break;
     }
 
     win_show_cur(w, w->pri, stdout);
