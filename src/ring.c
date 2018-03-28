@@ -4,7 +4,7 @@ vec ring_bufs;
 
 void ring_init(void)
 {
-    vec_init(&ring_bufs, sizeof(buf));
+    vec_init(&ring_bufs, sizeof(buf *));
 }
 
 void ring_kill(void)
@@ -14,7 +14,11 @@ void ring_kill(void)
     len = vec_len(&ring_bufs);
     for (ind = 0; ind < len; ind++)
     {
-        buf_kill(vec_get(&ring_bufs, ind));
+        buf **b;
+
+        b = vec_get(&ring_bufs, ind);
+        buf_kill(*b);
+        free(*b);
     }
 
     vec_kill(&ring_bufs);
@@ -22,23 +26,26 @@ void ring_kill(void)
 
 int ring_get_ind(buf *b)
 {
-    int ind;
-    buf *first;
-    first = vec_get(&ring_bufs, 0);
+    size_t ind, len;
 
-    if (first == NULL) return -1;
+    len = vec_len(&ring_bufs);
+    for (ind = 0; ind < len; ind++)
+    {
+        buf **cmp;
+        cmp = vec_get(&ring_bufs, ind);
 
-    ind = ((char *)b - (char *)first)/sizeof(buf);
+        if (*cmp == b)
+            return ind;
+    }
 
-    if (ind < 0 || ind >= (int)vec_len(&ring_bufs))
-        return -1;
-
-    return ind;
+    return -1;
 }
 
 buf *ring_next(buf *b)
 {
     int ind;
+    buf **rtn;
+
     ind = ring_get_ind(b);
 
     if (ind == -1)
@@ -49,12 +56,15 @@ buf *ring_next(buf *b)
         ind %= vec_len(&ring_bufs);
     }
 
-    return vec_get(&ring_bufs, ind);
+    rtn = vec_get(&ring_bufs, ind);
+    return *rtn;
 }
 
 buf *ring_prev(buf *b)
 {
     int ind;
+    buf **rtn;
+
     ind = ring_get_ind(b);
 
     if (ind == -1)
@@ -67,7 +77,8 @@ buf *ring_prev(buf *b)
         ind -= 1;
     }
 
-    return vec_get(&ring_bufs, ind);
+    rtn = vec_get(&ring_bufs, ind);
+    return *rtn;
 }
 
 buf *ring_new(void)
@@ -75,14 +86,15 @@ buf *ring_new(void)
     vec msg;
     buf *b;
 
-    vec_init(&msg, sizeof(chr));
-    chr_format(&msg, "This is buffer number %ld.", vec_len(&ring_bufs));
-
-    b = vec_ins(&ring_bufs, vec_len(&ring_bufs), 1, NULL);
+    b = malloc(sizeof(buf));
     buf_init(b);
 
+    vec_init(&msg, sizeof(chr));
+    chr_format(&msg, "This is buffer number %ld.", vec_len(&ring_bufs));
     buf_ins(b, (cur){0, 0}, vec_get(&msg, 0), vec_len(&msg));
     vec_kill(&msg);
+
+    vec_ins(&ring_bufs, vec_len(&ring_bufs), 1, &b);
 
     return b;
 }
