@@ -99,7 +99,11 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
         path = vec_get(args, 1);
         if (file_get_fullpath(path, fn) == -1)
         {
-            chr_format(rtn, "err Parsing path: [%d] %s", errno, strerror(errno));
+            chr_format(
+                rtn,
+                "err Parsing path: [%d] %s",
+                errno, strerror(errno)
+            );
             return;
         }
 
@@ -118,7 +122,11 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
                 file_clr_win(w);
             }
             else
-                chr_format(rtn, "err Opening '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
+                chr_format(
+                    rtn,
+                    "err Opening '%s': [%d] %s",
+                    vec_get(fn, 0), errno, strerror(errno)
+                );
         }
         else
         {
@@ -130,7 +138,11 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
             if (ferror(f))
             {
                 fclose(f);
-                chr_format(rtn, "err Reading '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
+                chr_format(
+                    rtn,
+                    "err Reading '%s': [%d] %s",
+                    vec_get(fn, 0), errno, strerror(errno)
+                );
 
                 return;
             }
@@ -153,7 +165,12 @@ void file_cmd_assoc(vec *rtn, vec *args, win *w)
         path = vec_get(args, 1);
         if (file_get_fullpath(path, fn))
         {
-            chr_format(rtn, "err Parsing path: [%d] %s, ", errno, strerror(errno));
+            chr_format(
+                rtn,
+                "err Parsing path: [%d] %s, ",
+                errno, strerror(errno)
+            );
+
             return;
         }
 
@@ -183,20 +200,63 @@ void file_cmd_save(vec *rtn, vec *args, win *w)
 
     if (!f)
     {
-        chr_format(rtn, "err Opening '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
+        chr_format(
+            rtn,
+            "err Opening '%s': [%d] %s",
+            vec_get(fn, 0), errno, strerror(errno)
+        );
+
         return;
     }
 
     file_save_win(w, f);
 
     if (ferror(f))
-        chr_format(rtn, "err Writing '%s': [%d] %s", vec_get(fn, 0), errno, strerror(errno));
+        chr_format(
+            rtn,
+            "err Writing '%s': [%d] %s",
+            vec_get(fn, 0), errno, strerror(errno)
+        );
+
     else
         chr_format(rtn, "Wrote '%s'", vec_get(fn, 0));
 
     fclose(f);
 
     w->b->flags &= ~buf_modified;
+}
+
+void file_cmd_chdir(vec *rtn, vec *args, win *w)
+{
+    char *cwd;
+    cwd = malloc(PATH_MAX);
+
+    if (vec_len(args) == 2)
+    {
+        vec dir, *arg;
+        vec_init(&dir, sizeof(char));
+
+        arg = vec_get(args, 1);
+
+        if (file_get_fullpath(arg, &dir) == -1)
+            chr_format(rtn, "err: [%d] %s, ", errno, strerror(errno));
+
+        else if (chdir(vec_get(&dir, 0)) == -1)
+            chr_format(rtn, "err: [%d] %s, ", errno, strerror(errno));
+
+        vec_kill(&dir);
+    }
+
+    if (getcwd(cwd, sizeof(cwd)) == NULL)
+    {
+        chr_format(rtn, "err: [%d] %s", errno, strerror(errno));
+    }
+    else
+    {
+        chr_format(rtn, "cwd: %s", cwd);
+    }
+
+    free(cwd);
 }
 
 void file_save_win(win *w, FILE *f)
@@ -238,76 +298,6 @@ void file_save_line(vec *line, FILE *f)
         if (fwrite(c->utf8, 1, width, f) != width)
             return;
     }
-}
-
-void file_cmd_chdir(vec *rtn, vec *args, win *w)
-{
-    char *cwd;
-    cwd = malloc(PATH_MAX);
-
-    if (vec_len(args) == 2)
-    {
-        vec dir, *arg;
-        vec_init(&dir, sizeof(char));
-
-        arg = vec_get(args, 1);
-
-        if (file_get_fullpath(arg, &dir) == -1)
-            chr_format(rtn, "err: [%d] %s, ", errno, strerror(errno));
-
-        else if (chdir(vec_get(&dir, 0)) == -1)
-            chr_format(rtn, "err: [%d] %s, ", errno, strerror(errno));
-
-        vec_kill(&dir);
-    }
-
-    if (getcwd(cwd, sizeof(cwd)) == NULL)
-    {
-        chr_format(rtn, "err: [%d] %s", errno, strerror(errno));
-    }
-    else
-    {
-        chr_format(rtn, "cwd: %s", cwd);
-    }
-
-    free(cwd);
-}
-
-/* chrs is a vec of chrs, fullpath is of chars */
-static int file_get_fullpath(vec *chrs, vec *fullpath)
-{
-    vec str;
-    char *base, *dir, *path;
-
-    vec_init(&str, sizeof(char));
-    chr_to_str(chrs, &str);
-    vec_ins(&str, vec_len(&str), 1, NULL);
-
-    dir = dirname(vec_get(&str, 0));
-    path = realpath(dir, NULL);
-
-    if (path == NULL)
-    {
-        vec_kill(&str);
-        return -1;
-    }
-
-    vec_del(fullpath, 0, vec_len(fullpath));
-    vec_ins(fullpath, 0, strlen(path), path);
-
-    if (strcmp(path, "/") != 0)
-        vec_ins(fullpath, vec_len(fullpath), 1, "/");
-
-    base = basename(vec_get(&str, 0));
-
-    if (strcmp(base, "/") != 0 && strcmp(base, ".") != 0)
-        vec_ins(fullpath, vec_len(fullpath), strlen(base), base);
-
-    vec_ins(fullpath, vec_len(fullpath), 1, NULL);
-
-    vec_kill(&str);
-
-    return 0;
 }
 
 void file_clr_win(win *w)
@@ -378,3 +368,62 @@ void file_load_win(win *w, FILE *f)
 
     vec_kill(&line);
 }
+
+/* chrs is a vec of chrs, fullpath is of chars */
+static int file_get_fullpath(vec *chrs, vec *fullpath)
+{
+    /* Three copies of the stringified argument.     *
+     * The first one to keep, and the second to feed *
+     * to basename and dirname.                      */
+    vec arg, basevec, dirvec;
+    char *base, *dir, *path;
+
+    vec_init(&arg, sizeof(char));
+    chr_to_str(chrs, &arg);
+    vec_ins(&arg, vec_len(&arg), 1, NULL);
+
+    /* Make throwaway copies of our argument path */
+    vec_init(&basevec, sizeof(char));
+    vec_init(&dirvec,  sizeof(char));
+    vec_ins(&basevec, 0, vec_len(&arg), vec_get(&arg, 0));
+    vec_ins(&dirvec,  0, vec_len(&arg), vec_get(&arg, 0));
+
+    /* We get our base and dir. These should NOT be free'd, as *
+     * they may be inside dirvec and basevec. If not, they are *
+     * statically allocated memory.                            */
+    dir  = dirname( vec_get(&dirvec,  0));
+    base = basename(vec_get(&basevec, 0));
+
+    /* We must free this */
+    path = realpath(dir, NULL);
+
+    if (path)
+    {
+        vec_del(fullpath, 0, vec_len(fullpath));
+        vec_ins(fullpath, 0, strlen(path), path);
+
+        /* Add a trailing slash to fullpath if needed */
+        if (path[strlen(path) - 1] != '/')
+            vec_ins(fullpath, vec_len(fullpath), 1, "/");
+
+        /* Add the basename to the directory name. Don't do this *
+         * if it is ., or /, as these are pretend names.         */
+        if (strcmp(base, "/") != 0 && strcmp(base, ".") != 0)
+            vec_ins(fullpath, vec_len(fullpath), strlen(base), base);
+
+        /* Null terminator */
+        vec_ins(fullpath, vec_len(fullpath), 1, NULL);
+    }
+
+    free(path);
+
+    vec_kill(&arg);
+    vec_kill(&basevec);
+    vec_kill(&dirvec);
+
+    if (path)
+        return 0;
+    else
+        return -1;
+}
+

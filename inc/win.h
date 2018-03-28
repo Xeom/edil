@@ -2,9 +2,10 @@
 # define WIN_H
 # include <stdio.h>
 # include <unistd.h>
-# include "cur.h"
 
 typedef struct win_s win;
+
+# include "cur.h"
 
 struct win_s
 {

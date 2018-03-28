@@ -88,6 +88,26 @@ cur cur_end(cur c, buf *b)
     return c;
 }
 
+cur cur_pgdn(cur c, win *w)
+{
+    c.ln = win_max_ln(w) + 1;
+
+    c = cur_check_bounds(c, w->b);
+    c = cur_check_blank(c, w->b, (cur){ .ln = 1 });
+
+    return c;
+}
+
+cur cur_pgup(cur c, win *w)
+{
+    c.ln = win_min_ln(w) - 1;
+
+    c = cur_check_bounds(c, w->b);
+    c = cur_check_blank(c, w->b, (cur){ .ln = -1 });
+
+    return c;
+}
+
 cur cur_del(cur c, buf *b)
 {
     size_t len;

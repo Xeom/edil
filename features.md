@@ -1,7 +1,7 @@
 # Features
 
 A list of features planned and included in each version 
-of *edil*.
+of *Edil*.
 
 ## 0.0.1 (Complete)
 
@@ -12,7 +12,7 @@ of *edil*.
 ## 0.0.2
 
 - [ ] Support for tabs (*partly*)
-- [ ] More navigation controls (*partly*)
+- [x] More navigation controls
 - [ ] Support for multiple buffers. (*partly*)
 
 ## 0.0.3

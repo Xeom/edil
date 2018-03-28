@@ -6,7 +6,7 @@
 #include "win.h"
 
 static int  win_out_goto(win *w, cur *c, FILE *f);
-static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *needsfree);
+static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *tofree);
 
 static void win_bar_fill_fname(win *w, vec *bar);
 static void win_bar_fill_query(win *w, vec *bar);
@@ -16,14 +16,26 @@ static void win_bar_fill(win *w, vec *bar);
 
 win *win_cur;
 
-chr      win_bar_chr = { .utf8 = "-", .fnt = { .fg = col_black | col_bright, .bg = col_none } };
-col_desc win_bar_col = { .inv = col_rev,   .fg = col_null, .bg = col_null };
+chr win_bar_chr = {
+    .utf8 = "-", .fnt = { .fg = col_black | col_bright, .bg = col_none }
+};
+col_desc win_bar_col = {
+    .inv = col_rev, .fg = col_null, .bg = col_null
+};
 
-chr      win_pri_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_blue } };
-col_desc win_pri_col = { .inv = col_rev,   .fg = col_null, .bg = col_null };
+chr win_pri_chr = {
+    .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_blue }
+};
+col_desc win_pri_col = {
+    .inv = col_rev, .fg = col_null, .bg = col_null
+};
 
-chr      win_sec_chr = { .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none } };
-col_desc win_sec_col = { .inv = col_under, .fg = col_blue, .bg = col_null };
+chr win_sec_chr = {
+    .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none }
+};
+col_desc win_sec_col = {
+    .inv = col_under, .fg = col_blue, .bg = col_null
+};
 
 void win_init(win *w, buf *b)
 {
@@ -70,7 +82,7 @@ ssize_t win_min_cn(win *w)
 
 static int win_out_goto(win *w, cur *c, FILE *f)
 {
-    if (c->ln < win_min_ln(w) 
+    if (c->ln < win_min_ln(w)
      || c->ln > win_max_ln(w))
         return 0;
 
@@ -87,7 +99,11 @@ static int win_out_goto(win *w, cur *c, FILE *f)
 
 void win_bar_fill_pos(win *w, vec *bar)
 {
-    chr_format(bar, " %ld %ld\xc2\xb7%ld", w->scry, w->pri.ln + 1, w->pri.cn + 1);   
+    chr_format(
+        bar,
+        " %ld %ld\xc2\xb7%ld",
+        w->scry, w->pri.ln + 1, w->pri.cn + 1
+    );
 }
 
 void win_bar_fill_fname(win *w, vec *bar)
@@ -117,14 +133,17 @@ static void win_bar_fill_query(win *w, vec *bar)
 {
     int tofree;
     vec *prompt, *typed;
+    cur barcur;
 
     tofree = 0;
 
     typed  = &(w->bartyped);
     prompt = &(w->barprompt);
+    barcur = (cur){ .cn = w->barcur };
 
+    /* Format the bar cursor, {.ln = 1} just ensures no second cur is shown */
     if (ui_mode == ui_mode_bar)
-        typed = win_add_cur((cur){ .cn = w->barcur }, (cur){ .ln = 1 }, 0, typed, &tofree);
+        typed = win_add_cur(barcur, (cur){ .ln = 1 }, 0, typed, &tofree);
 
     if (vec_len(prompt))
         chr_format(bar, " ");
@@ -281,7 +300,7 @@ static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
             vec_ins(line, linelen++, 1, &win_sec_chr);
 
         curchr = vec_get(line, sec.cn);
-        if (curchr) 
+        if (curchr)
             chr_set_cols(curchr, win_sec_col);
     }
 
@@ -313,7 +332,7 @@ void win_out_line(win *w, cur c, FILE *f)
 
     out_chrs(vec_get(line, c.cn + w->scrx), outlen, f);
 
-    if (needsfree) 
+    if (needsfree)
     {
         vec_kill(line);
         free(line);

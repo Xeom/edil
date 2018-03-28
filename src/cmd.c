@@ -226,4 +226,3 @@ static size_t cmd_parse_word(vec *str, vec *chrs, size_t ind)
 
     return ind;
 }
-
