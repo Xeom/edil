@@ -69,6 +69,15 @@ Each mode can be entered into by pressing control plus a key.
 * `associate [file]` - Associate the current buffer with a specific file. Then
                        return the current file associated with the current buffer.
 
+
+#### Buffers
+
+* `new` - Open a new buffer.
+
+* `next` - Go to the next buffer.
+
+* `prev` - Go to the previous buffer.
+
 #### Navigation
 
 * `goto [line] [col]` - Goto the specified line and column, if given. Then return
