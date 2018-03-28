@@ -12,7 +12,7 @@ of *edil*.
 ## 0.0.2
 
 - [ ] Support for tabs
-- [ ] More navigation controls
+- [x] More navigation controls
 - [ ] Efficient updates to the screen for buffers
 
 ## 0.0.3
