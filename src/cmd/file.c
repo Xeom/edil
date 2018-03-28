@@ -33,6 +33,12 @@ void file_cmd_new(vec *rtn, vec *args, win *w)
     w->b = b;
 
     chr_format(rtn, "New buffer [%d]", ring_get_ind(b));
+
+    if (vec_len(args) != 1)
+    {
+        chr_from_str(rtn, ", ");
+        file_cmd_load(rtn, args, w);
+    }
 }
 
 void file_cmd_next(vec *rtn, vec *args, win *w)
@@ -145,6 +151,10 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
                 );
 
                 return;
+            }
+            else
+            {
+                chr_format(rtn, "Loaded '%s'", vec_get(fn, 0));
             }
 
             fclose(f);

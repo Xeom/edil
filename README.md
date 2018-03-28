@@ -72,7 +72,8 @@ Each mode can be entered into by pressing control plus a key.
 
 #### Buffers
 
-* `new` - Open a new buffer.
+* `new [file]` - Open a new buffer. If a file is specified, that file is loaded
+                 to the new buffer, equivialent to `new` followed by `load [file]`.
 
 * `next` - Go to the next buffer.
 
