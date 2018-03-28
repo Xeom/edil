@@ -21,7 +21,7 @@ cur cur_enter(cur c, buf *b)
         num = len - c.cn;
 
         buf_ins(b, rtn, vec_get(line, c.cn), num);
-	    buf_del(b, c,   num);
+        buf_del(b, c,   num);
     }
 
     return rtn;
@@ -109,6 +109,26 @@ cur cur_home(cur c, buf *b)
 cur cur_end(cur c, buf *b)
 {
     c.cn = (ssize_t)buf_line_len(b, c);
+
+    return c;
+}
+
+cur cur_pgdn(cur c, win *w)
+{
+    c.ln = win_max_ln(w) + 1;
+
+    c = cur_check_bounds(c, w->b);
+    c = cur_check_blank(c, w->b, (cur){ .ln = 1 });
+
+    return c;
+}
+
+cur cur_pgup(cur c, win *w)
+{
+    c.ln = win_min_ln(w) - 1;
+
+    c = cur_check_bounds(c, w->b);
+    c = cur_check_blank(c, w->b, (cur){ .ln = -1 });
 
     return c;
 }
