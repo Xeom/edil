@@ -15,56 +15,50 @@
 
 #include "cmd.h"
 #include "chr.h"
+#include "ring.h"
 #include "indent.h"
 
 #include "cmd/file.h"
 
 static int file_get_fullpath(vec *chrs, vec *fullpath);
-static void file_clr_win(win *w);
 
 static void file_save_line(vec *line, FILE *f);
 static void file_load_line(vec *line, FILE *f);
 
-/* chrs is a vec of chrs, fullpath is of chars */
-static int file_get_fullpath(vec *chrs, vec *fullpath)
+void file_cmd_new(vec *rtn, vec *args, win *w)
 {
-    vec str;
-    char *base, *dir, *path;
+    buf *b;
 
-    vec_init(&str, sizeof(char));
-    chr_to_str(chrs, &str);
-    vec_ins(&str, vec_len(&str), 1, NULL);
+    b = ring_new();
+    w->b = b;
 
-    dir = dirname(vec_get(&str, 0));
-    path = realpath(dir, NULL);
-
-    if (path == NULL)
-    {
-        vec_kill(&str);
-        return -1;
-    }
-
-    vec_del(fullpath, 0, vec_len(fullpath));
-    vec_ins(fullpath, 0, strlen(path), path);
-
-    if (strcmp(path, "/") != 0)
-        vec_ins(fullpath, vec_len(fullpath), 1, "/");
-
-    base = basename(vec_get(&str, 0));
-
-    if (strcmp(base, "/") != 0 && strcmp(base, ".") != 0)
-        vec_ins(fullpath, vec_len(fullpath), strlen(base), base);
-
-    vec_ins(fullpath, vec_len(fullpath), 1, NULL);
-
-    vec_kill(&str);
-
-    return 0;
+    chr_format(rtn, "New buffer [%d]", ring_get_ind(b));
 }
+
+void file_cmd_next(vec *rtn, vec *args, win *w)
+{
+    buf *prev;
+    prev = w->b;
+
+    w->b = ring_next(prev);
+
+    chr_format(rtn, "switched buffer [%d] -> [%d]", ring_get_ind(prev), ring_get_ind(w->b));
+}
+
+void file_cmd_prev(vec *rtn, vec *args, win *w)
+{
+    buf *prev;
+    prev = w->b;
+
+    w->b = ring_prev(prev);
+
+    chr_format(rtn, "switched buffer [%d] -> [%d]", ring_get_ind(prev), ring_get_ind(w->b));
+}
+
 
 void file_cmd_discard(vec *rtn, vec *args, win *w)
 {
-    if (vec_len(args))
+    if (vec_len(args) != 1)
     {
         chr_format(rtn, "err: Command takes no arguments");
         return;
@@ -279,7 +273,44 @@ void file_cmd_chdir(vec *rtn, vec *args, win *w)
     free(cwd);
 }
 
-static void file_clr_win(win *w)
+/* chrs is a vec of chrs, fullpath is of chars */
+static int file_get_fullpath(vec *chrs, vec *fullpath)
+{
+    vec str;
+    char *base, *dir, *path;
+
+    vec_init(&str, sizeof(char));
+    chr_to_str(chrs, &str);
+    vec_ins(&str, vec_len(&str), 1, NULL);
+
+    dir = dirname(vec_get(&str, 0));
+    path = realpath(dir, NULL);
+
+    if (path == NULL)
+    {
+        vec_kill(&str);
+        return -1;
+    }
+
+    vec_del(fullpath, 0, vec_len(fullpath));
+    vec_ins(fullpath, 0, strlen(path), path);
+
+    if (strcmp(path, "/") != 0)
+        vec_ins(fullpath, vec_len(fullpath), 1, "/");
+
+    base = basename(vec_get(&str, 0));
+
+    if (strcmp(base, "/") != 0 && strcmp(base, ".") != 0)
+        vec_ins(fullpath, vec_len(fullpath), strlen(base), base);
+
+    vec_ins(fullpath, vec_len(fullpath), 1, NULL);
+
+    vec_kill(&str);
+
+    return 0;
+}
+
+void file_clr_win(win *w)
 {
     cur loc;
     loc.ln = buf_len(w->b);

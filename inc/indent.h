@@ -14,11 +14,11 @@ extern col_desc indent_tab_col;
 void indent_print_tab(size_t ind, FILE *f, col fnt);
 
 /* Get the number of columns taken up by a chr */
-int indent_get_width(chr *c);
+int indent_get_width(chr *c, size_t ind);
 
 /* Apply blanks to buffers */
 void indent_add_blanks_buf(buf *b);
-void indent_add_blanks_line(vec *line);
+void indent_add_blanks_line(vec *line, size_t ind);
 void indent_add_blanks_chr(vec *line, size_t ind);
 
 #endif

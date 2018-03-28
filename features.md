@@ -13,16 +13,16 @@ of *edil*.
 
 - [ ] Support for tabs (*partly*)
 - [ ] More navigation controls (*partly*)
-- [ ] Efficient updates to the screen for buffers
+- [ ] Support for multiple buffers. (*partly*)
 
 ## 0.0.3
 
+- [ ] Efficient updates to the screen for buffers
 - [ ] Commands and modes using both cursors.
 - [ ] More efficient rendering of window bars.
 
 ## 0.0.4
 
-- [ ] Support for multiple buffers.
 - [ ] Log buffers.
 
 ## 0.0.5

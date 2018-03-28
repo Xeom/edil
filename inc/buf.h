@@ -11,8 +11,8 @@ typedef struct buf_s buf;
 /* Bit flags describing attributes of buffers */
 typedef enum
 {
-    buf_readonly   = 0x01, /* Don't modify this      (not yet implemented) */
-    buf_modified   = 0x02, /* This has been modified (not yet implemented) */
+    buf_readonly   = 0x01, /* Don't modify this                            */
+    buf_modified   = 0x02, /* This has been modified                       */
     buf_associated = 0x04, /* This buffer is associated with a filename    */
 } buf_flags;
 

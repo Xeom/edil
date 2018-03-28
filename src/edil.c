@@ -6,6 +6,7 @@
 # include <stdio.h>
 #endif
 
+#include "ring.h"
 #include "win.h"
 #include "out.h"
 #include "inp.h"
@@ -73,13 +74,11 @@ static void process_arg(int argc, char **argv, int *n)
         fputs(help, stdout);
         exit(0);
     }
-
     else if (argis(--version) || argis(-v))
     {
         fputs(version, stdout);
         exit(0);
     }
-
     else
     {
         fputs(argerror, stdout);
@@ -91,23 +90,27 @@ static void process_arg(int argc, char **argv, int *n)
 
 static void init_all(void)
 {
+    ring_init();
+    cmd_init();
     out_init(stdout);
     inp_init();
     ui_init();
-    cmd_init();
 }
 
 static void kill_all(void)
 {
-    out_kill(stdout);
-    inp_kill();
     ui_kill();
+    inp_kill();
+    out_kill(stdout);
     cmd_kill();
+    ring_kill();
 }
 
 static void load_string(win *w, char *str)
 {
     int fds[2];
+
+    file_clr_win(w);
 
     if (pipe(fds) != 0)
         return;
@@ -152,7 +155,7 @@ static void colour_edil(buf *b)
 
 int main(int argc, char **argv)
 {
-    buf b;
+    buf *b;
     win w;
     int argind;
 
@@ -161,14 +164,15 @@ int main(int argc, char **argv)
     while (argind < argc)
         process_arg(argc, argv, &argind);
 
-    buf_init(&b);
-    win_init(&w, &b);
     init_all();
+
+    b = ring_new();
+    win_init(&w, b);
 
     win_cur = &w;
 
     load_string(&w, welcome);
-    colour_edil(&b);
+    colour_edil(b);
 
     w.cols = out_cols;
     w.rows = out_rows - 1;
@@ -182,6 +186,5 @@ int main(int argc, char **argv)
     loop();
 
     win_kill(&w);
-    buf_kill(&b);
     kill_all();
 }

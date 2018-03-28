@@ -12,7 +12,7 @@ void indent_print_tab(size_t ind, FILE *f, col fnt)
     size_t len, width;
     col tabcol;
 
-    width = indent_tab_width - (ind % indent_tab_width);
+    width = indent_get_width(&(chr){ .utf8 = "\t" }, ind);
     len   = strlen(indent_tab_text);
 
     tabcol = col_update(fnt, indent_tab_col);
@@ -37,13 +37,15 @@ void indent_print_tab(size_t ind, FILE *f, col fnt)
 
 }
 
-int indent_get_width(chr *c)
+int indent_get_width(chr *c, size_t ind)
 {
+    if (!c) return 0;
+
     if (chr_is_blank(c))
         return 1;
 
     if (strcmp(c->utf8, "\t") == 0)
-        return indent_tab_width;
+        return indent_tab_width - (ind % indent_tab_width);
 
     return 1;
 }
@@ -60,21 +62,23 @@ void indent_add_blanks_buf(buf *b)
         vec *l;
         l = vec_get(lines, ln);
 
-        indent_add_blanks_line(l);
+        indent_add_blanks_line(l, 0);
     }
 }
 
-void indent_add_blanks_line(vec *line)
+void indent_add_blanks_line(vec *line, size_t ind)
 {
-    size_t ind, len;
+    size_t len;
 
     len = vec_len(line);
-    for (ind = 0; ind < len; ind++)
+    for (; ind < len; ind++)
     {
         chr *c;
         c = vec_get(line, ind);
 
-        if (indent_get_width(c) != 1)
+        if (!c) break;
+
+        if (indent_get_width(c, ind) != 1 || strcmp(c->utf8, "\t") == 0)
             indent_add_blanks_chr(line, ind);
     }
 }
@@ -89,7 +93,7 @@ void indent_add_blanks_chr(vec *line, size_t ind)
 
     if (!c) return;
 
-    width = indent_get_width(c);
+    width = indent_get_width(c, ind);
 
     for (blankind = ind + 1; blankind < len; blankind++)
     {

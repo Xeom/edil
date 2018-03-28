@@ -31,6 +31,8 @@ void win_init(win *w, buf *b)
     w->rows = 10;
     w->cols = 10;
     w->b    = b;
+    w->pri  = (cur){0, 0};
+    w->sec  = (cur){0, 0};
     vec_init(&(w->bartyped),  sizeof(chr));
     vec_init(&(w->barprompt), sizeof(chr));
 }

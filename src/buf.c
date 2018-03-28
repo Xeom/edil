@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "buf.h"
+#include "indent.h"
 
 void buf_init(buf *b)
 {
@@ -48,31 +49,49 @@ void buf_ins(buf *b, cur loc, chr *chrs, size_t n)
 {
     vec *line;
 
-    b->flags |= buf_modified;
-
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;
 
     vec_ins(line, loc.cn, n, chrs);
+    indent_add_blanks_line(line, loc.cn);
 }
 
 void buf_del(buf *b, cur loc, size_t n)
 {
+    size_t len;
     vec *line;
-
-    b->flags |= buf_modified;
+    chr *c;
 
     line = vec_get(&(b->lines), loc.ln);
+    len  = vec_len(line);
+
+    if (loc.cn     < 0)   loc.cn = 0;
+    if (loc.cn + n > len) loc.cn = len - n;
+
+    while (loc.cn > 0)
+    {
+        c = vec_get(line, loc.cn);
+        if (!chr_is_blank(c)) break;
+        loc.cn -= 1;
+        n      += 1;
+    }
+
+    while (loc.cn + n < len)
+    {
+        c = vec_get(line, loc.cn + n);
+        if (!chr_is_blank(c)) break;
+        n += 1;
+    }
+
     if (!line) return;
 
     vec_del(line, loc.cn, n);
+    indent_add_blanks_line(line, loc.cn);
 }
 
 void buf_ins_line(buf *b, cur loc)
 {
     vec *line;
-
-    b->flags |= buf_modified;
 
     line = vec_ins(&(b->lines), loc.ln, 1, NULL);
     if (!line) return;
@@ -83,8 +102,6 @@ void buf_ins_line(buf *b, cur loc)
 void buf_del_line(buf *b, cur loc)
 {
     vec *line;
-
-    b->flags |= buf_modified;
 
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;

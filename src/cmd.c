@@ -12,6 +12,9 @@ vec cmd_infos;
 
 static cmd_info cmd_infos_static[] =
 {
+    { "new",       file_cmd_new     },
+    { "next",      file_cmd_next    },
+    { "prev",      file_cmd_prev    },
     { "load",      file_cmd_load    },
     { "save",      file_cmd_save    },
     { "discard",   file_cmd_discard },
