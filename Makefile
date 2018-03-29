@@ -25,8 +25,6 @@ DFILES=$(addprefix $(DEPDIR), $(addsuffix .d, $(FILES)))
 
 ERRPIPE=2>>errs.txt || (less -r errs.txt && /bin/false)
 
-deps: $(DFILES)
-
 clean_err:
 	@rm -f errs.txt
 
@@ -40,45 +38,42 @@ clean_dep:
 	@rm -rf dep/*
 
 $(OBJDIR)%.o: $(SRCDIR)%.c conf.mk
-	@printf "Building $@ ... "
 	@mkdir -p $(@D)
 	@gcc -c $(FLAGS) $< -o $@ $(ERRPIPE)
-	@printf "Done\n"
+	@printf "Built $@\n"
 
 $(DEPDIR)%.d: $(SRCDIR)%.c $(HFILES) conf.mk
-	@printf "Creating $@ ... "
 	@mkdir -p $(@D)
 	@printf $(OBJDIR) > $@
 	@gcc -MM $(FLAGS) $< >> $@
-	@printf "Done\n"
+	@printf "Created $@\n"
 
 $(BINDIR)libedil.so: $(OFILES)
-	@printf "Linking $@ ... "
 	@mkdir -p $(@D)
 	@gcc $(FLAGS) -shared $^ -o $@ $(ERRPIPE)
-	@printf "Done\n"
+	@printf "Linked $@\n"
 
 $(BINDIR)libedil.a: $(OFILES)
-	@printf "Linking $@ ... "
 	@mkdir -p $(@D)
 	@ar rcs $@ $^ $(ERRPIPE)
-	@printf "Done\n"
+	@printf "Linked $@\n"
 
 $(BINDIR)edil: $(SRCDIR)edil.c $(BINDIR)libedil.a
-	@printf "Building $@ ... "
 	@mkdir -p $(@D)
 	@gcc $(FLAGS) $^ -o $@ $(ERRPIPE)
-	@printf "Done\n"
+	@printf "Built $@\n"
 
 deps: $(DFILES)
 
-all: clean_err $(BINDIR)libedil.a $(BINDIR)libedil.so $(BINDIR)edil
+all: deps $(BINDIR)libedil.a $(BINDIR)libedil.so $(BINDIR)edil
 	@if [ -s errs.txt ]; then cat errs.txt | less -r; fi
 
 clean: clean_err clean_bin clean_obj clean_dep
 
 .PHONEY=deps all clean_err clean_bin clean_obj clean_dep clean
 .DEFAULT_GOAL=all
+
+$(shell rm -f errs.txt)
 
 ifeq (,$(findstring clean,$(MAKECMDGOALS)))
   ifeq (,$(findstring deps,$(MAKECMDGOALS)))
