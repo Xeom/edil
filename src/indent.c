@@ -1,9 +1,11 @@
 #include <string.h>
 
+#include "ring.h"
+
 #include "indent.h"
 
 int      indent_tab_width = 4;
-char    *indent_tab_text  = "....";
+char    *indent_tab_text  = ";";
 col_desc indent_tab_col   = { .fg = col_blue, .bg = col_none };
 
 void indent_print_tab(size_t ind, FILE *f, col fnt)
@@ -21,7 +23,7 @@ void indent_print_tab(size_t ind, FILE *f, col fnt)
     if (width > len)
     {
         size_t n;
-        n = indent_tab_width - len;
+        n = width - len;
 
         while (n--) fputs(" ", f);
 
@@ -123,4 +125,25 @@ void indent_add_blanks_chr(vec *line, size_t ind)
             chr_blankify(c);
         }
     }
+}
+
+void indent_ins_tab(buf *b, cur c);
+
+size_t indent_get_depth(buf *b, cur c);
+size_t indent_set_depth(buf *b, cur c, size_t depth);
+
+void indent_set_tab_width(size_t width)
+{
+    size_t ind, len;
+    indent_tab_width = width;
+
+    len = vec_len(&ring_bufs);
+    for (ind = 0; ind < len; ind++)
+    {
+        buf **b;
+        b = vec_get(&ring_bufs, ind);
+        indent_add_blanks_buf(*b);
+    }
+
+    win_out_all(stdout);
 }

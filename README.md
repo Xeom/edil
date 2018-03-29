@@ -85,3 +85,9 @@ Each mode can be entered into by pressing control plus a key.
                         the new location of the cursor.
 
 * `swap` - Swap the position of the primary and secondary cursors.
+
+#### Indentation
+
+* `tabwidth [number]` - Set the width tabs are displayed as if a number is given.
+                        Then return the current value.
+                       

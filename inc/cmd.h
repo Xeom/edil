@@ -16,7 +16,6 @@ typedef enum
 extern vec cmd_items;
 
 void cmd_init(void);
-
 void cmd_kill(void);
 
 void cmd_run(vec *args, vec *rtn, win *w);

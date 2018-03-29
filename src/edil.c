@@ -27,18 +27,18 @@
 # define COMPILETIME never
 #endif
 
-static char *welcome =
-"         Welcome, to            \n"
-"      _____   ___      __   __  \n"
-"     / ___/  / _ \\    / /  / /  \n"
-"    / /_    / / | |  / /  / /   \n"
-"   / __/   / / / /  / /  / /    \n"
-"  / /__   / /_/ /  / /  / /__   \n"
-" /____/  /_____/  /_/  /____/   \n"
-"                     v" STRIFY(VERSION) "            \n\n"
+static char *welcome = "\n"
+"          Welcome, to            \n"
+"       _____   ___      __   __  \n"
+"      / ___/  / _ \\    / /  / /  \n"
+"     / /_    / / | |  / /  / /   \n"
+"    / __/   / / / /  / /  / /    \n"
+"   / /__   / /_/ /  / /  / /__   \n"
+"  /____/  /_____/  /_/  /____/   \n"
+"                      v" STRIFY(VERSION) "            \n\n"
 
-" My text editor,\n"
-"     by Francis Wharf\n\n"
+"     My text editor,\n"
+"          by Francis Wharf\n\n"
 "    - Copyright 2017\n";
 
 static char *help = "\n"
@@ -139,16 +139,16 @@ static void colour_edil(buf *b)
     col_desc linefnt = { .fg = col_cyan | col_bright, .bg = col_null, .set = col_under };
     col_desc copyfnt = { .fg = col_black | col_bright, .bg = col_null };
 
-    for (ln = 1; ln < 7; ln++)
+    for (ln = 2; ln < 8; ln++)
     {
         cur loc = { .ln = ln };
         buf_setcol(b, loc, buf_line_len(b, loc), textfnt);
     }
 
-    buf_setcol(b, (cur){ .cn = 7 }, 25, linefnt);
-    buf_setcol(b, (cur){ .ln = 7 }, 27, linefnt);
+    buf_setcol(b, (cur){ .cn = 8, .ln = 1 }, 25, linefnt);
+    buf_setcol(b, (cur){ .cn = 1, .ln = 8 }, 27, linefnt);
 
-    buf_setcol(b, (cur){ .ln = 12 }, 20, copyfnt);
+    buf_setcol(b, (cur){ .ln = 13 }, 20, copyfnt);
 
     b->flags |= buf_readonly;
 }
@@ -177,8 +177,8 @@ int main(int argc, char **argv)
     w.cols = out_cols;
     w.rows = out_rows - 1;
 
-    w.pri = (cur){0, 13};
-    w.sec = (cur){0, 13};
+    w.pri = (cur){0, 14};
+    w.sec = (cur){0, 14};
 
     win_out_after(&w, (cur){0, 0}, stdout);
     win_out_bar(&w, stdout);

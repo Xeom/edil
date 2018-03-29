@@ -6,12 +6,13 @@
 
 #include "cmd/file.h"
 #include "cmd/nav.h"
+#include "cmd/indent.h"
 
 #include "cmd.h"
 
 vec cmd_items;
 
-#define CMD_ITEM(name, fname) { #name, .data.fptr = (void(*)(void))fname }
+#define CMD_ITEM(name, fname) { #name, .data.cmdfunct = fname }
 
 static namevec_item cmd_items_static[] =
 {
@@ -24,7 +25,8 @@ static namevec_item cmd_items_static[] =
     CMD_ITEM(associate, file_cmd_assoc),
     CMD_ITEM(cd,        file_cmd_chdir),
     CMD_ITEM(goto,      nav_cmd_goto),
-    CMD_ITEM(swap,      nav_cmd_swap)
+    CMD_ITEM(swap,      nav_cmd_swap),
+    CMD_ITEM(tabwidth,  indent_cmd_tabwidth),
 };
 
 /* Increment ind until whitespace isn't found, return this *
@@ -79,9 +81,7 @@ void cmd_run(vec *args, vec *rtn, win *w)
     }
     else
     {
-        void (*fptr)(vec *rtn, vec *args, win *w);
-        fptr = (void(*)(vec *, vec *, win *))item->data.fptr;
-        fptr(rtn, args, w);
+        item->data.cmdfunct(rtn, args, w);
     }
 }
 

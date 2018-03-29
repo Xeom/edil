@@ -2,6 +2,7 @@
 # define NAMEVEC_H
 # include <stdlib.h>
 # include "vec.h"
+# include "win.h"
 
 typedef struct namevec_item_s namevec_item;
 
@@ -10,8 +11,8 @@ struct namevec_item_s
     char *name;
     union
     {
-        void *ptr;
-        void (*fptr)(void);
+        
+        void (*cmdfunct)(vec *rtn, vec *args, win *w);
     } data;
 };
 
