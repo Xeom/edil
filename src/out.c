@@ -90,6 +90,11 @@ void out_log(vec *chrs, FILE *f)
     vec_kill(&colchrs);
 }
 
+void out_clr_line(FILE *f)
+{
+    fputs(CLR_LINE, f);
+}
+
 void out_blank_line(FILE *f)
 {
     fputs(CLR_LINE, f);
@@ -129,7 +134,6 @@ void out_chrs(chr *chrs, size_t n, FILE *f)
     }
 
     col_print(col_default, f);
-    fputs(CLR_LINE, f);
 }
 
 static void out_handle_winch(int sign)
