@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "vec.h"
+#include "namevec.h"
 #include "chr.h"
 
 #include "cmd/file.h"
@@ -8,26 +9,23 @@
 
 #include "cmd.h"
 
-vec cmd_infos;
+vec cmd_items;
 
-static cmd_info cmd_infos_static[] =
+#define CMD_ITEM(name, fname) { #name, .data.fptr = (void(*)(void))fname }
+
+static namevec_item cmd_items_static[] =
 {
-    { "new",       file_cmd_new     },
-    { "next",      file_cmd_next    },
-    { "prev",      file_cmd_prev    },
-    { "load",      file_cmd_load    },
-    { "save",      file_cmd_save    },
-    { "discard",   file_cmd_discard },
-    { "associate", file_cmd_assoc   },
-    { "cd",        file_cmd_chdir   },
-    { "goto",      nav_cmd_goto     },
-    { "swap",      nav_cmd_swap     }
+    CMD_ITEM(new,       file_cmd_new),
+    CMD_ITEM(next,      file_cmd_next),
+    CMD_ITEM(prev,      file_cmd_prev),
+    CMD_ITEM(load,      file_cmd_load),
+    CMD_ITEM(save,      file_cmd_save),
+    CMD_ITEM(discard,   file_cmd_discard),
+    CMD_ITEM(associate, file_cmd_assoc),
+    CMD_ITEM(cd,        file_cmd_chdir),
+    CMD_ITEM(goto,      nav_cmd_goto),
+    CMD_ITEM(swap,      nav_cmd_swap)
 };
-
-/* Check whether a cmd name starts with a string */
-static int cmd_info_startswith(cmd_info *info, char *str);
-/* Compare cmd infos, for orting cmd_infos */
-static int cmd_info_cmp(const void *a, const void *b);
 
 /* Increment ind until whitespace isn't found, return this *
  * value.                                                  */
@@ -36,94 +34,55 @@ static size_t cmd_eat_whitespace(vec *chrs, size_t ind);
 static size_t cmd_parse_str(vec *str, vec *chrs, size_t ind);
 static size_t cmd_parse_word(vec *str, vec *chrs, size_t ind);
 
-static int cmd_info_startswith(cmd_info *info, char *str)
-{
-    size_t len;
-
-    if (!info) return 0;
-
-    len = strlen(str);
-
-    if (strncmp(str, info->name, len) == 0)
-        return 1;
-
-    else
-        return 0;
-}
-
-static int cmd_info_cmp(const void *a, const void *b)
-{
-    const cmd_info *ainfo, *binfo;
-
-    ainfo = a;
-    binfo = b;
-
-    return strcmp(ainfo->name, binfo->name);
-}
-
 void cmd_init(void)
 {
-    size_t numcmds;
-
-    numcmds = sizeof(cmd_infos_static) / sizeof(cmd_info);
-
-    vec_init(&cmd_infos, sizeof(cmd_info));
-    vec_ins(&cmd_infos, 0, numcmds, &cmd_infos_static);
-    vec_sort(&cmd_infos, cmd_info_cmp);
+    namevec_init(&cmd_items, cmd_items_static, sizeof(cmd_items_static));
 }
 
 void cmd_kill(void)
 {
-    vec_kill(&cmd_infos);
+    vec_kill(&cmd_items);
 }
 
 void cmd_run(vec *args, vec *rtn, win *w)
 {
-    size_t len, ind;
-    vec name;
-    char *namestr;
-    cmd_info *info;
+    size_t number, len;
+    namevec_item *item;
+    vec *arg;
 
     len = vec_len(args);
     if (len == 0) return;
 
-    vec_init(&name, sizeof(char));
-    chr_to_str(vec_get(args, 0), &name);
-    vec_ins(&name, vec_len(&name), 1, NULL);
+    arg  = vec_get(args, 0);
+    item = namevec_get_chrs(&cmd_items, arg, &number);
 
-    namestr = vec_get(&name, 0);
-
-    ind = vec_bst(&cmd_infos, &(cmd_info){ .name = namestr }, cmd_info_cmp);
-    info = vec_get(&cmd_infos, ind);
-
-    if (cmd_info_startswith(info, namestr))
+    if (!item || number == 0)
     {
-        cmd_info *next;
-        next = vec_get(&cmd_infos, ++ind);
-        if (cmd_info_startswith(next, namestr))
+        chr_from_str(rtn, "err: '");
+        vec_ins(rtn, vec_len(rtn), vec_len(arg), vec_get(arg, 0));
+        chr_format(rtn, "' is not a known command");
+    }
+    else if (number > 1)
+    {
+        chr_from_str(rtn, "err: '");
+        vec_ins(rtn, vec_len(rtn), vec_len(arg), vec_get(arg, 0));
+        chr_format(rtn, "' is ambiguous (");
+
+        while (number--)
         {
-            chr_format(rtn, "err: %s is ambiguous (%s", namestr, info->name);
-
-            while (next && cmd_info_startswith(next, namestr))
-            {
-                chr_format(rtn, ", %s", next->name);
-                next = vec_get(&cmd_infos, ++ind);
-            }
-
-            chr_format(rtn, ")");
-            vec_kill(&name);
-
-            return; /* Not a unique name */
+            namevec_item *i;
+            i = item + number;
+            chr_format(rtn, "%s, ", i->name);
         }
-        else
-            info->funct(rtn, args, w);
+
+        chr_from_str(rtn, ")");
     }
     else
     {
-        chr_format(rtn, "err: %s is not a known command", namestr);
+        void (*fptr)(vec *rtn, vec *args, win *w);
+        fptr = (void(*)(vec *, vec *, win *))item->data.fptr;
+        fptr(rtn, args, w);
     }
-
-    vec_kill(&name);
 }
 
 void cmd_parse(vec *args, vec *chrs, size_t ind)

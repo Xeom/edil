@@ -4,8 +4,6 @@
 # include "vec.h"
 # include "win.h"
 
-typedef struct cmd_info_s cmd_info;
-
 typedef enum
 {
     cmd_pipe_chrs,
@@ -15,13 +13,7 @@ typedef enum
     cmd_pipe_cmd
 } cmd_pipe_type;
 
-struct cmd_info_s
-{
-    char *name;
-    void (*funct)(vec *rtn, vec *args, win *w);
-};
-
-extern vec cmd_infos;
+extern vec cmd_items;
 
 void cmd_init(void);
 
