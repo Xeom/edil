@@ -66,6 +66,7 @@ void ui_ins_flush(void)
         case ui_mode_bar: win_bar_ins(w, &ui_ins_buf); break;
     }
 
+    win_show_cur(w, w->pri, stdout);
     vec_del(&ui_ins_buf, 0, len);
 }
 
@@ -164,8 +165,7 @@ void ui_handle_buf(inp_key key)
     {
         ui_ins(key);
     }
-
-    switch (key)
+    else switch (key)
     {
     case inp_key_enter:
         w->pri = cur_enter(w->pri, w->b); break;

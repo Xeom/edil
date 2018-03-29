@@ -326,11 +326,13 @@ void win_out_line(win *w, cur c, FILE *f)
 
     line = win_add_cur(w->pri, w->sec, c.ln, line, &needsfree);
 
-    outlen = vec_len(line) - c.cn - w->scrx;
+    outlen = vec_len(line) - c.cn;
     if (outlen < 0)       outlen = 0;
     if (outlen > w->cols) outlen = w->cols;
 
-    out_chrs(vec_get(line, c.cn + w->scrx), outlen, f);
+    out_chrs(vec_get(line, c.cn), outlen, f);
+
+    if (outlen != w->cols) out_clr_line(f);
 
     if (needsfree)
     {
