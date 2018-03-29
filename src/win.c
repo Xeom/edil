@@ -372,3 +372,18 @@ void win_show_cur(win *w, cur c, FILE *f)
     if (needsupdate)
         win_out_after(w, (cur){0, 0}, f);
 }
+
+void win_buf_out_line(buf *b, cur c, FILE *f)
+{
+    win_out_line(win_cur, c, f);
+}
+
+void win_buf_out_after(buf *b, cur c, FILE *f)
+{
+    win_out_after(win_cur, c, f);
+}
+
+void win_out_all(FILE *f)
+{
+    win_out_after(win_cur, (cur){0, 0}, f);
+}
