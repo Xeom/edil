@@ -33,6 +33,8 @@ size_t vec_len(vec *v);
 
 void *vec_ins(vec *v, size_t ind, size_t n, const void *data);
 
+void *vec_rep(vec *v, size_t ind, size_t n, const void *data, size_t reps);
+
 int vec_del(vec *v, size_t ind, size_t n);
 
 void *vec_get(vec *v, size_t ind);

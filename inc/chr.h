@@ -17,6 +17,8 @@ int chr_utf8_len(char c);
 /* Get the utf8 width of a chr */
 int chr_len(chr *c);
 
+int chr_is_whitespace(chr *c);
+
 /* Print a chr in utf8 format, with no colours, to a file */
 void chr_print(chr *c, FILE *f);
 

@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "indent.h"
 #include "cur.h"
 #include "win.h"
 #include "chr.h"
@@ -12,6 +13,7 @@ static void ui_handle_buf(inp_key key);
 static void ui_handle_kcd(inp_key key);
 static void ui_handle_bar(inp_key key);
 static void ui_cmd_cb(win *w, vec *chrs);
+static void ui_handle_indent(inp_key key);
 
 ui_mode_type ui_mode = ui_mode_buf;
 int ui_alive = 1;
@@ -192,9 +194,34 @@ void ui_handle_buf(inp_key key)
         w->pri = cur_move(w->pri, w->b, (cur){ .cn = -1 });
     case inp_key_del:
         w->pri = cur_del (w->pri, w->b);  break;
+    default:
+        ui_handle_indent(key);
     }
 
     win_show_cur(w, w->pri, stdout);
+}
+
+static void ui_handle_indent(inp_key key)
+{
+    vec tabvec;
+
+    switch (key)
+    {
+    case inp_key_tab:
+        win_cur->pri = indent_incr_depth(win_cur->b, win_cur->pri);
+        break;
+    case inp_key_tab | inp_key_esc:
+        win_cur->pri = indent_decr_depth(win_cur->b, win_cur->pri);
+        break;
+    case '[' | inp_key_esc:
+        vec_init(&tabvec, sizeof(chr));
+        vec_ins(&tabvec, 0, 1, &(chr){ .utf8 = "\t", .fnt= { .bg = col_none, .fg = col_none } });
+        win_cur->pri = cur_ins(win_cur->pri, win_cur->b, &tabvec);
+        vec_kill(&tabvec);
+        break;
+    }
+
+    win_out_line(win_cur, win_cur->pri, stdout);
 }
 
 static void ui_handle_bar(inp_key key)

@@ -17,6 +17,8 @@ void out_log(vec *chrs, FILE *f);
 
 void out_goto(int cn, int ln, FILE *f);
 
+void out_clr_line(FILE *f);
+
 void out_blank_line(FILE *f);
 
 void out_chrs(chr *chrs, size_t n, FILE *f);

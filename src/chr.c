@@ -35,6 +35,16 @@ void chr_print(chr *c, FILE *f)
     fwrite(c->utf8, 1, len, f);
 }
 
+int chr_is_whitespace(chr *c)
+{
+    if (chr_is_blank(c)            ||
+        strcmp(c->utf8, " ")  == 0 ||
+        strcmp(c->utf8, "\t") == 0)
+        return 1;
+    else
+        return 0;
+}
+
 void chr_from_vec(vec *chrs, vec *str)
 {
     size_t len, ind;

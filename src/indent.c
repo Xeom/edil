@@ -5,6 +5,7 @@
 #include "indent.h"
 
 int      indent_tab_width = 4;
+int      indent_lvl_width = 4;
 char    *indent_tab_text  = ";";
 col_desc indent_tab_col   = { .fg = col_blue, .bg = col_none };
 
@@ -127,10 +128,100 @@ void indent_add_blanks_chr(vec *line, size_t ind)
     }
 }
 
-void indent_ins_tab(buf *b, cur c);
+void indent_ins_tab(buf *b, cur c)
+{
+    vec *line;
+    chr tab = { .utf8 = "\t" };
 
-size_t indent_get_depth(buf *b, cur c);
-size_t indent_set_depth(buf *b, cur c, size_t depth);
+    line = vec_get(&(b->lines), c.ln);
+    if (!line) return;
+
+    buf_ins(b, c, &tab, 1);
+    indent_add_blanks_line(line, c.ln);
+}
+
+size_t indent_get_depth(buf *b, cur c)
+{
+    vec *line;
+    size_t ind, len;
+
+    line = vec_get(&(b->lines), c.ln);
+    if (!line) return 0;
+
+    len = vec_len(line);
+    for (ind = 0; ind < len; ind++)
+    {
+        chr *c;
+        c = vec_get(line, ind);
+        if (!c || !chr_is_whitespace(c)) break;
+    }
+
+    return ind;
+}
+
+void indent_set_depth(buf *b, cur c, size_t depth)
+{
+    vec *line;
+    size_t orig;
+
+    line = vec_get(&(b->lines), c.ln);
+    if (!line) return;
+
+    orig = indent_get_depth(b, c);
+
+    if (orig)
+        vec_del(line, 0, orig);
+
+    if (depth)
+    {
+        size_t tabs, spaces;
+        chr tab   = { .utf8 = "\t", .fnt = { .fg = col_none, .bg = col_none } };
+        chr space = { .utf8 = " ",  .fnt = { .fg = col_none, .bg = col_none } };
+
+        tabs   = depth / indent_tab_width;
+        spaces = depth % indent_tab_width;
+
+        vec_rep(line, 0, 1, &space, spaces);
+        vec_rep(line, 0, 1, &tab,   tabs);
+    }
+
+    indent_add_blanks_line(line, 0);
+}
+
+cur indent_incr_depth(buf *b, cur c)
+{
+    size_t depth;
+    depth = indent_get_depth(b, c) + indent_lvl_width;
+
+    indent_set_depth(b, c, depth);
+    c.cn += indent_lvl_width;
+
+    c = cur_check_bounds(c, b);
+    c = cur_check_blank(c, b, (cur){ .cn = 1 });
+
+    return c;
+}
+
+cur indent_decr_depth(buf *b, cur c)
+{
+    ssize_t depth;
+    depth = indent_get_depth(b, c) - indent_lvl_width;
+    if (depth < 0) depth = 0;
+
+    indent_set_depth(b, c, depth);
+
+    c.cn -= indent_lvl_width;
+    if (c.cn < 0) c.cn = 0;
+
+    c = cur_check_bounds(c, b);
+    c = cur_check_blank(c, b, (cur){ .cn = -1 });
+
+    return c;
+}
+
+void indent_auto_depth(buf *b, cur c)
+{
+}
 
 void indent_set_tab_width(size_t width)
 {

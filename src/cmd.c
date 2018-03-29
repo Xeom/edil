@@ -27,6 +27,7 @@ static namevec_item cmd_items_static[] =
     CMD_ITEM(goto,      nav_cmd_goto),
     CMD_ITEM(swap,      nav_cmd_swap),
     CMD_ITEM(tabwidth,  indent_cmd_tabwidth),
+    CMD_ITEM(lvlwidth,  indent_cmd_lvlwidth)
 };
 
 /* Increment ind until whitespace isn't found, return this *

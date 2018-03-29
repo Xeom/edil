@@ -7,12 +7,13 @@
 
 typedef enum
 {
-    indent_expand = 0x01,
-    indent_auto   = 0x02,
-    indent_incr   = 0x04
+    indent_spacify = 0x01,
+    indent_auto    = 0x02,
+    indent_incr    = 0x04
 } indent_modes;
 
 extern int      indent_tab_width;
+extern int      indent_lvl_width;
 extern char    *indent_tab_text;
 extern col_desc indent_tab_col;
 
@@ -30,4 +31,12 @@ void indent_add_blanks_chr(vec *line, size_t ind);
 
 void indent_set_tab_width(size_t width);
 
+void indent_ins_tab(buf *b, cur c);
+
+size_t indent_get_depth(buf *b, cur c);
+void   indent_set_depth(buf *b, cur c, size_t depth);
+
+cur indent_incr_depth(buf *b, cur c);
+
+cur indent_decr_depth(buf *b, cur c);
 #endif

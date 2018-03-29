@@ -82,6 +82,47 @@ void vec_rev(vec *v)
     }
 }
 
+/* Repeatedly insert something in a vector */
+void *vec_rep(vec *v, size_t ind, size_t n, const void *data, size_t reps)
+{
+    /* The bytes after the point of insertion, the offset into the data   *
+     * of the point of insertion, and the number of bytes being inserted, *
+     * and the number of bytes per single insertion.                      */
+    size_t bytesafter, offset, bytesins, bytessing;
+
+    if (!v) return NULL;
+    if (n == 0) return NULL;
+
+    offset     = ind * v->width;
+    bytessing  = n   * v->width;
+    bytesins   = bytessing * reps;
+    bytesafter = v->usage - offset;
+
+    /* Don't accept inserts beyond the end of the data */
+    if (offset > v->usage) return NULL;
+
+    /* Increment and resize before putting in the data */
+    v->usage  += bytesins;
+    vec_resize_longer(v);
+
+    /* Shift the bytes after the point of insertion forward */
+    if (bytesafter)
+        memmove(v->data + offset + bytesins, v->data + offset, bytesafter);
+
+    /* Fill the gap, either with data or to zero */
+    if (data)
+    {
+        while (reps--)
+        {
+            memmove(v->data + offset, data, bytessing);
+            offset += bytessing;
+        }
+    }
+    else memset(v->data + offset, 0, bytesins);
+
+    return v->data + offset;
+}
+
 /* BISECTION */
 size_t vec_bst(
     vec *v,
@@ -137,34 +178,7 @@ size_t vec_len(vec *v)
 /* Insert data into a vector */
 void *vec_ins(vec *v, size_t ind, size_t n, const void *data)
 {
-    /* The bytes after the point of insertion, the offset into the data  *
-     * of the point of insertion, and the number of bytes being inserted */
-    size_t bytesafter, offset, bytesins;
-
-    if (!v) return NULL;
-    if (n == 0) return NULL;
-
-    offset     = ind * v->width;
-    bytesins   = n * v->width;
-    bytesafter = v->usage - offset;
-
-    /* Don't accept inserts beyond the end of the data */
-    if (offset > v->usage) return NULL;
-
-    /* Increment and resize before putting in the data */
-    v->usage  += bytesins;
-    vec_resize_longer(v);
-
-    /* Shift the bytes after the point of insertion forward */
-    if (bytesafter)
-        memmove(v->data + offset + bytesins, v->data + offset, bytesafter);
-
-    /* Fill the gap, either with data or to zero */
-    if (data)
-        memmove(v->data + offset, data, bytesins);
-    else memset(v->data + offset, 0,    bytesins);
-
-    return v->data + offset;
+    return vec_rep(v, ind, n, data, 1);
 }
 
 int vec_del(vec *v, size_t ind, size_t n)

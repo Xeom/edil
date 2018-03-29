@@ -151,6 +151,9 @@ cur cur_ins(cur c, buf *b, vec *text)
     buf_ins(b, c, vec_get(text, 0), num);
     c.cn += num;
 
+    c = cur_check_bounds(c, b);
+    c = cur_check_blank(c, b, (cur){ .cn = 1 });
+
     return c;
 }
 
