@@ -5,10 +5,10 @@ ifndef DEBUG
 endif
 
 ifeq ($(DEBUG), yes)
-  FLAGS += -g
+  FLAGS+=-g
   VERSION:=$(VERSION)-debug
 else
-  FLAGS += -O3
+  FLAGS+=-O3
 endif
 
 DFLAGS=$(addprefix -D, $(DEFINES)) \
@@ -16,19 +16,12 @@ DFLAGS=$(addprefix -D, $(DEFINES)) \
        -DVERSION='$(VERSION)'
 
 WFLAGS=$(addprefix -W, $(WARNINGS))
-FLAGS+= $(WFLAGS) --std=c99 -pedantic -pthread -I$(INCDIR) -fPIC -fdiagnostics-color=always $(DFLAGS)
+FLAGS+=$(WFLAGS) --std=c99 -pedantic -pthread -I$(INCDIR) -fPIC -fdiagnostics-color=always $(DFLAGS)
 
 HFILES=$(addprefix $(INCDIR), $(addsuffix .h, $(FILES)))
 CFILES=$(addprefix $(SRCDIR), $(addsuffix .c, $(FILES)))
 OFILES=$(addprefix $(OBJDIR), $(addsuffix .o, $(FILES)))
 DFILES=$(addprefix $(DEPDIR), $(addsuffix .d, $(FILES)))
-
-ifeq (,$(findstring clean,$(MAKECMDGOALS)))
-ifeq (,$(findstring deps,$(MAKECMDGOALS)))
-  $(shell $(MAKE) -j8 deps)
-  include $(DFILES)
-endif
-endif
 
 ERRPIPE=2>>errs.txt || (less -r errs.txt && /bin/false)
 
@@ -86,3 +79,10 @@ clean: clean_err clean_bin clean_obj clean_dep
 
 .PHONEY=deps all clean_err clean_bin clean_obj clean_dep clean
 .DEFAULT_GOAL=all
+
+ifeq (,$(findstring clean,$(MAKECMDGOALS)))
+  ifeq (,$(findstring deps,$(MAKECMDGOALS)))
+    $(info Including depenendencies ...)
+    include $(DFILES)
+  endif
+endif
