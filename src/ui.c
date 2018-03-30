@@ -87,7 +87,7 @@ int ui_is_typable(inp_key key)
 
 void ui_ins(inp_key key)
 {
-    static chr c = CHR("");
+    static chr c = { .fnt = { .fg = col_none, .bg = col_none } };
     static int utf8ind = 0, width;
 
     c.utf8[utf8ind] = (char)(key & 0xff);

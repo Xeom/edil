@@ -4,10 +4,11 @@
 
 #include "indent.h"
 
-int      indent_tab_width = 4;
-int      indent_lvl_width = 4;
-char    *indent_tab_text  = ";";
-col_desc indent_tab_col   = { .fg = col_blue, .bg = col_none };
+indent_flag indent_mode      = 0;
+int         indent_tab_width = 4;
+int         indent_lvl_width = 4;
+char       *indent_tab_text  = ";";
+col_desc    indent_tab_col   = { .fg = col_blue, .bg = col_none };
 
 void indent_print_tab(size_t ind, FILE *f, col fnt)
 {
@@ -71,10 +72,7 @@ void indent_add_blanks_buf(buf *b)
 
 void indent_add_blanks_line(vec *line, size_t ind)
 {
-    size_t len;
-
-    len = vec_len(line);
-    for (; ind < len; ind++)
+    for (; ind < vec_len(line); ind++)
     {
         chr *c;
         c = vec_get(line, ind);
@@ -128,18 +126,6 @@ void indent_add_blanks_chr(vec *line, size_t ind)
     }
 }
 
-void indent_ins_tab(buf *b, cur c)
-{
-    vec *line;
-    chr tab = { .utf8 = "\t" };
-
-    line = vec_get(&(b->lines), c.ln);
-    if (!line) return;
-
-    buf_ins(b, c, &tab, 1);
-    indent_add_blanks_line(line, c.ln);
-}
-
 size_t indent_get_depth(buf *b, cur c)
 {
     vec *line;
@@ -164,6 +150,9 @@ void indent_set_depth(buf *b, cur c, size_t depth)
     vec *line;
     size_t orig;
 
+    if (b->flags & buf_readonly) return c;
+    b->flags |= buf_modified;
+
     line = vec_get(&(b->lines), c.ln);
     if (!line) return;
 
@@ -178,8 +167,16 @@ void indent_set_depth(buf *b, cur c, size_t depth)
         chr tab   = CHR("\t");
         chr space = CHR(" ");
 
-        tabs   = depth / indent_tab_width;
-        spaces = depth % indent_tab_width;
+        if (indent_mode & indent_spacify)
+        {
+            spaces = depth;
+            tabs   = 0;
+        }
+        else
+        {
+            spaces = depth % indent_tab_width;
+            tabs   = depth / indent_tab_width;
+        }
 
         vec_rep(line, 0, 1, &space, spaces);
         vec_rep(line, 0, 1, &tab,   tabs);

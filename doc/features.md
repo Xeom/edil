@@ -13,7 +13,7 @@ of *Edil*.
 
 - [x] Support for tabs
 - [x] More navigation controls
-- [ ] Support for multiple buffers. (*partly*)
+- [x] Support for multiple buffers.
 
 ## 0.0.3
 

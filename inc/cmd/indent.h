@@ -6,5 +6,5 @@
 
 void indent_cmd_lvlwidth(vec *rtn, vec *args, win *w);
 void indent_cmd_tabwidth(vec *rtn, vec *args, win *w);
-
+void indent_cmd_indentmode(vec *rtn, vec *args, win *w);
 #endif

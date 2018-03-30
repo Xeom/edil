@@ -8,14 +8,14 @@
 typedef enum
 {
     indent_spacify = 0x01,
-    indent_auto    = 0x02,
-    indent_incr    = 0x04
-} indent_modes;
+    indent_auto    = 0x02
+} indent_flag;
 
-extern int      indent_tab_width;
-extern int      indent_lvl_width;
-extern char    *indent_tab_text;
-extern col_desc indent_tab_col;
+extern indent_flag indent_mode;
+extern int         indent_tab_width;
+extern int         indent_lvl_width;
+extern char       *indent_tab_text;
+extern col_desc    indent_tab_col;
 
 /* Print out a tab, as if it were in the column *
  * specified by ind.                            */
