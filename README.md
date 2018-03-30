@@ -33,61 +33,7 @@ in mind.
 
 ## Using Edil
 
-### Modes
+More detailed documentation can be found in the `docs/` directory:
 
-Each mode can be entered into by pressing control plus a key.
-
-* `Ctrl+A` - **buffer mode**: This mode allows the user to edit text in
-                              the currently selected buffer.
-* `Ctrl+X` - **bar mode**: This mode allows the user to type and run
-                           commands for the currently selected window.
-* `Ctrl+K` - **key mode**: This mode types ascii representations of user
-                           keystrokes into the current buffer. e.g. 
-                           `(031 1)`, `(106 del)`, `(657 Ctrl+Esc+W)`
-
-
-### Commands
-
-*Edil* has various commands that can be accessed in bar mode.
-
-#### Files
-
-* `load [file]` - Associate a file with the currently selected buffer,
-                  and load that file's contents to the buffer. If no
-                  file is specified, and one is already associated, reload
-                  that file.
-
-* `save` - Save the contents of the current buffer to the file associated with it.
-
-* `cd [path]` - Move the current working directory of the application to
-                the location specified by `[path]`. If no path is specified,
-                then do not change the working directory. Then return the
-                current working directory.
-
-* `discard` - Discard and delete the contents of the current buffer.
-
-* `associate [file]` - Associate the current buffer with a specific file. Then
-                       return the current file associated with the current buffer.
-
-
-#### Buffers
-
-* `new [file]` - Open a new buffer. If a file is specified, that file is loaded
-                 to the new buffer, equivialent to `new` followed by `load [file]`.
-
-* `next` - Go to the next buffer.
-
-* `prev` - Go to the previous buffer.
-
-#### Navigation
-
-* `goto [line] [col]` - Goto the specified line and column, if given. Then return
-                        the new location of the cursor.
-
-* `swap` - Swap the position of the primary and secondary cursors.
-
-#### Indentation
-
-* `tabwidth [number]` - Set the width tabs are displayed as if a number is given.
-                        Then return the current value.
-                       
+* [Command documentation](doc/commands.md) can be found in `docs/commands.md`.
+* [Keybind documentation](doc/keys.md) can be found in `docs/keys.md`.
