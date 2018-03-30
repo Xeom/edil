@@ -37,6 +37,6 @@ size_t indent_get_depth(buf *b, cur c);
 void   indent_set_depth(buf *b, cur c, size_t depth);
 
 cur indent_incr_depth(buf *b, cur c);
-
 cur indent_decr_depth(buf *b, cur c);
+cur indent_auto_depth(buf *b, cur c);
 #endif

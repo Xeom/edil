@@ -210,10 +210,10 @@ static void ui_handle_indent(inp_key key)
     case inp_key_tab:
         win_cur->pri = indent_incr_depth(win_cur->b, win_cur->pri);
         break;
-    case inp_key_tab | inp_key_esc:
+    case '[' | inp_key_esc:
         win_cur->pri = indent_decr_depth(win_cur->b, win_cur->pri);
         break;
-    case '[' | inp_key_esc:
+    case inp_key_tab | inp_key_esc:
         vec_init(&tabvec, sizeof(chr));
         vec_ins(&tabvec, 0, 1, &CHR("\t"));
         win_cur->pri = cur_ins(win_cur->pri, win_cur->b, &tabvec);

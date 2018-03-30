@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "chr.h"
 #include "indent.h"
 

@@ -150,7 +150,7 @@ void indent_set_depth(buf *b, cur c, size_t depth)
     vec *line;
     size_t orig;
 
-    if (b->flags & buf_readonly) return c;
+    if (b->flags & buf_readonly) return;
     b->flags |= buf_modified;
 
     line = vec_get(&(b->lines), c.ln);
@@ -216,8 +216,20 @@ cur indent_decr_depth(buf *b, cur c)
     return c;
 }
 
-void indent_auto_depth(buf *b, cur c)
+cur indent_auto_depth(buf *b, cur c)
 {
+    ssize_t depth;
+
+    if (!(indent_mode & indent_auto))
+        return c;
+
+    depth = indent_get_depth(b, (cur){ .ln = c.ln - 1 });
+    if (depth < 0) depth = 0;
+
+    indent_set_depth(b, c, depth);
+    c.cn = depth;
+
+    return c;
 }
 
 void indent_set_tab_width(size_t width)

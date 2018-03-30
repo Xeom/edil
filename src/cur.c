@@ -1,3 +1,5 @@
+#include "indent.h"
+
 #include "cur.h"
 
 cur_mode_type cur_mode;
@@ -181,6 +183,8 @@ cur cur_enter(cur c, buf *b)
         buf_ins(b, rtn, vec_get(line, c.cn), num);
 	    buf_del(b, c,   num);
     }
+
+    rtn = indent_auto_depth(b, rtn);
 
     return rtn;
 }
