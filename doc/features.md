@@ -9,7 +9,7 @@ of *Edil*.
 - [x] Can edit files
 - [x] Can save files
 
-## 0.0.2
+## 0.0.2 (Complete)
 
 - [x] Support for tabs
 - [x] More navigation controls
