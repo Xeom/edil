@@ -72,7 +72,7 @@ size_t chr_from_mem(vec *chrs, char *str, size_t len)
     {
         size_t width;
         char  *bytes;
-        chr    c = { .fnt = { .attr = 0, .fg = col_none, .bg = col_none } };
+        chr    c = CHR("");
 
         bytes = str + ind;
 

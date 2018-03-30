@@ -87,7 +87,7 @@ int ui_is_typable(inp_key key)
 
 void ui_ins(inp_key key)
 {
-    static chr c = { .fnt = { .fg = col_none, .bg = col_none } };
+    static chr c = CHR("");
     static int utf8ind = 0, width;
 
     c.utf8[utf8ind] = (char)(key & 0xff);
@@ -215,7 +215,7 @@ static void ui_handle_indent(inp_key key)
         break;
     case '[' | inp_key_esc:
         vec_init(&tabvec, sizeof(chr));
-        vec_ins(&tabvec, 0, 1, &(chr){ .utf8 = "\t", .fnt= { .bg = col_none, .fg = col_none } });
+        vec_ins(&tabvec, 0, 1, &CHR("\t"));
         win_cur->pri = cur_ins(win_cur->pri, win_cur->b, &tabvec);
         vec_kill(&tabvec);
         break;

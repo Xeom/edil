@@ -15,7 +15,7 @@ void indent_print_tab(size_t ind, FILE *f, col fnt)
     size_t len, width;
     col tabcol;
 
-    width = indent_get_width(&(chr){ .utf8 = "\t" }, ind);
+    width = indent_get_width(&CHR("\t"), ind);
     len   = strlen(indent_tab_text);
 
     tabcol = col_update(fnt, indent_tab_col);
@@ -175,8 +175,8 @@ void indent_set_depth(buf *b, cur c, size_t depth)
     if (depth)
     {
         size_t tabs, spaces;
-        chr tab   = { .utf8 = "\t", .fnt = { .fg = col_none, .bg = col_none } };
-        chr space = { .utf8 = " ",  .fnt = { .fg = col_none, .bg = col_none } };
+        chr tab   = CHR("\t");
+        chr space = CHR(" ");
 
         tabs   = depth / indent_tab_width;
         spaces = depth % indent_tab_width;
@@ -238,3 +238,4 @@ void indent_set_tab_width(size_t width)
 
     win_out_all(stdout);
 }
+

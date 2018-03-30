@@ -5,6 +5,11 @@
 
 typedef struct chr_s chr;
 
+#define CHR(_utf8) (chr){                                \
+    .utf8 = _utf8,                                       \
+    .fnt = { .fg = col_none, .bg = col_none, .attr = 0 } \
+}
+
 struct chr_s
 {
     char utf8[6];

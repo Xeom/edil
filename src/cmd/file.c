@@ -339,8 +339,8 @@ void file_clr_win(win *w)
 static void file_load_line(vec *line, FILE *f)
 {
     size_t width, ind;
-    chr    utfchr = { .fnt = { .fg = col_none, .bg = col_none } };
-    int   c;
+    chr utfchr = CHR("");
+    int c;
 
     width = 0;
     ind   = 0;
