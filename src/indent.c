@@ -245,6 +245,6 @@ void indent_set_tab_width(size_t width)
         indent_add_blanks_buf(*b);
     }
 
-    win_out_all(stdout);
+    win_out_all();
 }
 

@@ -180,8 +180,8 @@ int main(int argc, char **argv)
     w.pri = (cur){0, 14};
     w.sec = (cur){0, 14};
 
-    win_out_after(&w, (cur){0, 0}, stdout);
-    win_out_bar(&w, stdout);
+    win_out_after(&w, (cur){0, 0});
+    win_out_bar(&w);
 
     loop();
 

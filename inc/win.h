@@ -45,16 +45,16 @@ void win_bar_query(win *w, vec *prompt, void (*cb)(win *w, vec *chrs));
 
 void win_kill(win *w);
 
-void win_out_bar(win *w, FILE *f);
+void win_out_bar(win *w);
 
-void win_out_line(win *w, cur c, FILE *f);
-void win_out_after(win *w, cur c, FILE *f);
+void win_out_line(win *w, cur c);
+void win_out_after(win *w, cur c);
 
-void win_buf_out_line(buf *b, cur c, FILE *f);
-void win_buf_out_after(buf *b, cur c, FILE *f);
+void win_buf_out_line(buf *b, cur c);
+void win_buf_out_after(buf *b, cur c);
 
-void win_out_all(FILE *f);
+void win_out_all(void);
 
-void win_show_cur(win *w, cur c, FILE *f);
+void win_show_cur(win *w, cur c);
 
 #endif

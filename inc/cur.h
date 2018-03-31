@@ -34,7 +34,7 @@ cur cur_check_blank(cur c, buf *b, cur dir);
 cur cur_move(cur c, buf *b, cur dir);
 
 cur cur_home(cur c, buf *b);
-cur cur_end(cur c, buf *b);
+cur cur_end(cur c,  buf *b);
 cur cur_pgup(cur c, win *w);
 cur cur_pgdn(cur c, win *w);
 

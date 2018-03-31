@@ -16,11 +16,12 @@ cur cur_check_bounds(cur c, buf *b)
     len = buf_line_len(b, c);
 
     if (c.cn < 0) c.cn = 0;
-    else if (c.cn > (ssize_t)len) c.cn = len;
+    else if (c.cn >  (ssize_t)len) c.cn = len;
 
     return c;
 }
 
+/* Make sure a cursor isn't inside a multi-column character */
 cur cur_check_blank(cur c, buf *b, cur dir)
 {
     vec *line;

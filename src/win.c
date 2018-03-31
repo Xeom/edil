@@ -5,7 +5,7 @@
 
 #include "win.h"
 
-static int  win_out_goto(win *w, cur *c, FILE *f);
+static int  win_out_goto(win *w, cur *c);
 static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *tofree);
 
 static void win_bar_fill_fname(win *w, vec *bar);
@@ -80,7 +80,7 @@ ssize_t win_min_cn(win *w)
     return w->scrx;
 }
 
-static int win_out_goto(win *w, cur *c, FILE *f)
+static int win_out_goto(win *w, cur *c)
 {
     if (c->ln < win_min_ln(w)
      || c->ln > win_max_ln(w))
@@ -92,7 +92,11 @@ static int win_out_goto(win *w, cur *c, FILE *f)
     if (c->cn < win_min_cn(w))
         c->cn = win_min_cn(w);
 
-    out_goto(c->cn - w->scrx + w->xpos + 1, c->ln - w->scry + w->ypos + 1, f);
+    out_goto(
+        c->cn - w->scrx + w->xpos + 1, 
+        c->ln - w->scry + w->ypos + 1, 
+        stdout
+    );
 
     return 1;
 }
@@ -167,7 +171,7 @@ static void win_bar_fill(win *w, vec *bar)
     chr_format(bar, " ");
 }
 
-void win_out_bar(win *w, FILE *f)
+void win_out_bar(win *w)
 {
     vec    bar;
     size_t len, ind;
@@ -192,8 +196,8 @@ void win_out_bar(win *w, FILE *f)
         c->fnt = col_update(c->fnt, win_bar_col);
     }
 
-    out_goto(w->xpos + 1, w->ypos + w->rows, f);
-    out_chrs(vec_get(&bar, 0), w->cols, f);
+    out_goto(w->xpos + 1, w->ypos + w->rows, stdout);
+    out_chrs(vec_get(&bar, 0), w->cols, stdout);
 
     vec_kill(&bar);
 }
@@ -307,17 +311,17 @@ static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
     return line;
 }
 
-void win_out_line(win *w, cur c, FILE *f)
+void win_out_line(win *w, cur c)
 {
     int      needsfree;
     vec     *line;
     ssize_t   outlen;
 
-    if (win_out_goto(w, &c, f) == 0) return;
+    if (win_out_goto(w, &c) == 0) return;
 
     if (c.ln >= (ssize_t)buf_len(w->b))
     {
-        out_blank_line(f);
+        out_blank_line(stdout);
         return;
     }
 
@@ -330,9 +334,9 @@ void win_out_line(win *w, cur c, FILE *f)
     if (outlen < 0)       outlen = 0;
     if (outlen > w->cols) outlen = w->cols;
 
-    out_chrs(vec_get(line, c.cn), outlen, f);
+    out_chrs(vec_get(line, c.cn), outlen, stdout);
 
-    if (outlen != w->cols) out_clr_line(f);
+    if (outlen != w->cols) out_clr_line(stdout);
 
     if (needsfree)
     {
@@ -341,19 +345,19 @@ void win_out_line(win *w, cur c, FILE *f)
     }
 }
 
-void win_out_after(win *w, cur c, FILE *f)
+void win_out_after(win *w, cur c)
 {
     if (c.ln < win_min_ln(w))
         c = (cur){ .ln = w->scry, .cn = 0 };
 
     while (c.ln <= win_max_ln(w))
     {
-        win_out_line(w, c, f);
+        win_out_line(w, c);
         c = (cur){ .ln = c.ln + 1, .cn = 0 };
     }
 }
 
-void win_show_cur(win *w, cur c, FILE *f)
+void win_show_cur(win *w, cur c)
 {
     int needsupdate = 0;
 
@@ -372,20 +376,22 @@ void win_show_cur(win *w, cur c, FILE *f)
     }
 
     if (needsupdate)
-        win_out_after(w, (cur){0, 0}, f);
+        win_out_after(w, (cur){0, 0});
 }
 
-void win_buf_out_line(buf *b, cur c, FILE *f)
+void win_buf_out_line(buf *b, cur c)
 {
-    win_out_line(win_cur, c, f);
+    if (b == win_cur->b)
+        win_out_line(win_cur, c);
 }
 
-void win_buf_out_after(buf *b, cur c, FILE *f)
+void win_buf_out_after(buf *b, cur c)
 {
-    win_out_after(win_cur, c, f);
+    if (b == win_cur->b)
+        win_out_after(win_cur, c);
 }
 
-void win_out_all(FILE *f)
+void win_out_all(void)
 {
-    win_out_after(win_cur, (cur){0, 0}, f);
+    win_out_after(win_cur, (cur){0, 0});
 }
