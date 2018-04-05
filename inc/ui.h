@@ -26,4 +26,5 @@ void ui_ins(inp_key key);
 
 void ui_handle(inp_key key);
 
+void ui_activate_cmd(void);
 #endif

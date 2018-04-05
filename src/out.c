@@ -158,8 +158,7 @@ void out_init(FILE *f)
 
     memcpy(&out_tattr_orig, &tattr, sizeof(struct termios));
 
-    tattr.c_lflag -= tattr.c_lflag & ICANON;
-    tattr.c_lflag -= tattr.c_lflag & ECHO;
+    tattr.c_lflag &= ~(ICANON | ECHO | ISIG);
 
     tattr.c_cc[VMIN]  = 1;
     tattr.c_cc[VTIME] = 0;
