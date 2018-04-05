@@ -77,8 +77,12 @@ void nav_cmd_swap(vec *rtn, vec *args, win *w)
 
     if (vec_len(args) != 1)
     {
-        chr_format(rtn, "err: This command takes no arguments");
+        chr_from_str(rtn, "err: This command takes no arguments");
         return;
+    }
+    else
+    {
+        chr_from_str(rtn, "Cursors swapped");
     }
 
     tmp    = w->pri;
