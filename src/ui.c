@@ -170,12 +170,8 @@ static void ui_handle_kcd(inp_key key)
 
 static void ui_handle_move(inp_key key)
 {
-    cur  c, prev;
-    buf *b;
     win *w;
     w = win_cur;
-    b = w->b;
-    c = w->pri;
 
     switch(key)
     {
@@ -194,9 +190,7 @@ static void ui_handle_move(inp_key key)
 void ui_handle_buf(inp_key key)
 {
     win *w;
-    cur prev;
     w = win_cur;
-    prev = w->pri;
 
     if (ui_is_typable(key))
     {
@@ -272,9 +266,7 @@ static void ui_handle_indent(inp_key key)
 {
     vec tabvec;
     win *w;
-    buf *b;
     w = win_cur;
-    b = w->b;
 
     switch (key)
     {
