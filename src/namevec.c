@@ -48,7 +48,14 @@ namevec_item *namevec_get_str(vec *v, char *str, size_t *n)
     ind = vec_bst(v, &(namevec_item){ .name = str }, namevec_cmp);
 
     rtn = vec_get(v, ind);
+
     if (!rtn) return NULL;
+
+    if (strcmp(str, rtn->name) == 0)
+    {
+        *n = 1;
+        return rtn;
+    }
 
     next = rtn;
 
