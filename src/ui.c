@@ -254,6 +254,8 @@ static void ui_handle_shortcut(inp_key key)
     case 'C' | inp_key_ctrl: cmd = "swap"; break;
     case 'N' | inp_key_ctrl: cmd = "next"; break;
     case 'V' | inp_key_ctrl: cmd = "prev"; break;
+    case inp_key_tab:        cmd = "incrindent"; break;
+    case '[' | inp_key_esc:  cmd = "decrindent"; break; /* Shift + Tab */
     }
 
     if (cmd)
@@ -276,12 +278,6 @@ static void ui_handle_indent(inp_key key)
 
     switch (key)
     {
-    case inp_key_tab:
-        w->pri = indent_incr_depth(b, w->pri);
-        break;
-    case '[' | inp_key_esc: /* Shift + Tab */
-        w->pri = indent_decr_depth(b, w->pri);
-        break;
     case inp_key_tab | inp_key_esc:
         vec_init(&tabvec, sizeof(chr));
         vec_ins(&tabvec, 0, 1, &CHR("\t"));
