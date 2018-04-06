@@ -8,8 +8,8 @@ Basic editing
 
 | Key             | Binding                                           |
 | ---             |   ---                                             |
-| *Arrow keys*    | Move primary cursor.                              |
-| *Printable key* | Type character.                                   |
+| __Arrow keys__    | Move primary cursor.                              |
+| __Printable key__ | Type character.                                   |
 | `Return`        | Insert newline.                                   |
 | `Home`, `End`   | Move to the end and start of the current line.    |
 | `PgUp`, `PgDn`  | Move to the top and bottom of the current screen. |

@@ -66,3 +66,11 @@ Commands for Indentation
   * `auto` - If this mode is active, when the enter key is pressed, the new line
       is automatically indented to the same indentation level as the previous
       line.
+
+* `indent [val]` - Indent the current line a certain distance, if one is specified.
+    Then display the depth the line is indented to.
+
+* `incrindent`, `decrindent` - Increment  or decrement the indentation level of 
+    the current line.
+
+* `autoindent` - Automatically indent the current line. 
