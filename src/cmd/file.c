@@ -43,7 +43,7 @@ void file_cmd_new(vec *rtn, vec *args, win *w)
     w->pri = (cur){0, 0};
     w->sec = (cur){0, 0};
 
-    win_out_after(w, (cur){0, 0}, stdout);
+    win_out_after(w, (cur){0, 0});
 }
 
 void file_cmd_next(vec *rtn, vec *args, win *w)
@@ -56,7 +56,7 @@ void file_cmd_next(vec *rtn, vec *args, win *w)
     w->pri = (cur){0, 0};
     w->sec = (cur){0, 0};
 
-    win_out_after(w, (cur){0, 0}, stdout);
+    win_out_after(w, (cur){0, 0});
     chr_format(rtn, "switched buffer %d -> %d", ring_get_ind(prev), ring_get_ind(w->b));
 }
 
@@ -70,7 +70,7 @@ void file_cmd_prev(vec *rtn, vec *args, win *w)
     w->pri = (cur){0, 0};
     w->sec = (cur){0, 0};
 
-    win_out_after(w, (cur){0, 0}, stdout);
+    win_out_after(w, (cur){0, 0});
     chr_format(rtn, "switched buffer %d -> %d", ring_get_ind(prev), ring_get_ind(w->b));
 }
 

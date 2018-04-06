@@ -28,7 +28,11 @@ static namevec_item cmd_items_static[] =
     CMD_ITEM(swap,      nav_cmd_swap),
     CMD_ITEM(tabwidth,  indent_cmd_tabwidth),
     CMD_ITEM(lvlwidth,  indent_cmd_lvlwidth),
-    CMD_ITEM(indentmode, indent_cmd_indentmode)
+    CMD_ITEM(indentmode, indent_cmd_indentmode),
+    CMD_ITEM(incrindent, indent_cmd_incrindent),
+    CMD_ITEM(decrindent, indent_cmd_decrindent),
+    CMD_ITEM(autoindent, indent_cmd_autoindent),
+    CMD_ITEM(indent,     indent_cmd_indent)
 };
 
 /* Increment ind until whitespace isn't found, return this *

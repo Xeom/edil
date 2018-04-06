@@ -6,6 +6,7 @@
 #include "cmd/indent.h"
 
 #define INDENT_MAX_TABWIDTH 64
+#define INDENT_MAX_SENSIBLE_DEPTH    256
 
 static void indent_mode_arg(char *str, vec *rtn);
 
@@ -129,4 +130,75 @@ static void indent_mode_arg(char *str, vec *rtn)
         chr_format(rtn, "Disabled '%s' mode", str);
         indent_mode &= ~flag;
     }
+}
+
+void indent_cmd_incrindent(vec *rtn, vec *args, win *w)
+{
+    ssize_t depth;
+
+    w->pri = indent_incr_depth(w->b, w->pri);
+    win_out_line(w, (cur){ .ln = w->pri.ln });
+
+    depth = indent_get_depth(w->b, w->pri);
+    chr_format(rtn, "depth: %ld", depth);
+}
+
+void indent_cmd_decrindent(vec *rtn, vec *args, win *w)
+{
+    ssize_t depth;
+
+    w->pri = indent_decr_depth(w->b, w->pri);
+    win_out_line(w, (cur){ .ln = w->pri.ln });
+
+    depth = indent_get_depth(w->b, w->pri);
+    chr_format(rtn, "depth: %ld", depth);
+}
+
+void indent_cmd_autoindent(vec *rtn, vec *args, win *w)
+{
+    ssize_t depth;
+
+    w->pri = indent_auto_depth(w->b, w->pri);
+    win_out_line(w, (cur){ .ln = w->pri.ln });
+
+    depth = indent_get_depth(w->b, w->pri);
+    chr_format(rtn, "depth: %ld", depth);
+}
+
+void indent_cmd_indent(vec *rtn, vec *args, win *w)
+{
+    ssize_t depth;
+
+    if (vec_len(args) == 2)
+    {
+        vec   arg;
+        char *str;
+
+        vec_init(&arg, sizeof(char));
+        chr_to_str(vec_get(args, 1), &arg);
+
+        str = vec_get(&arg,  0);
+
+        if (sscanf(str, "%ld", &depth) != 1 ||
+            depth > INDENT_MAX_SENSIBLE_DEPTH ||
+            depth < 0)
+        {
+            chr_format(rtn, "err: '%s' is not a sensible depth, ", str);
+        }
+        else
+        {
+            indent_set_depth(w->b, w->pri, depth);
+            w->pri.cn = 0;
+
+            if (w->sec.ln == w->pri.ln)
+                w->sec.cn = 0;
+
+            win_out_line(w, (cur){ .ln = w->pri.ln });
+        }
+
+        vec_kill(&arg);
+    }
+
+    depth = indent_get_depth(w->b, w->pri);
+    chr_format(rtn, "depth: %ld", depth);
 }
