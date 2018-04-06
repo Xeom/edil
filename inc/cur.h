@@ -26,20 +26,19 @@ extern cur_mode_type cur_mode;
 # include "buf.h"
 # include "win.h"
 
-cur cur_enter(cur c, buf *b);
+void cur_enter(win *w);
 
 cur cur_check_bounds(cur c, buf *b);
 cur cur_check_blank(cur c, buf *b, cur dir);
 
-cur cur_move(cur c, buf *b, cur dir);
+void cur_move(win *w, cur dir);
 
-cur cur_home(cur c, buf *b);
-cur cur_end(cur c,  buf *b);
-cur cur_pgup(cur c, win *w);
-cur cur_pgdn(cur c, win *w);
+void cur_home(win *w);
+void cur_end(win *w);
+void cur_pgup(win *w);
+void cur_pgdn(win *w);
 
-cur cur_del(cur c, buf *b);
-
-cur cur_ins(cur c, buf *b, vec *text);
+void cur_del(win *w);
+void cur_ins(win *w, vec *text);
 
 #endif

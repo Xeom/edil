@@ -68,7 +68,7 @@ void ui_ins_flush(void)
 
     switch (ui_mode)
     {
-        case ui_mode_buf: w->pri = cur_ins(w->pri, w->b, &ui_ins_buf); break;
+        case ui_mode_buf: cur_ins(w, &ui_ins_buf); break;
         case ui_mode_bar: win_bar_ins(w, &ui_ins_buf); break;
     }
 
@@ -162,7 +162,7 @@ static void ui_handle_kcd(inp_key key)
 
     chr_from_str(&chrs, buf);
 
-    w->pri = cur_ins(w->pri, w->b, &chrs);
+    cur_ins(w, &chrs);
 
     win_out_line(w, prev);
     vec_kill(&chrs);
@@ -179,44 +179,15 @@ static void ui_handle_move(inp_key key)
 
     switch(key)
     {
-    case inp_key_up:
-        c = cur_move(c, b, (cur){ .ln = -1 });
-        break;
-    case inp_key_down:
-        c = cur_move(c, b, (cur){ .ln =  1 });
-        break;
-    case inp_key_left:
-        c = cur_move(c, b, (cur){ .cn = -1 });
-        break;
-    case inp_key_right:
-        c = cur_move(c, b, (cur){ .cn =  1 });
-        break;
+    case inp_key_up:    cur_move(w, (cur){ .ln = -1 }); break;
+    case inp_key_down:  cur_move(w, (cur){ .ln =  1 }); break;
+    case inp_key_left:  cur_move(w, (cur){ .cn = -1 }); break;
+    case inp_key_right: cur_move(w, (cur){ .cn =  1 }); break;
 
-    case inp_key_home:
-        c = cur_home(c, b);
-        break;
-    case inp_key_end:
-        c = cur_end(c, b);
-        break;
-    case inp_key_pgdn:
-        c = cur_pgdn(c, w);
-        break;
-    case inp_key_pgup:
-        c = cur_pgup(c, w);
-        break;
-    }
-
-    prev = w->pri;
-    w->pri = c;
-
-    if (prev.ln == w->pri.ln)
-    {
-        win_out_line(w, (w->pri.cn > prev.cn) ? prev : w->pri);
-    }
-    else
-    {
-        win_out_line(w, w->pri);
-        win_out_line(w, prev);
+    case inp_key_home: cur_home(w); break;
+    case inp_key_end:  cur_end(w);  break;
+    case inp_key_pgdn: cur_pgdn(w); break;
+    case inp_key_pgup: cur_pgup(w); break;
     }
 }
 
@@ -233,21 +204,17 @@ void ui_handle_buf(inp_key key)
     }
     else switch (key)
     {
-    case inp_key_enter:
-        w->pri = cur_enter(w->pri, w->b);
-        win_out_after(w, prev);
-        break;
+    case inp_key_enter: cur_enter(w); break;
 
     case inp_key_back:
-        w->pri = cur_move(w->pri, w->b, (cur){ .cn = -1 });
-    case inp_key_del:
-        w->pri = cur_del (w->pri, w->b);
+        if (memcmp(&(w->pri), &(cur){0, 0}, sizeof(cur)) == 0)
+            break;
 
-        if (prev.ln != w->pri.ln)
-            win_out_after(w, w->pri);
-        else
-            win_out_line(w, w->pri);
+        cur_move(w, (cur){ .cn = -1 });
+    case inp_key_del:
+        cur_del(w);
         break;
+
     default:
         ui_handle_move(key);
         ui_handle_indent(key);
@@ -318,7 +285,7 @@ static void ui_handle_indent(inp_key key)
     case inp_key_tab | inp_key_esc:
         vec_init(&tabvec, sizeof(chr));
         vec_ins(&tabvec, 0, 1, &CHR("\t"));
-        w->pri = cur_ins(w->pri, b, &tabvec);
+        cur_ins(w, &tabvec);
         vec_kill(&tabvec);
         break;
     }
