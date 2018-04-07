@@ -109,12 +109,14 @@ void cur_pgdn(win *w)
     cur c;
     c = w->pri;
 
-    c.cn = win_max_ln(w) + 1;
+    c.ln = win_max_ln(w) + 1;
 
     c = cur_check_bounds(c, w->b);
     c = cur_check_blank(c, w->b, (cur){ .ln = 1 });
 
     w->pri = c;
+
+    win_out_after(w, (cur){0, 0});
 }
 
 void cur_pgup(win *w)
@@ -128,6 +130,8 @@ void cur_pgup(win *w)
     c = cur_check_blank(c, w->b, (cur){ .ln = -1 });
 
     w->pri = c;
+
+    win_out_after(w, (cur){0, 0});
 }
 
 void cur_del(win *w)
