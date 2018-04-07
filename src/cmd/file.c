@@ -270,7 +270,7 @@ void file_cmd_chdir(vec *rtn, vec *args, win *w)
         vec_kill(&dir);
     }
 
-    if (getcwd(cwd, sizeof(cwd)) == NULL)
+    if (getcwd(cwd, PATH_MAX) == NULL)
     {
         chr_format(rtn, "err: [%d] %s", errno, strerror(errno));
     }
