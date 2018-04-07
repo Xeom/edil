@@ -1,6 +1,8 @@
 #if !defined(CON_H)
 # define CON_H
 # include "inp.h"
+# include "vec.h"
+# include "win.h"
 
 typedef enum
 {
@@ -11,6 +13,8 @@ typedef enum
 
 extern int ui_alive;
 extern ui_mode_type ui_mode;
+
+void ui_cmd_cb(win *w, vec *cmd);
 
 void ui_init(void);
 

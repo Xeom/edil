@@ -2,7 +2,6 @@
 
 #include "indent.h"
 #include "cur.h"
-#include "win.h"
 #include "chr.h"
 #include "cmd.h"
 #include "out.h"
@@ -12,17 +11,17 @@
 static void ui_handle_buf(inp_key key);
 static void ui_handle_kcd(inp_key key);
 static void ui_handle_bar(inp_key key);
-static void ui_cmd_cb(win *w, vec *chrs);
 static void ui_handle_indent(inp_key key);
 static void ui_handle_move(inp_key key);
 static void ui_handle_ins(inp_key key);
 static void ui_handle_shortcut(inp_key key);
+
 ui_mode_type ui_mode = ui_mode_buf;
 int ui_alive = 1;
 char *ui_cmd_prompt = "$ ";
 vec ui_ins_buf;
 
-static void ui_cmd_cb(win *w, vec *chrs)
+void ui_cmd_cb(win *w, vec *chrs)
 {
     vec args, rtn;
     size_t    argind;
