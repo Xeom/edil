@@ -30,7 +30,7 @@ static void out_handle_winch(int sign);
 
 ssize_t out_cols, out_rows;
 
-/* The colour and text to be printed when a line that doesn't exist *
+/* The color and text to be printed when a line that doesn't exist *
  * is displayed (not just empty, a line beyond the end of the buf)  */
 char *out_blank_line_text = "\xc2\xbb";
 col out_blank_line_col = {
@@ -42,7 +42,7 @@ col_desc out_log_col_desc  = {
     .fg = col_null, .bg = col_null
 };
 
-/* Colour of trailing spaces in the log bar */
+/* Color of trailing spaces in the log bar */
 col out_log_space_col = {
     .fg = col_black | col_bright, .bg = col_none, .attr = col_under
 };
