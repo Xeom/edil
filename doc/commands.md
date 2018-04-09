@@ -66,6 +66,11 @@ Commands for Indentation
   * `auto` - If this mode is active, when the enter key is pressed, the new line
       is automatically indented to the same indentation level as the previous
       line.
+  * `trim` - When the enter key is pressed, the trailing whitespace on the current
+      line is trimmed.
+  * `skipblanks` - Blank lines are not considered when calculating the automatic
+      indent, and so the automatic level is the same as the previous non-blank
+      line. A blank line is one consisting only of whitespace.
 
 * `indent [val]` - Indent the current line a certain distance, if one is specified.
     Then display the depth the line is indented to.
