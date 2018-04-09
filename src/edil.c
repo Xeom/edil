@@ -184,6 +184,17 @@ static void loop(void)
     {
         fflush(stdout);
         inp_wait();
+
+        if (out_to_resize)
+        {
+            out_to_resize = 0;
+            win_cur->cols = out_cols;
+            win_cur->rows = out_rows - 1;
+            out_goto(0, out_rows, stdout);
+            out_clr_line(stdout);
+            win_out_all();
+            win_out_bar(win_cur);
+        }
     }
 }
 

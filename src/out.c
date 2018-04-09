@@ -29,6 +29,7 @@
 static void out_handle_winch(int sign);
 
 ssize_t out_cols, out_rows;
+int out_to_resize;
 
 /* The colour and text to be printed when a line that doesn't exist *
  * is displayed (not just empty, a line beyond the end of the buf)  */
@@ -144,6 +145,8 @@ static void out_handle_winch(int sign)
 
     out_cols = w.ws_col;
     out_rows = w.ws_row;
+
+    out_to_resize = 1;
 
     fflush(stdout);
 }

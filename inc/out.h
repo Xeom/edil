@@ -10,6 +10,7 @@ extern col out_blank_line_col;
 extern char *out_blank_line_text;
 extern col_desc out_cur1_col_desc;
 extern col_desc out_cur2_col_desc;
+extern int out_to_resize;
 
 extern ssize_t out_rows, out_cols;
 
