@@ -46,7 +46,7 @@ static char *help = "\n"
 
 "More complete documentation can be found in the README.md\n"
 "file, and in the doc/ directory of my repository."
-"This should be availible at http://github.com/Xeom/edil.\n\n"
+"This should be availible at http://github.com/Xeom/edil-2.0.\n\n"
 
 "Usage: edil [options ...] [files ...]\n\n"
 
