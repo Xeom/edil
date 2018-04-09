@@ -45,7 +45,7 @@ $(OBJDIR)%.o: $(SRCDIR)%.c conf.mk
 $(DEPDIR)%.d: $(SRCDIR)%.c $(HFILES) conf.mk
 	@mkdir -p $(@D)
 	@printf $(OBJDIR) > $@
-	@gcc -MM $(FLAGS) $< >> $@
+	@gcc -MM -MT $(@:$(DEPDIR)%.d=%.o) $(FLAGS) $< >> $@
 	@printf "Created $@\n"
 
 $(BINDIR)libedil.so: $(OFILES)
