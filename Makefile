@@ -70,7 +70,7 @@ all: deps $(BINDIR)libedil.a $(BINDIR)libedil.so $(BINDIR)edil
 
 clean: clean_err clean_bin clean_obj clean_dep
 
-.PHONEY=deps all clean_err clean_bin clean_obj clean_dep clean
+.PHONEY=deps all clean_err clean_bin clean_obj clean_dep clean install uninstall
 .DEFAULT_GOAL=all
 
 $(shell rm -f errs.txt)

@@ -114,6 +114,10 @@ static void indent_mode_arg(char *str, vec *rtn)
         flag = indent_spacify;
     else if (strcmp(str, "auto") == 0)
         flag = indent_auto;
+    else if (strcmp(str, "skipblank") == 0)
+        flag = indent_skipblank;
+    else if (strcmp(str, "trim") == 0)
+        flag = indent_trim;
     else
     {
         chr_format(rtn, "Unknown mode '%s'", str);

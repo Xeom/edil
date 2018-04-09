@@ -223,8 +223,10 @@ void cur_enter(win *w)
 
     rtn = indent_auto_depth(w->b, rtn);
 
+    indent_trim_end(w->b, w->pri);
+
     prev = w->pri;
     w->pri = rtn;
-    win_out_after(w, prev);
+    win_out_after(w, (cur){ .ln = prev.ln });
 }
 

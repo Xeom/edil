@@ -7,8 +7,10 @@
 
 typedef enum
 {
-    indent_spacify = 0x01,
-    indent_auto    = 0x02
+    indent_spacify   = 0x01,
+    indent_auto      = 0x02,
+    indent_skipblank = 0x04,
+    indent_trim      = 0x08
 } indent_flag;
 
 extern indent_flag indent_mode;
@@ -33,8 +35,10 @@ void indent_set_tab_width(size_t width);
 
 void indent_ins_tab(buf *b, cur c);
 
+int    indent_is_blank(buf *b, cur c);
 size_t indent_get_depth(buf *b, cur c);
 void   indent_set_depth(buf *b, cur c, size_t depth);
+void   indent_trim_end(buf *b, cur c);
 
 cur indent_incr_depth(buf *b, cur c);
 cur indent_decr_depth(buf *b, cur c);

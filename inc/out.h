@@ -21,7 +21,7 @@ void out_clr_line(FILE *f);
 
 void out_blank_line(FILE *f);
 
-void out_chrs(chr *chrs, size_t n, FILE *f);
+void out_chrs(chr *chrs, size_t n, size_t off, FILE *f);
 
 void out_init(FILE *f);
 

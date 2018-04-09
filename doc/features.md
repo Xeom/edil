@@ -11,18 +11,21 @@ of *Edil*.
 
 ## 0.0.2 (Complete)
 
-- [x] Support for tabs
-- [x] More navigation controls
+- [x] Support for tabs.
+- [x] More navigation controls.
 - [x] Support for multiple buffers.
 
 ## 0.0.3
 
-- [ ] Efficient updates to the screen for buffers
+- [x] Command-line options for commands & opening files.
+- [ ] Tabs auto mode understands blank lines.
+- [ ] Trim mode for tabs.
+- [x] Efficient updates to the screen for buffers.
 - [ ] Commands and modes using both cursors.
-- [ ] More efficient rendering of window bars.
 
 ## 0.0.4
 
+- [ ] More efficient rendering of window bars.
 - [ ] Log buffers.
 
 ## 0.0.5

@@ -50,7 +50,7 @@ void buf_ins(buf *b, cur loc, chr *chrs, size_t n)
     vec *line;
 
     line = vec_get(&(b->lines), loc.ln);
-    if (!line) return;
+    if (!line) return; 
 
     vec_ins(line, loc.cn, n, chrs);
     indent_add_blanks_line(line, loc.cn);
@@ -67,6 +67,8 @@ void buf_del(buf *b, cur loc, size_t n)
 
     if (loc.cn     < 0)   loc.cn = 0;
     if (loc.cn + n > len) loc.cn = len - n;
+
+    if (len == 0) return;
 
     while (loc.cn > 0)
     {

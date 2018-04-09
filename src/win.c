@@ -197,7 +197,7 @@ void win_out_bar(win *w)
     }
 
     out_goto(w->xpos + 1, w->ypos + w->rows, stdout);
-    out_chrs(vec_get(&bar, 0), w->cols, stdout);
+    out_chrs(vec_get(&bar, 0), w->cols, 0, stdout);
 
     vec_kill(&bar);
 }
@@ -334,7 +334,7 @@ void win_out_line(win *w, cur c)
     if (outlen < 0)       outlen = 0;
     if (outlen > w->cols) outlen = w->cols;
 
-    out_chrs(vec_get(line, c.cn), outlen, stdout);
+    out_chrs(vec_get(line, c.cn), outlen, c.cn, stdout);
 
     if (outlen != w->cols) out_clr_line(stdout);
 

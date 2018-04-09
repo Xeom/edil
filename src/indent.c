@@ -145,10 +145,32 @@ size_t indent_get_depth(buf *b, cur c)
     return ind;
 }
 
+int indent_is_blank(buf *b, cur c)
+{
+    vec *line;
+    size_t ind;
+
+    line = vec_get(&(b->lines), c.ln);
+    if (!line) return 0;
+
+    ind = vec_len(line);
+    while (ind--)
+    {
+        chr *c;
+        c = vec_get(line, ind);
+        if (!c || !chr_is_whitespace(c))
+            return 0;
+    }
+
+    return 1;
+}
+
 void indent_set_depth(buf *b, cur c, size_t depth)
 {
     vec *line;
     size_t orig;
+
+    c.cn = 0;
 
     if (b->flags & buf_readonly) return;
     b->flags |= buf_modified;
@@ -159,10 +181,11 @@ void indent_set_depth(buf *b, cur c, size_t depth)
     orig = indent_get_depth(b, c);
 
     if (orig)
-        vec_del(line, 0, orig);
+        buf_del(b, c, orig);
 
     if (depth)
     {
+        vec whitespace;
         size_t tabs, spaces;
         chr tab   = CHR("\t");
         chr space = CHR(" ");
@@ -178,11 +201,44 @@ void indent_set_depth(buf *b, cur c, size_t depth)
             tabs   = depth / indent_tab_width;
         }
 
-        vec_rep(line, 0, 1, &space, spaces);
-        vec_rep(line, 0, 1, &tab,   tabs);
+        vec_init(&whitespace, sizeof(chr));
+
+        vec_rep(&whitespace, 0, 1, &space, spaces);
+        vec_rep(&whitespace, 0, 1, &tab,   tabs);
+
+        buf_ins(b, c, vec_get(&whitespace, 0), vec_len(&whitespace));
+
+        vec_kill(&whitespace);
     }
 
     indent_add_blanks_line(line, 0);
+}
+
+void indent_trim_end(buf *b, cur c)
+{
+    vec *line;
+    size_t len;
+
+    if (b->flags & buf_readonly) return;
+    b->flags |= buf_modified;
+
+    if (!(indent_mode & indent_trim)) return;
+
+    line = vec_get(&(b->lines), c.ln);
+    if (!line) return;
+
+    len = vec_len(line);
+    c.cn = len;
+    while (c.cn--)
+    {
+        chr *cr;
+        cr = vec_get(line, c.cn);
+        if (!cr || !chr_is_whitespace(cr)) break;
+    }
+
+    c.cn += 1;
+
+    buf_del(b, c, len - c.cn);
 }
 
 cur indent_incr_depth(buf *b, cur c)
@@ -219,11 +275,21 @@ cur indent_decr_depth(buf *b, cur c)
 cur indent_auto_depth(buf *b, cur c)
 {
     ssize_t depth;
+    cur loc;
 
     if (!(indent_mode & indent_auto))
         return c;
 
-    depth = indent_get_depth(b, (cur){ .ln = c.ln - 1 });
+    loc.ln = c.ln - 1;
+    loc.cn = 0;
+
+    if (indent_mode & indent_skipblank)
+    {
+        while (loc.ln > 0 && indent_is_blank(b, loc))
+            loc.ln -= 1;
+    }
+
+    depth = indent_get_depth(b, loc);
     if (depth < 0) depth = 0;
 
     indent_set_depth(b, c, depth);

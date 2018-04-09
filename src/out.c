@@ -85,7 +85,7 @@ void out_log(vec *chrs, FILE *f)
 
     out_goto(0, out_rows, f);
 
-    out_chrs(vec_get(&colchrs, 0), out_cols, f);
+    out_chrs(vec_get(&colchrs, 0), out_cols, 0, f);
 
     vec_kill(&colchrs);
 }
@@ -103,7 +103,7 @@ void out_blank_line(FILE *f)
     fputs(out_blank_line_text,    f);
 }
 
-void out_chrs(chr *chrs, size_t n, FILE *f)
+void out_chrs(chr *chrs, size_t n, size_t off, FILE *f)
 {
     col prevcol = col_default;
     col currcol;
@@ -119,7 +119,7 @@ void out_chrs(chr *chrs, size_t n, FILE *f)
 
         if (strcmp(c->utf8, "\t") == 0)
         {
-            indent_print_tab(ind, f, c->fnt);
+            indent_print_tab(ind + off, f, c->fnt);
             prevcol = c->fnt;
         }
         else if (!chr_is_blank(c))

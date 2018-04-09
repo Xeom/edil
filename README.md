@@ -33,7 +33,7 @@ in mind.
 
 ## Using Edil
 
-More detailed documentation can be found in the `docs/` directory:
+More detailed documentation can be found in the `doc/` directory:
 
-* [Command documentation](doc/commands.md) can be found in `docs/commands.md`.
-* [Keybind documentation](doc/keys.md) can be found in `docs/keys.md`.
+* [Command documentation](doc/commands.md) can be found in `doc/commands.md`.
+* [Keybind documentation](doc/keys.md) can be found in `doc/keys.md`.
