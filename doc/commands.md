@@ -46,6 +46,8 @@ Commands for Navigation
 
 * `swap` - Swap the positions of the primary and secondary cursors.
 
+* `snap` - Snap the position of the secondary cursor to the primary cursor.
+
 Commands for Indentation
 ------------------------
 

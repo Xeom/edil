@@ -8,8 +8,8 @@ Basic editing
 
 | Key             | Binding                                           |
 | ---             |   ---                                             |
-| __Arrow keys__    | Move primary cursor.                              |
-| __Printable key__ | Type character.                                   |
+| `Arrow keys`    | Move primary cursor.                              |
+| `Printable key` | Type character.                                   |
 | `Return`        | Insert newline.                                   |
 | `Home`, `End`   | Move to the end and start of the current line.    |
 | `PgUp`, `PgDn`  | Move to the top and bottom of the current screen. |
@@ -45,5 +45,16 @@ Shortcuts
 | `Esc+s`         | The `save` command, but does not run it.          |
 | `Esc+g`         | The `goto` command, with blank arguments.         |
 | `Ctrl+c`        | Run the command `swap`.                           |
+| `Ctrl+z`        | Run the command `snap`.                           |
 | `Ctrl+n`        | Run the command `next`.                           |
 | `Ctrl+v`        | Run the command `prev`.                           | 
+
+Selections
+----------
+
+Selections are the text between the primary and secondary cursors, including
+the cursors themselves.
+
+| Key             | Binding                                           |
+| ---             |   ---                                             |
+| `Esc+Arrow Key` | Move selection in chosen direction.               |

@@ -88,4 +88,28 @@ void nav_cmd_swap(vec *rtn, vec *args, win *w)
     tmp    = w->pri;
     w->pri = w->sec;
     w->sec = tmp;
+
+    win_out_line(w, w->pri);
+    win_out_line(w, w->sec);
+}
+
+void nav_cmd_snap(vec *rtn, vec *args, win *w)
+{
+    cur prev;
+
+    if (vec_len(args) != 1)
+    {
+        chr_from_str(rtn, "err: This command takes no arguments");
+        return;
+    }
+    else
+    {
+        chr_from_str(rtn, "Secondary cursor snapped");
+    }
+    
+    prev   = w->sec;
+    w->sec = w->pri;
+
+    win_out_line(w, w->pri);
+    win_out_line(w, prev);
 }
