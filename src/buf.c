@@ -70,9 +70,12 @@ void buf_del(buf *b, cur loc, size_t n)
 
     if (len == 0) return;
 
+    if (n == 0) return;
+
     while (loc.cn > 0)
     {
         c = vec_get(line, loc.cn);
+        if (!c) return;
         if (!chr_is_blank(c)) break;
         loc.cn -= 1;
         n      += 1;

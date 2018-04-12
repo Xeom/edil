@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "indent.h"
 
 #include "cur.h"
@@ -152,7 +154,8 @@ void cur_del(win *w)
         size_t num;
         cur delcur = { .ln = c.ln + 1, .cn = 0 };
 
-        line = vec_get(&(w->b->lines), c.ln + 1);
+        /* The line to move to this line */
+        line = vec_get(&(w->b->lines), delcur.ln);
         if (!line) return;
 
         num = vec_len(line);
@@ -160,11 +163,18 @@ void cur_del(win *w)
         buf_ins(w->b, c, vec_get(line, 0), num);
         buf_del_line(w->b, delcur);
 
+        if (w->sec.ln > c.ln)      w->sec.ln -= 1;
+        if (w->sec.ln == c.ln + 1) w->sec.cn += len;
+
         win_out_after(w, w->pri);
     }
     else
     {
         buf_del(w->b, w->pri, 1);
+
+        if (w->sec.ln == c.ln && w->sec.cn > c.ln)
+            w->sec.cn -= 1;
+
         win_out_line(w, w->pri);
     }
 }
@@ -189,6 +199,10 @@ void cur_ins(win *w, vec *text)
 
     prev = w->pri;
     w->pri = c;
+
+    if (w->sec.ln == prev.ln && w->sec.cn >= prev.cn)
+        w->sec.cn += 1;
+
     win_out_after(w, prev);
 }
 
@@ -227,6 +241,139 @@ void cur_enter(win *w)
 
     prev = w->pri;
     w->pri = rtn;
+
+    if (w->sec.ln > prev.ln)
+    {
+        w->sec.ln += 1;
+    }
+    else if (memcmp(&(w->sec), &prev, sizeof(cur)) == 0)
+    {
+        w->sec.ln += 1;
+        w->sec.cn  = 0;
+    }
+
     win_out_after(w, (cur){ .ln = prev.ln });
 }
 
+int cur_greater(cur a, cur b)
+{
+    if (a.ln == b.ln)
+        return a.cn > b.cn;
+    else
+        return a.ln > b.ln;
+}
+
+cur *cur_region_start(win *w)
+{
+    if (cur_greater(w->pri, w->sec))
+        return &(w->sec);
+    else
+        return &(w->pri);
+}
+
+cur *cur_region_end(win *w)
+{
+    if (cur_greater(w->pri, w->sec))
+        return &(w->pri);
+    else
+        return &(w->sec);
+}
+
+void cur_move_region(win *w, cur dir)
+{
+    vec tmp;
+    cur *start, *end;
+
+    if (w->b->flags & buf_readonly) return;
+    w->b->flags |= buf_modified;
+
+    start = cur_region_start(w);
+    end   = cur_region_end(w);
+
+    if ((dir.ln < 0 && start->ln > 0) || dir.ln > 0)
+    {
+        cur delcur, inscur;
+        vec *line;
+
+        vec_init(&tmp, sizeof(chr));
+
+        if (dir.ln > 0) /* Shifting forward */
+        {
+            /* Delete the line one past the end */
+            delcur = (cur){ .ln = end->ln + 1 };
+            /* Insert it again at the start */
+            inscur = (cur){ .ln = start->ln   };
+
+            start->ln += 1;
+            end->ln   += 1;
+        }
+        else
+        {
+            /* Delete the line one before the start */
+            delcur = (cur){ .ln = start->ln - 1 };
+            /* Insert it at the end this time */
+            inscur = (cur){ .ln = end->ln       };
+
+            start->ln -= 1;
+            end->ln   -= 1;
+        }
+
+        line = vec_get(&(w->b->lines), delcur.ln);
+        vec_ins(&tmp, 0, vec_len(line), vec_get(line, 0));
+
+        buf_del_line(w->b, delcur);
+        buf_ins_line(w->b, inscur);
+
+        buf_ins(w->b, inscur, vec_get(&tmp, 0), vec_len(&tmp));
+
+        win_out_after(w, (cur){ .ln = start->ln });
+
+        vec_kill(&tmp);
+    }
+
+    if (dir.cn != 0 && start->ln == end->ln)
+    {
+        cur delcur, inscur;
+        vec *line;
+        chr *c;
+
+        if (dir.cn > 0)
+        { /* Forward */
+            delcur = *end;
+            delcur.cn += 1;
+            inscur = *start;
+        }
+        else
+        { /* Back */
+            delcur = *start;
+            delcur.cn -= 1;
+            inscur = *end;
+        }
+
+        if (delcur.cn >= 0)
+        {
+            chr tmp;
+            size_t len;
+
+            line = vec_get(&(w->b->lines), delcur.ln);
+            len  = vec_len(line);
+            if (inscur.cn >= len && dir.cn < 0)
+            {
+                inscur.cn -= 1;
+                end->cn   -= 1;
+            }
+            c    = vec_get(line, delcur.cn);
+
+            if (c)
+            {
+                tmp = *c;
+
+                w->pri.cn += dir.cn;
+                w->sec.cn += dir.cn;
+
+                buf_del(w->b, delcur, 1);
+                buf_ins(w->b, inscur, &tmp, 1);
+            }
+        }
+    }
+}

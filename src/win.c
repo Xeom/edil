@@ -14,7 +14,7 @@ static void win_bar_fill_pos(win *w, vec *bar);
 
 static void win_bar_fill(win *w, vec *bar);
 
-win *win_cur;
+win *win_cur = NULL;
 
 chr win_bar_chr = {
     .utf8 = "-", .fnt = { .fg = col_black | col_bright, .bg = col_none }

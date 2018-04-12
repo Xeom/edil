@@ -179,6 +179,23 @@ static void ui_handle_move(inp_key key)
     case inp_key_left:  cur_move(w, (cur){ .cn = -1 }); break;
     case inp_key_right: cur_move(w, (cur){ .cn =  1 }); break;
 
+    case inp_key_left | inp_key_esc:
+        cur_move_region(w, (cur){ .cn = -1 });
+        win_out_all();
+        break;
+    case inp_key_right | inp_key_esc:
+        cur_move_region(w, (cur){ .cn = 1 });
+        win_out_all();
+        break;
+    case inp_key_down | inp_key_esc:
+        cur_move_region(w, (cur){ .ln = 1 });
+        win_out_all();
+        break;
+    case inp_key_up | inp_key_esc:
+        cur_move_region(w, (cur){ .ln = -1 });
+        win_out_all();
+        break;
+
     case inp_key_home: cur_home(w); break;
     case inp_key_end:  cur_end(w);  break;
     case inp_key_pgdn: cur_pgdn(w); break;
@@ -245,6 +262,7 @@ static void ui_handle_shortcut(inp_key key)
     switch (key)
     {
     case 'C' | inp_key_ctrl: cmd = "swap"; break;
+    case 'Z' | inp_key_ctrl: cmd = "snap"; break;
     case 'N' | inp_key_ctrl: cmd = "next"; break;
     case 'V' | inp_key_ctrl: cmd = "prev"; break;
     case inp_key_tab:        cmd = "incrindent"; break;

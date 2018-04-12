@@ -45,7 +45,7 @@ static char *help = "\n"
 "Edil - My text editor. v" STRIFY(VERSION) "\n\n"
 
 "More complete documentation can be found in the README.md\n"
-"file, and in the doc/ directory of my repository."
+"file, and in the doc/ directory of my repository.\n"
 "This should be availible at http://github.com/Xeom/edil-2.0.\n\n"
 
 "Usage: edil [options ...] [files ...]\n\n"
@@ -185,6 +185,7 @@ static void loop(void)
         fflush(stdout);
         inp_wait();
 
+        /* Update the entire screen */
         if (out_to_resize)
         {
             out_to_resize = 0;

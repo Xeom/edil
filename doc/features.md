@@ -18,8 +18,8 @@ of *Edil*.
 ## 0.0.3
 
 - [x] Command-line options for commands & opening files.
-- [ ] Tabs auto mode understands blank lines.
-- [ ] Trim mode for tabs.
+- [x] Tabs auto mode understands blank lines.
+- [x] Trim mode for tabs.
 - [x] Efficient updates to the screen for buffers.
 - [ ] Commands and modes using both cursors.
 

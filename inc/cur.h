@@ -41,4 +41,10 @@ void cur_pgdn(win *w);
 void cur_del(win *w);
 void cur_ins(win *w, vec *text);
 
+int cur_greater(cur a, cur b);
+
+cur *cur_region_start(win *w);
+cur *cur_region_end(win *w);
+
+void cur_move_region(win *w, cur dir);
 #endif
