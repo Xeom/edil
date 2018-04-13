@@ -112,6 +112,12 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
         return;
     }
 
+    if (w->b->flags & buf_nofile)
+    {
+        chr_format(rtn, "err: Buffer cannot be a file");
+        return;
+    }
+
     if (vec_len(args) == 2)
     {
         vec *path;
@@ -181,6 +187,12 @@ void file_cmd_assoc(vec *rtn, vec *args, win *w)
 {
     vec *fn;
     fn = &(w->b->fname);
+
+    if (w->b->flags & buf_nofile)
+    {
+        chr_format(rtn, "err: Buffer cannot be a file");
+        return;
+    }
 
     if (vec_len(args) == 2)
     {

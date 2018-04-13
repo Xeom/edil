@@ -14,6 +14,7 @@ typedef enum
     buf_readonly   = 0x01, /* Don't modify this                            */
     buf_modified   = 0x02, /* This has been modified                       */
     buf_associated = 0x04, /* This buffer is associated with a filename    */
+    buf_nofile     = 0x08, /* Buffer cannot be associated with a filename  */
 } buf_flags;
 
 /* A representation of some text */
