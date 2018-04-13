@@ -46,4 +46,7 @@ void chr_blankify(chr *c);
 /* Append a formatted string to an array of chrs */
 void chr_format(vec *chrs, char *fmt, ...);
 
+/* Perform sscanf on a vec of chrs */
+int chr_scan(vec *chrs, char *fmt, ...);
+
 #endif

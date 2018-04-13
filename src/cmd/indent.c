@@ -16,26 +16,14 @@ void indent_cmd_lvlwidth(vec *rtn, vec *args, win *w)
 
     if (vec_len(args) == 2)
     {
-        vec   arg;
-        char *str;
+        if (chr_scan(vec_get(args, 1), "%d", &val) != 1)
+            chr_from_str(rtn, "err: Not a valid width, ");
 
-        vec_init(&arg, sizeof(char));
-        chr_to_str(vec_get(args, 1), &arg);
+        else if (val > INDENT_MAX_TABWIDTH || val < 0)
+            chr_from_str(rtn, "err: Width out of range, ");
 
-        str = vec_get(&arg,  0);
-
-        if (sscanf(str, "%d", &val) != 1 ||
-            val > INDENT_MAX_TABWIDTH ||
-            val < 0)
-        {
-            chr_format(rtn, "err: '%s' is not a valid width, ", str);
-        }
         else
-        {
             indent_lvl_width = val;
-        }
-
-        vec_kill(&arg);
     }
 
     chr_format(rtn, "lvlwidth: %d", indent_tab_width);
@@ -47,26 +35,14 @@ void indent_cmd_tabwidth(vec *rtn, vec *args, win *w)
 
     if (vec_len(args) == 2)
     {
-        vec   arg;
-        char *str;
+        if (chr_scan(vec_get(args, 1), "%d", &val) != 1)
+            chr_from_str(rtn, "err: Not a valid width, ");
 
-        vec_init(&arg, sizeof(char));
-        chr_to_str(vec_get(args, 1), &arg);
+        else if (val > INDENT_MAX_TABWIDTH || val < 0)
+            chr_from_str(rtn, "err: Width out of range, ");
 
-        str = vec_get(&arg,  0);
-
-        if (sscanf(str, "%d", &val) != 1 ||
-            val > INDENT_MAX_TABWIDTH ||
-            val < 0)
-        {
-            chr_format(rtn, "err: '%s' is not a valid width, ", str);
-        }
         else
-        {
             indent_set_tab_width(val);
-        }
-
-        vec_kill(&arg);
     }
 
     chr_format(rtn, "tabwidth: %d", indent_tab_width);
@@ -175,20 +151,12 @@ void indent_cmd_indent(vec *rtn, vec *args, win *w)
 
     if (vec_len(args) == 2)
     {
-        vec   arg;
-        char *str;
+        if (chr_scan(vec_get(args, 1), "%ld", &depth) != 1)
+            chr_from_str(rtn, "err: Not a valid depth, ");
 
-        vec_init(&arg, sizeof(char));
-        chr_to_str(vec_get(args, 1), &arg);
+        else if (depth > INDENT_MAX_SENSIBLE_DEPTH || depth < 0)
+            chr_from_str(rtn, "err: Depth out of range, ");
 
-        str = vec_get(&arg,  0);
-
-        if (sscanf(str, "%ld", &depth) != 1 ||
-            depth > INDENT_MAX_SENSIBLE_DEPTH ||
-            depth < 0)
-        {
-            chr_format(rtn, "err: '%s' is not a sensible depth, ", str);
-        }
         else
         {
             indent_set_depth(w->b, w->pri, depth);
@@ -199,8 +167,6 @@ void indent_cmd_indent(vec *rtn, vec *args, win *w)
 
             win_out_line(w, (cur){ .ln = w->pri.ln });
         }
-
-        vec_kill(&arg);
     }
 
     depth = indent_get_depth(w->b, w->pri);

@@ -151,3 +151,22 @@ void chr_format(vec *chrs, char *fmt, ...)
 
     free(buf);
 }
+
+int chr_scan(vec *chrs, char *fmt, ...)
+{
+    va_list args;
+    vec str;
+    int rtn;
+
+    va_start(args, fmt);
+
+    vec_init(&str, sizeof(char));
+    chr_to_str(chrs, &str);
+    vec_ins(&str, vec_len(&str), 1, NULL);
+
+    rtn = sscanf(vec_get(&str, 0), fmt, args);
+
+    vec_kill(&str);
+
+    return rtn;
+}
