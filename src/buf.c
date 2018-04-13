@@ -94,6 +94,30 @@ void buf_del(buf *b, cur loc, size_t n)
     indent_add_blanks_line(line, loc.cn);
 }
 
+void buf_ins_nl(buf *b, cur loc)
+{
+    size_t num;
+    cur  newloc;
+    vec *line;
+
+    newloc = (cur){ .ln = loc.ln + 1 };
+
+    line = vec_get(&(b->lines), loc.ln);
+    if (!line) return;
+    num  = vec_len(line) - loc.cn;
+
+    buf_ins_line(b, newloc);
+
+    if (num > 0)
+    {
+        chr *text;
+        text = vec_get(line, loc.cn);
+
+        buf_ins(b, newloc, text, num);
+        buf_del(b, loc, num);
+    }
+}
+
 void buf_ins_line(buf *b, cur loc)
 {
     vec *line;
@@ -138,3 +162,26 @@ size_t buf_line_len(buf *b, cur loc)
     return vec_len(line);
 }
 
+vec *buf_line(buf *b, cur loc)
+{
+    vec *line;
+
+    line = vec_get(&(b->lines), loc.ln);
+    if (!line) return 0;
+
+    return line;
+}
+
+chr *buf_chr(buf *b, cur loc)
+{
+    vec *line;
+    chr *c;
+
+    line = vec_get(&(b->lines), loc.ln);
+    if (!line)
+        return NULL;
+
+    c = vec_get(line, loc.cn);
+
+    return c;
+}

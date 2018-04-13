@@ -34,6 +34,8 @@ void buf_ins(buf *b, cur loc, chr *chrs, size_t n);
 
 void buf_del(buf *b, cur loc, size_t n);
 
+void buf_ins_nl(buf *b, cur loc);
+
 void buf_ins_line(buf *b, cur loc);
 
 void buf_del_line(buf *b, cur loc);
@@ -41,5 +43,9 @@ void buf_del_line(buf *b, cur loc);
 size_t buf_len(buf *b);
 
 size_t buf_line_len(buf *b, cur loc);
+
+vec *buf_line(buf *b, cur loc);
+
+chr *buf_chr(buf *b, cur loc);
 
 #endif
