@@ -49,4 +49,8 @@ vec *buf_line(buf *b, cur loc);
 
 chr *buf_chr(buf *b, cur loc);
 
+cur buf_last_cur(buf *b);
+
+void buf_ins_buf(buf *b, cur *c, buf *other, cur loc, cur end);
+
 #endif

@@ -7,6 +7,7 @@ void buf_init(buf *b)
 {
     vec_init(&(b->lines), sizeof(vec));
     vec_init(&(b->fname), sizeof(char));
+
     b->flags = 0;
 
     buf_ins_line(b, (cur){0, 0});
@@ -185,3 +186,47 @@ chr *buf_chr(buf *b, cur loc)
 
     return c;
 }
+
+cur buf_last_cur(buf *b)
+{
+    cur rtn;
+    rtn.ln = buf_len(b) - 1;
+    rtn.cn = buf_line_len(b, rtn);
+
+    return rtn;
+}
+
+void buf_ins_buf(buf *b, cur *c, buf *other, cur loc, cur end)
+{
+    for (; loc.ln < end.ln; loc = (cur){ .ln = loc.ln + 1 })
+    {
+        ssize_t linelen, num;
+        vec *line;
+        line    = buf_line(other, loc);
+        linelen = vec_len(line);
+
+        num = linelen - loc.cn;
+
+        if (num > 0)
+        {
+            buf_ins(b, *c, vec_get(line, loc.cn), num);
+            c->cn += linelen;
+        }
+
+        buf_ins_nl(b, *c);
+        *c = (cur){ .ln = c->ln + 1 };
+    }
+
+    if (loc.ln == end.ln)
+    {
+        ssize_t num;
+        vec *line;
+        line    = buf_line(other, loc);
+
+        num = end.cn - loc.cn;
+
+        if (num > 0)
+            buf_ins(b, *c, vec_get(line, loc.cn), num);
+    }
+}
+
