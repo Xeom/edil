@@ -15,50 +15,22 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
 
     if (vec_len(args) == 3)
     {
-        vec_init(&strarg, sizeof(char));
-
-        chr_to_str(vec_get(args, 2), &strarg);
-        vec_ins(&strarg, vec_len(&strarg), 1, NULL);
-
-        if (sscanf(vec_get(&strarg, 0), "%ld", &(w->pri.cn)) != 1)
+        if (chr_scan(vec_get(args, 2), "%ld", &(w->pri.cn)) != 1)
         {
-            chr_format(
-                rtn,
-                "err: Could nor parse number '%s'",
-                vec_get(&strarg, 0)
-            );
-
-            vec_kill(&strarg);
+            chr_format("err: Could not parse column number");
             return;
         }
-
         w->pri.cn -= 1;
-
-        vec_kill(&strarg);
     }
 
-    if (vec_len(args) >= 2)
+    if (vec_len(args) >= 2);
     {
-        vec_init(&strarg, sizeof(char));
-
-        chr_to_str(vec_get(args, 1), &strarg);
-        vec_ins(&strarg, vec_len(&strarg), 1, NULL);
-
-        if (sscanf(vec_get(&strarg, 0), "%ld", &(w->pri.ln)) != 1)
+        if (chr_scan(vec_get(args, 1), "%ld", &(w->pri.ln)) != 1)
         {
-            chr_format(
-                rtn,
-                "err: Could nor parse number '%s'",
-                vec_get(&strarg, 0)
-            );
-
-            vec_kill(&strarg);
+            chr_formaat("err: Could not parse line number");
             return;
         }
-
         w->pri.ln -= 1;
-
-        vec_kill(&strarg);
     }
 
     w->pri = cur_check_bounds(w->pri, w->b);
