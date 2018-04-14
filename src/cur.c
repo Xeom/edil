@@ -136,6 +136,20 @@ void cur_pgup(win *w)
     win_out_after(w, (cur){0, 0});
 }
 
+void cur_lineify(win *w)
+{
+    cur prev;
+    prev = w->sec;
+
+    w->pri.cn = (ssize_t)buf_line_len(w->b, w->pri);
+    w->sec = (cur){ .ln = w->pri.ln };
+
+    win_out_line(w, w->sec);
+
+    if (prev.ln != w->pri.ln)
+        win_out_line(w, prev);
+}
+
 void cur_del(win *w)
 {
     cur c;
@@ -279,6 +293,20 @@ cur *cur_region_end(win *w)
         return &(w->sec);
 }
 
+void cur_ins_buf(win *w, buf *other, cur loc, cur end)
+{
+    cur prev;
+
+    if (w->b->flags & buf_readonly) return;
+    w->b->flags |= buf_modified;
+
+    prev = w->pri;
+
+    buf_ins_buf(w->b, &(w->pri), other, loc, end);
+
+    win_out_after(w, prev);
+}
+
 void cur_move_region(win *w, cur dir)
 {
     vec tmp;
@@ -318,7 +346,7 @@ void cur_move_region(win *w, cur dir)
             end->ln   -= 1;
         }
 
-        line = vec_get(&(w->b->lines), delcur.ln);
+        line = buf_line(w->b, delcur);
         vec_ins(&tmp, 0, vec_len(line), vec_get(line, 0));
 
         buf_del_line(w->b, delcur);
@@ -334,8 +362,6 @@ void cur_move_region(win *w, cur dir)
     if (dir.cn != 0 && start->ln == end->ln)
     {
         cur delcur, inscur;
-        vec *line;
-        chr *c;
 
         if (dir.cn > 0)
         { /* Forward */
@@ -354,15 +380,16 @@ void cur_move_region(win *w, cur dir)
         {
             chr tmp;
             size_t len;
+            chr *c;
 
-            line = vec_get(&(w->b->lines), delcur.ln);
-            len  = vec_len(line);
-            if (inscur.cn >= len && dir.cn < 0)
+            c = buf_chr(w->b, delcur);
+            len  = buf_line_len(w->b, delcur);
+
+            if (inscur.cn >= (ssize_t)len && dir.cn < 0)
             {
                 inscur.cn -= 1;
                 end->cn   -= 1;
             }
-            c    = vec_get(line, delcur.cn);
 
             if (c)
             {

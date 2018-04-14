@@ -38,6 +38,8 @@ void cur_end(win *w);
 void cur_pgup(win *w);
 void cur_pgdn(win *w);
 
+void cur_lineify(win *w);
+
 void cur_del(win *w);
 void cur_ins(win *w, vec *text);
 
@@ -47,4 +49,6 @@ cur *cur_region_start(win *w);
 cur *cur_region_end(win *w);
 
 void cur_move_region(win *w, cur dir);
+
+void cur_ins_buf(win *w, buf *other, cur loc, cur end);
 #endif
