@@ -24,6 +24,8 @@ static namevec_item cmd_items_static[] =
     CMD_ITEM(discard,   file_cmd_discard),
     CMD_ITEM(associate, file_cmd_assoc),
     CMD_ITEM(cd,        file_cmd_chdir),
+    CMD_ITEM(copy,      file_cmd_copy),
+    CMD_ITEM(paste,     file_cmd_paste),
     CMD_ITEM(goto,      nav_cmd_goto),
     CMD_ITEM(swap,      nav_cmd_swap),
     CMD_ITEM(snap,      nav_cmd_snap),

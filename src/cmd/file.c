@@ -25,6 +25,8 @@ static int file_get_fullpath(vec *chrs, vec *fullpath);
 static void file_save_line(vec *line, FILE *f);
 static void file_load_line(vec *line, FILE *f);
 
+buf *file_clipboard = NULL;
+
 void file_cmd_new(vec *rtn, vec *args, win *w)
 {
     buf *b;
@@ -74,6 +76,68 @@ void file_cmd_prev(vec *rtn, vec *args, win *w)
     chr_format(rtn, "switched buffer %d -> %d", ring_get_ind(prev), ring_get_ind(w->b));
 }
 
+void file_cmd_copy(vec *rtn, vec *args, win *w)
+{
+    cur loc, start, end;
+
+    if (file_clipboard == NULL)
+    {
+        file_clipboard = ring_new();
+        file_clipboard->flags |= buf_nofile;
+    }
+
+    else if (file_clipboard == w->b)
+        return;
+
+    loc.ln = buf_len(file_clipboard);
+    loc.cn = 0;
+
+    while ((loc.ln)--)
+        buf_del_line(file_clipboard, loc);
+
+    start = *cur_region_start(w);
+    end   = *cur_region_end(w);
+
+    if (end.cn < buf_line_len(w->b, end))
+        end.cn += 1;
+
+    buf_ins_buf(file_clipboard, &(cur){0, 0}, w->b, start, end);
+}
+
+void file_cmd_paste(vec *rtn, vec *args, win *w)
+{
+    buf *source;
+
+    if (vec_len(args) == 2)
+    {
+        int ind, maxind;
+        buf **b;
+
+        maxind = vec_len(&ring_bufs) - 1;
+
+        if (chr_scan(vec_get(args, 1), "%d", &ind) != 1 ||
+            ind < 0 || ind > maxind)
+        {
+            chr_from_str(rtn, "err: Not a valid index");
+            return;
+        }
+
+        b = vec_get(&ring_bufs, ind);
+        source = *b;
+    }
+    else
+    {
+        if (!file_clipboard)
+        {
+            chr_from_str(rtn, "err: Nothing has been copied to the clipboard");
+            return;
+        }
+
+        source = file_clipboard;
+    }
+
+    cur_ins_buf(w, source, (cur){0, 0}, buf_last_cur(source));
+}
 
 void file_cmd_discard(vec *rtn, vec *args, win *w)
 {

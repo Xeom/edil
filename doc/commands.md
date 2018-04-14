@@ -48,6 +48,14 @@ Commands for Navigation
 
 * `snap` - Snap the position of the secondary cursor to the primary cursor.
 
+Commands for Regions
+--------------------
+
+* `copy` - Store the contents of the current region in the clipboard buffer.
+
+* `paste [buf]` - Insert the contents of the clipboard buffer at the current location.
+    If a buffer is specified instead, insert the contents of that buffer instead.
+
 Commands for Indentation
 ------------------------
 
