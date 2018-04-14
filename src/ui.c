@@ -273,10 +273,12 @@ static void ui_handle_shortcut(inp_key key)
     {
     case 'C' | inp_key_ctrl: cmd = "swap"; break;
     case 'Z' | inp_key_ctrl: cmd = "snap"; break;
-    case 'N' | inp_key_ctrl: cmd = "next"; break;
-    case 'V' | inp_key_ctrl: cmd = "prev"; break;
+    case 'M' | inp_key_ctrl: cmd = "next"; break;
+    case 'N' | inp_key_ctrl: cmd = "prev"; break;
     case inp_key_tab:        cmd = "incrindent"; break;
     case '[' | inp_key_esc:  cmd = "decrindent"; break; /* Shift + Tab */
+    case 'Y' | inp_key_ctrl: cmd = "copy"; break;
+    case 'P' | inp_key_ctrl: cmd = "paste"; break;
     }
 
     if (cmd)

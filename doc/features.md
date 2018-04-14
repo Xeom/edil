@@ -21,7 +21,7 @@ of *Edil*.
 - [x] Tabs auto mode understands blank lines.
 - [x] Trim mode for tabs.
 - [x] Efficient updates to the screen for buffers.
-- [ ] Commands and modes using both cursors.
+- [x] Commands and modes using both cursors.
 
 ## 0.0.4
 

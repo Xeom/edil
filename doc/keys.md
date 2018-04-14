@@ -58,4 +58,6 @@ the cursors themselves.
 | Key             | Binding                                           |
 | ---             |   ---                                             |
 | `Esc+Arrow Key` | Move selection in chosen direction.               |
-| `Ctrl+L`        | Select the current line.                          |
+| `Ctrl+l`        | Select the current line.                          |
+| `Ctrl+y`        | Copy the current selection to clipboard.          |
+| `Ctrl+p`        | Paste the current clipboard.                      |
