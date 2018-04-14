@@ -16,7 +16,7 @@ then be loaded to that buffer, and the contents of the buffer saved to
 that file.
 
 * `load [file]` - If a file is specifed, associate that file with the
-    current buffer, then load the contents of the associated file to the 
+    current buffer, then load the contents of the associated file to the
     buffer.
 
 * `associate [file]` - If a file is specified, associate that file with
@@ -85,7 +85,7 @@ Commands for Indentation
 * `indent [val]` - Indent the current line a certain distance, if one is specified.
     Then display the depth the line is indented to.
 
-* `incrindent`, `decrindent` - Increment  or decrement the indentation level of 
+* `incrindent`, `decrindent` - Increment  or decrement the indentation level of
     the current line.
 
-* `autoindent` - Automatically indent the current line. 
+* `autoindent` - Automatically indent the current line.

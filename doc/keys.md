@@ -46,8 +46,8 @@ Shortcuts
 | `Esc+g`         | The `goto` command, with blank arguments.         |
 | `Ctrl+c`        | Run the command `swap`.                           |
 | `Ctrl+z`        | Run the command `snap`.                           |
-| `Ctrl+n`        | Run the command `next`.                           |
-| `Ctrl+v`        | Run the command `prev`.                           | 
+| `Ctrl+m`        | Run the command `next`.                           |
+| `Ctrl+n`        | Run the command `prev`.                           |
 
 Selections
 ----------

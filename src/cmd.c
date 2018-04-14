@@ -172,7 +172,7 @@ static size_t cmd_parse_word(vec *str, vec *chrs, size_t ind)
     size_t len;
 
     len = vec_len(chrs);
-  
+
     for (; ind < len; ind++)
     {
         chr *c;

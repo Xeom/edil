@@ -11,7 +11,6 @@ struct namevec_item_s
     char *name;
     union
     {
-        
         void (*cmdfunct)(vec *rtn, vec *args, win *w);
     } data;
 };

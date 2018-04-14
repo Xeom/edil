@@ -1,6 +1,6 @@
 # Features
 
-A list of features planned and included in each version 
+A list of features planned and included in each version
 of *Edil*.
 
 ## 0.0.1 (Complete)

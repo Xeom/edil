@@ -93,8 +93,8 @@ static int win_out_goto(win *w, cur *c)
         c->cn = win_min_cn(w);
 
     out_goto(
-        c->cn - w->scrx + w->xpos + 1, 
-        c->ln - w->scry + w->ypos + 1, 
+        c->cn - w->scrx + w->xpos + 1,
+        c->ln - w->scry + w->ypos + 1,
         stdout
     );
 

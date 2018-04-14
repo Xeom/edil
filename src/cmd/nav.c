@@ -106,7 +106,7 @@ void nav_cmd_snap(vec *rtn, vec *args, win *w)
     {
         chr_from_str(rtn, "Secondary cursor snapped");
     }
-    
+
     prev   = w->sec;
     w->sec = w->pri;
 

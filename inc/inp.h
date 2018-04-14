@@ -2,7 +2,7 @@
 # define INP_H
 
 typedef enum
-{   
+{
     inp_key_back  = 0x07f,
     inp_key_tab   = 0x449,
     inp_key_enter = 0x44a,
@@ -19,7 +19,7 @@ typedef enum
     inp_key_pgup,
     inp_key_pgdn,
     inp_key_insert,
-    inp_key_f1, 
+    inp_key_f1,
     inp_key_f2,
     inp_key_f3,
     inp_key_f4,

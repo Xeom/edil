@@ -31,7 +31,7 @@ void col_print(col c, FILE *f)
 #if !defined(COL_NONE)
     if (c.bg < col_none)
     {
-        if (c.bg & col_bright) 
+        if (c.bg & col_bright)
             fprintf(f, ";%d", (c.bg & col_allcols) + 100);
         else
             fprintf(f, ";%d", (c.bg & col_allcols) + 40);

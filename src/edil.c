@@ -130,7 +130,7 @@ void run_startup_cmd(void)
         ui_cmd_cb(win_cur, cmd);
         vec_kill(cmd);
     }
-    
+
     vec_kill(&startup_cmd);
 }
 
@@ -140,7 +140,7 @@ vec *new_startup_cmd(void)
     cmd = vec_ins(&startup_cmd, vec_len(&startup_cmd), 1, NULL);
     vec_init(cmd, sizeof(chr));
 
-    return cmd;    
+    return cmd;
 }
 
 static void init_all(void)

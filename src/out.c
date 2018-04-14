@@ -126,7 +126,7 @@ void out_chrs(chr *chrs, size_t n, size_t off, FILE *f)
         else if (!chr_is_blank(c))
         {
             currcol = c->fnt;
-            if (memcmp(&currcol, &prevcol, sizeof(col)) != 0) 
+            if (memcmp(&currcol, &prevcol, sizeof(col)) != 0)
                 col_print(currcol, f);
 
             chr_print(c, f);
@@ -156,7 +156,7 @@ void out_init(FILE *f)
     struct termios tattr;
     struct sigaction act;
 
-    /* Set terminal attributes */   
+    /* Set terminal attributes */
     tcgetattr(fileno(f), &tattr);
 
     memcpy(&out_tattr_orig, &tattr, sizeof(struct termios));

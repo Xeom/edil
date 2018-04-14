@@ -171,7 +171,7 @@ size_t vec_bst(
 /* Get the number of items in a vector */
 size_t vec_len(vec *v)
 {
-    if (!v) return 0; 
+    if (!v) return 0;
     return v->usage / v->width;
 }
 
@@ -184,9 +184,9 @@ void *vec_ins(vec *v, size_t ind, size_t n, const void *data)
 int vec_del(vec *v, size_t ind, size_t n)
 {
     size_t bytesafter, bytesdead, offset;
-    
+
     if (n == 0) return 0;
-    
+
     offset     = ind * v->width;
     bytesdead  = n   * v->width;
     bytesafter = v->usage - offset - bytesdead;

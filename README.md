@@ -15,10 +15,10 @@ Writing extensions or fixing anything is impossible without creating
 a million bugs from the most terrifying corners of 1997.
 
 Vim is an excellent alternative in many ways, and while far
-from perfect, it definitely holds its own against Emacs. 
+from perfect, it definitely holds its own against Emacs.
 Particularly in the speed and bugginess department. I've been a
-fan of Emacs for too long however, so I could never 
-un-patriotically turn my back on it and edit my text with its 
+fan of Emacs for too long however, so I could never
+un-patriotically turn my back on it and edit my text with its
 arch-rival.
 
 Edil is my solution to this problem. Creating my own text editor
