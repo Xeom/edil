@@ -222,32 +222,14 @@ void cur_ins(win *w, vec *text)
 
 void cur_enter(win *w)
 {
-    cur    c, prev, rtn;
-    size_t len;
+    cur prev, rtn;
 
-    c = w->pri;
-
-    len = buf_line_len(w->b, c);
-    rtn = (cur){ .ln = c.ln + 1, .cn = 0 };
+    rtn = (cur){ .ln = w->pri.ln + 1 };
 
     if (w->b->flags & buf_readonly) return;
     w->b->flags |= buf_modified;
 
-    buf_ins_line(w->b, rtn);
-
-    if ((ssize_t)len > c.cn)
-    {
-        vec *line;
-        size_t num;
-
-        line = vec_get(&(w->b->lines), c.ln);
-        if (!line) return;
-
-        num = len - c.cn;
-
-        buf_ins(w->b, rtn, vec_get(line, c.cn), num);
-	    buf_del(w->b, c,   num);
-    }
+    buf_ins_nl(w->b, w->pri);
 
     rtn = indent_auto_depth(w->b, rtn);
 

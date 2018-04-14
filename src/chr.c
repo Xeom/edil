@@ -111,7 +111,7 @@ void chr_to_str(vec *chrs, vec *str)
 }
 
 void chr_set_cols(chr *c, col_desc d)
-{ 
+{
     c->fnt = col_update(c->fnt, d);
 }
 
