@@ -112,6 +112,8 @@ void buf_ins_nl(buf *b, cur loc)
     if (num > 0)
     {
         chr *text;
+
+        line = vec_get(&(b->lines), loc.ln);
         text = vec_get(line, loc.cn);
 
         buf_ins(b, newloc, text, num);
