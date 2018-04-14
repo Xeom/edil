@@ -71,7 +71,7 @@ void out_log(vec *chrs, FILE *f)
         chr *c;
 
         c = vec_get(&colchrs, ind);
-        c->fnt = col_update(c->fnt, out_log_col_desc);
+        chr_set_cols(c, out_log_col_desc);
     }
 
     if (len < out_cols)

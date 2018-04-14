@@ -193,7 +193,7 @@ void win_out_bar(win *w)
     {
         chr *c;
         c = vec_get(&bar, ind);
-        c->fnt = col_update(c->fnt, win_bar_col);
+        chr_set_cols(c, win_bar_col);
     }
 
     out_goto(w->xpos + 1, w->ypos + w->rows, stdout);
