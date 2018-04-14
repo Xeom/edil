@@ -110,7 +110,15 @@ void ui_handle(inp_key key)
 
     switch (key)
     {
-    case inp_key_ctrl | 'X': ui_activate_cmd();  break;
+    case inp_key_ctrl | 'X':
+        if (ui_mode == ui_mode_bar)
+        {
+            ui_mode = ui_mode_buf;
+            win_bar_cancel(win_cur);
+        }
+        else
+            ui_activate_cmd();
+        break;
     case inp_key_ctrl | 'K': ui_mode = ui_mode_kcd; break;
     case inp_key_ctrl | 'A': ui_mode = ui_mode_buf; break;
     case inp_key_ctrl | inp_key_esc | 'K': ui_alive = 0; break;

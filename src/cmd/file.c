@@ -73,7 +73,11 @@ void file_cmd_prev(vec *rtn, vec *args, win *w)
     w->sec = (cur){0, 0};
 
     win_out_after(w, (cur){0, 0});
-    chr_format(rtn, "switched buffer %d -> %d", ring_get_ind(prev), ring_get_ind(w->b));
+    chr_format(
+        rtn,
+        "switched buffer %d -> %d",
+        ring_get_ind(prev), ring_get_ind(w->b)
+    );
 }
 
 void file_cmd_copy(vec *rtn, vec *args, win *w)
@@ -84,13 +88,21 @@ void file_cmd_copy(vec *rtn, vec *args, win *w)
     {
         file_clipboard = ring_new();
         file_clipboard->flags |= buf_nofile;
+
+        chr_format(
+            rtn,
+            "Created clipboard buffer [%d], ",
+            ring_get_ind(file_clipboard)
+        );
     }
 
     else if (file_clipboard == w->b)
+    {
+        chr_from_str(rtn, "err: Cannot copy clipboard");
         return;
+    }
 
-    loc.ln = buf_len(file_clipboard);
-    loc.cn = 0;
+    loc = (cur){ .ln = buf_len(file_clipboard) };
 
     while ((loc.ln)--)
         buf_del_line(file_clipboard, loc);
@@ -102,6 +114,12 @@ void file_cmd_copy(vec *rtn, vec *args, win *w)
         end.cn += 1;
 
     buf_ins_buf(file_clipboard, &(cur){0, 0}, w->b, start, end);
+
+    chr_format(
+        rtn,
+        "Copied %lu lines to clipboard",
+        buf_len(file_clipboard)
+    );
 }
 
 void file_cmd_paste(vec *rtn, vec *args, win *w)
@@ -136,7 +154,19 @@ void file_cmd_paste(vec *rtn, vec *args, win *w)
         source = file_clipboard;
     }
 
+    if (w->b == source)
+    {
+        chr_from_str(rtn, "err: Cannot paste buffer into itself");
+        return;
+    }
+
     cur_ins_buf(w, source, (cur){0, 0}, buf_last_cur(source));
+
+    chr_format(
+        rtn,
+        "Pasted %lu lines.",
+        buf_len(source)
+    );
 }
 
 void file_cmd_discard(vec *rtn, vec *args, win *w)

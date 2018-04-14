@@ -211,7 +211,6 @@ void win_bar_ins(win *w, vec *chrs)
     w->barcur += vec_len(chrs);
 }
 
-
 void win_bar_back(win *w)
 {
     if (w->barcur == 0) return;
@@ -253,15 +252,19 @@ void win_bar_run(win *w)
 
 void win_bar_query(win *w, vec *prompt, void (*cb)(win *w, vec *chrs))
 {
-    vec_del(&(w->barprompt), 0, vec_len(&(w->barprompt)));
-    vec_ins(&(w->barprompt), 0, vec_len(prompt), vec_get(prompt, 0));
+    win_bar_cancel(w);
 
+    vec_ins(&(w->barprompt), 0, vec_len(prompt), vec_get(prompt, 0));
+    w->barcb = cb;
+}
+
+void win_bar_cancel(win *w)
+{
+    vec_del(&(w->barprompt), 0, vec_len(&(w->barprompt)));
     vec_del(&(w->bartyped), 0, vec_len(&(w->bartyped)));
 
-    if (w->barcb) (w->barcb(w, &(w->bartyped)));
-
     w->barcur = 0;
-    w->barcb = cb;
+    w->barcb = NULL;
 }
 
 static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)

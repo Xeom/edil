@@ -42,6 +42,7 @@ void win_bar_back(win *w);
 void win_bar_del(win *w);
 void win_bar_run(win *w);
 void win_bar_query(win *w, vec *prompt, void (*cb)(win *w, vec *chrs));
+void win_bar_cancel(win *w);
 
 void win_kill(win *w);
 
