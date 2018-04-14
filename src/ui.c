@@ -200,6 +200,8 @@ static void ui_handle_move(inp_key key)
     case inp_key_end:  cur_end(w);  break;
     case inp_key_pgdn: cur_pgdn(w); break;
     case inp_key_pgup: cur_pgup(w); break;
+
+    case inp_key_ctrl | 'L': cur_lineify(w); break;
     }
 }
 
