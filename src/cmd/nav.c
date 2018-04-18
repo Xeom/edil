@@ -17,7 +17,7 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
     {
         if (chr_scan(vec_get(args, 2), "%ld", &(w->pri.cn)) != 1)
         {
-            chr_format("err: Could not parse column number");
+            chr_from_str(rtn, "err: Could not parse column number");
             return;
         }
         w->pri.cn -= 1;
@@ -27,7 +27,7 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
     {
         if (chr_scan(vec_get(args, 1), "%ld", &(w->pri.ln)) != 1)
         {
-            chr_formaat("err: Could not parse line number");
+            chr_from_str(rtn, "err: Could not parse line number");
             return;
         }
         w->pri.ln -= 1;
