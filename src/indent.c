@@ -243,11 +243,19 @@ void indent_trim_end(buf *b, cur c)
 
 cur indent_incr_depth(buf *b, cur c)
 {
-    size_t depth;
-    depth = indent_get_depth(b, c) + indent_lvl_width;
+    ssize_t depth, orig;
+    depth = indent_get_depth(b, c);
+    orig  = depth;
+
+    depth += indent_lvl_width;
+    depth -= depth % indent_lvl_width;
 
     indent_set_depth(b, c, depth);
-    c.cn += indent_lvl_width;
+
+    if (c.cn <= orig)
+        c.cn = depth;
+    else
+        c.cn += depth - orig;
 
     c = cur_check_bounds(c, b);
     c = cur_check_blank(c, b, (cur){ .cn = 1 });
@@ -257,13 +265,23 @@ cur indent_incr_depth(buf *b, cur c)
 
 cur indent_decr_depth(buf *b, cur c)
 {
-    ssize_t depth;
-    depth = indent_get_depth(b, c) - indent_lvl_width;
+    ssize_t depth, orig;
+    depth = indent_get_depth(b, c);
+    orig  = depth;
+
+    depth -= indent_lvl_width;
     if (depth < 0) depth = 0;
+
+    if (depth % indent_lvl_width)
+        depth += indent_lvl_width - (depth % indent_lvl_width);
 
     indent_set_depth(b, c, depth);
 
-    c.cn -= indent_lvl_width;
+    if (c.cn <= orig)
+        c.cn = depth;
+    else
+        c.cn += depth - orig;
+
     if (c.cn < 0) c.cn = 0;
 
     c = cur_check_bounds(c, b);
