@@ -467,7 +467,8 @@ static void file_load_line(vec *line, FILE *f)
             ind   = 0;
         }
 
-        if (c == '\n') break;
+	    if (c == '\r') continue; /* When we encounter \r, ignore it */
+        if (c == '\n') break;    /* When we encounter \n, new line  */
 
         utfchr.utf8[ind++] = c;
     }
