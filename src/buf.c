@@ -105,6 +105,10 @@ void buf_ins_nl(buf *b, cur loc)
 
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;
+
+    if (loc.cn > vec_len(line))
+        loc.cn = vec_len(line);
+
     num  = vec_len(line) - loc.cn;
 
     buf_ins_line(b, newloc);

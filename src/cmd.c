@@ -70,13 +70,13 @@ void cmd_run(vec *args, vec *rtn, win *w)
     if (!item || number == 0)
     {
         chr_from_str(rtn, "err: '");
-        vec_ins(rtn, vec_len(rtn), vec_len(arg), vec_get(arg, 0));
+        vec_cpy(rtn, arg);
         chr_format(rtn, "' is not a known command");
     }
     else if (number > 1)
     {
         chr_from_str(rtn, "err: '");
-        vec_ins(rtn, vec_len(rtn), vec_len(arg), vec_get(arg, 0));
+        vec_cpy(rtn, arg);
         chr_format(rtn, "' is ambiguous (");
 
         while (number--)
@@ -109,7 +109,7 @@ void cmd_parse(vec *args, vec *chrs, size_t ind)
         c = vec_get(chrs, ind);
         if (!c) break;
 
-        arg = vec_ins(args, vec_len(args), 1, NULL);
+        arg = vec_app(args, NULL);
         vec_init(arg, sizeof(chr));
 
         if (strcmp("\"", c->utf8) == 0)
@@ -151,7 +151,7 @@ static size_t cmd_parse_str(vec *str, vec *chrs, size_t ind)
         c = vec_get(chrs, ind);
 
         if (escaped)
-            vec_ins(str, vec_len(str), 1, c);
+            vec_app(str, c);
         else if (strcmp("\\", c->utf8) == 0)
             escaped = 1;
         else if (strcmp("\"", c->utf8) == 0)
@@ -160,7 +160,7 @@ static size_t cmd_parse_str(vec *str, vec *chrs, size_t ind)
             break;
         }
         else
-            vec_ins(str, vec_len(str), 1, c);
+            vec_app(str, c);
     }
 
     return ind;
@@ -179,7 +179,7 @@ static size_t cmd_parse_word(vec *str, vec *chrs, size_t ind)
         c = vec_get(chrs, ind);
 
         if (escaped)
-            vec_ins(str, vec_len(str), 1, c);
+            vec_app(str, c);
         else if (strcmp("\\", c->utf8) == 0)
             escaped = 1;
         else if (strcmp(" ",  c->utf8) == 0)
@@ -189,7 +189,7 @@ static size_t cmd_parse_word(vec *str, vec *chrs, size_t ind)
         else if (strcmp("\"", c->utf8) == 0)
             break;
         else
-            vec_ins(str, vec_len(str), 1, c);
+            vec_app(str, c);
     }
 
     return ind;

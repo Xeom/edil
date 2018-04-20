@@ -462,7 +462,7 @@ static void file_load_line(vec *line, FILE *f)
         if (width == ind)
         {
             if (width)
-                vec_ins(line, vec_len(line), 1, &utfchr);
+                vec_app(line, &utfchr);
             width = chr_utf8_len(c);
             ind   = 0;
         }
@@ -510,13 +510,13 @@ static int file_get_fullpath(vec *chrs, vec *fullpath)
 
     vec_init(&arg, sizeof(char));
     chr_to_str(chrs, &arg);
-    vec_ins(&arg, vec_len(&arg), 1, NULL);
+    vec_app(&arg, NULL);
 
     /* Make throwaway copies of our argument path */
     vec_init(&basevec, sizeof(char));
     vec_init(&dirvec,  sizeof(char));
-    vec_ins(&basevec, 0, vec_len(&arg), vec_get(&arg, 0));
-    vec_ins(&dirvec,  0, vec_len(&arg), vec_get(&arg, 0));
+    vec_cpy(&basevec, &arg);
+    vec_cpy(&dirvec,  &arg);
 
     /* We get our base and dir. These should NOT be free'd, as *
      * they may be inside dirvec and basevec. If not, they are *
@@ -534,7 +534,7 @@ static int file_get_fullpath(vec *chrs, vec *fullpath)
 
         /* Add a trailing slash to fullpath if needed */
         if (path[strlen(path) - 1] != '/')
-            vec_ins(fullpath, vec_len(fullpath), 1, "/");
+            vec_app(fullpath, "/");
 
         /* Add the basename to the directory name. Don't do this *
          * if it is ., or /, as these are pretend names.         */
@@ -542,7 +542,7 @@ static int file_get_fullpath(vec *chrs, vec *fullpath)
             vec_ins(fullpath, vec_len(fullpath), strlen(base), base);
 
         /* Null terminator */
-        vec_ins(fullpath, vec_len(fullpath), 1, NULL);
+        vec_app(fullpath, "\0");
     }
 
     free(path);

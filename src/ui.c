@@ -150,7 +150,7 @@ static void ui_handle_ins(inp_key key)
     if (++utf8ind == width)
     {
         utf8ind = 0;
-        vec_ins(&ui_ins_buf, vec_len(&ui_ins_buf), 1, &c);
+        vec_app(&ui_ins_buf, &c);
     }
 }
 

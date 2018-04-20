@@ -26,7 +26,7 @@ void indent_cmd_lvlwidth(vec *rtn, vec *args, win *w)
             indent_lvl_width = val;
     }
 
-    chr_format(rtn, "lvlwidth: %d", indent_tab_width);
+    chr_format(rtn, "lvlwidth: %d", indent_lvl_width);
 }
 
 void indent_cmd_tabwidth(vec *rtn, vec *args, win *w)

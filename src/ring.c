@@ -94,7 +94,7 @@ buf *ring_new(void)
     buf_ins(b, (cur){0, 0}, vec_get(&msg, 0), vec_len(&msg));
     vec_kill(&msg);
 
-    vec_ins(&ring_bufs, vec_len(&ring_bufs), 1, &b);
+    vec_app(&ring_bufs, &b);
 
     return b;
 }

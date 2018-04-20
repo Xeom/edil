@@ -152,8 +152,8 @@ static void win_bar_fill_query(win *w, vec *bar)
     if (vec_len(prompt))
         chr_format(bar, " ");
 
-    vec_ins(bar, vec_len(bar), vec_len(prompt), vec_get(prompt, 0));
-    vec_ins(bar, vec_len(bar), vec_len(typed),  vec_get(typed,  0));
+    vec_cpy(bar, prompt);
+    vec_cpy(bar, typed);
 
     if (tofree)
     {
@@ -242,26 +242,22 @@ void win_bar_move(win *w, int n)
 void win_bar_run(win *w)
 {
     if (w->barcb) w->barcb(w, &(w->bartyped));
-    w->barcb = NULL;
 
-    vec_del(&(w->barprompt), 0, vec_len(&(w->barprompt)));
-    vec_del(&(w->bartyped),  0, vec_len(&(w->bartyped)));
-
-    w->barcur = 0;
+    win_bar_cancel(w);
 }
 
 void win_bar_query(win *w, vec *prompt, void (*cb)(win *w, vec *chrs))
 {
     win_bar_cancel(w);
 
-    vec_ins(&(w->barprompt), 0, vec_len(prompt), vec_get(prompt, 0));
+    vec_cpy(&(w->barprompt), prompt);
     w->barcb = cb;
 }
 
 void win_bar_cancel(win *w)
 {
-    vec_del(&(w->barprompt), 0, vec_len(&(w->barprompt)));
-    vec_del(&(w->bartyped), 0, vec_len(&(w->bartyped)));
+    vec_clr(&(w->barprompt));
+    vec_clr(&(w->bartyped));
 
     w->barcur = 0;
     w->barcb = NULL;
@@ -281,7 +277,7 @@ static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
 
         modline = malloc(sizeof(vec));
         vec_init(modline, sizeof(chr));
-        vec_ins(modline, 0, linelen, vec_get(line, 0));
+        vec_cpy(modline, line);
 
         line = modline;
         *mod = 1;

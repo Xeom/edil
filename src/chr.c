@@ -164,7 +164,9 @@ int chr_scan(vec *chrs, char *fmt, ...)
     chr_to_str(chrs, &str);
     vec_ins(&str, vec_len(&str), 1, NULL);
 
-    rtn = sscanf(vec_get(&str, 0), fmt, args);
+    rtn = vsscanf(vec_get(&str, 0), fmt, args);
+
+    va_end(args);
 
     vec_kill(&str);
 

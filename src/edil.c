@@ -137,7 +137,7 @@ void run_startup_cmd(void)
 vec *new_startup_cmd(void)
 {
     vec *cmd;
-    cmd = vec_ins(&startup_cmd, vec_len(&startup_cmd), 1, NULL);
+    cmd = vec_app(&startup_cmd, NULL);
     vec_init(cmd, sizeof(chr));
 
     return cmd;
