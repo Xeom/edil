@@ -39,4 +39,15 @@ int vec_del(vec *v, size_t ind, size_t n);
 
 void *vec_get(vec *v, size_t ind);
 
+/* Append one item to the end of a vector */
+void *vec_app(vec *v, const void *data);
+
+/* Append the contents of another vector onto this one */
+void *vec_cpy(vec *v, vec *other);
+
+/* Delete everything in a vector */
+int vec_clr(vec *v);
+
+/* Append a string */
+void *vec_str(vec *v, const char *str);
 #endif /* VEC_H */

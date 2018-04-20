@@ -181,6 +181,47 @@ void *vec_ins(vec *v, size_t ind, size_t n, const void *data)
     return vec_rep(v, ind, n, data, 1);
 }
 
+void *vec_app(vec *v, const void *data)
+{
+    size_t ind;
+    ind = vec_len(v);
+
+    return vec_rep(v, ind, 1, data, 1);
+}
+
+void *vec_str(vec *v, const char *str)
+{
+    size_t num, ind;
+    num = strlen(str);
+    ind = vec_len(v);
+
+    return vec_rep(v, ind, num, str, 1);
+}
+
+void *vec_cpy(vec *v, vec *other)
+{
+    size_t num, ind;
+
+    num = vec_len(other);
+    ind = vec_len(v);
+
+    if (num)
+    {
+        const char *data;
+
+        data = vec_get(other, 0);
+
+        return vec_rep(v, ind, num, data, 1);
+    }
+    else
+        return NULL;
+}
+
+int vec_clr(vec *v)
+{
+    return vec_del(v, 0, vec_len(v));
+}
+
 int vec_del(vec *v, size_t ind, size_t n)
 {
     size_t bytesafter, bytesdead, offset;
