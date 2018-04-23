@@ -66,7 +66,7 @@ $(BINDIR)edil: $(SRCDIR)edil.c $(BINDIR)libedil.a
 deps: $(DFILES)
 
 all: deps $(BINDIR)libedil.a $(BINDIR)libedil.so $(BINDIR)edil
-	@if [ -s errs.txt ]; then cat errs.txt | less -r; fi
+	@if [ -s errs.txt ]; then cat errs.txt | less -r; rm errs.txt; fi
 
 clean: clean_err clean_bin clean_obj clean_dep
 
