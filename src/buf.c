@@ -6,7 +6,8 @@
 void buf_init(buf *b)
 {
     vec_init(&(b->lines), sizeof(vec));
-    vec_init(&(b->fname), sizeof(char));
+
+    file_init(&(b->finfo));
 
     b->flags = 0;
 
@@ -21,7 +22,6 @@ void buf_kill(buf *b)
         vec_kill(vec_get(&(b->lines), ln));
 
     vec_kill(&(b->lines));
-    vec_kill(&(b->fname));
 }
 
 void buf_setcol(buf *b, cur loc, size_t n, col_desc col)
@@ -95,6 +95,15 @@ void buf_del(buf *b, cur loc, size_t n)
     indent_add_blanks_line(line, loc.cn);
 }
 
+void buf_clr(buf *b)
+{
+    cur loc;
+    loc.ln = buf_len(b);
+
+    while ((loc.ln)--)
+        buf_del_line(b, loc);
+}
+
 void buf_ins_nl(buf *b, cur loc)
 {
     size_t num;
@@ -106,7 +115,7 @@ void buf_ins_nl(buf *b, cur loc)
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return;
 
-    if (loc.cn > vec_len(line))
+    if (loc.cn > (ssize_t)vec_len(line))
         loc.cn = vec_len(line);
 
     num  = vec_len(line) - loc.cn;
@@ -159,14 +168,14 @@ size_t buf_len(buf *b)
     return vec_len(&(b->lines));
 }
 
-size_t buf_line_len(buf *b, cur loc)
+ssize_t buf_line_len(buf *b, cur loc)
 {
     vec *line;
 
     line = vec_get(&(b->lines), loc.ln);
     if (!line) return 0;
 
-    return vec_len(line);
+    return (ssize_t)vec_len(line);
 }
 
 vec *buf_line(buf *b, cur loc)

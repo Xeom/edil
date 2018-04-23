@@ -5,8 +5,6 @@
 
 void nav_cmd_goto(vec *rtn, vec *args, win *w)
 {
-    vec strarg;
-
     if (vec_len(args) > 3)
     {
         chr_format(rtn, "err: This command takes up to two arguments only");
@@ -23,7 +21,7 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
         w->pri.cn -= 1;
     }
 
-    if (vec_len(args) >= 2);
+    if (vec_len(args) >= 2)
     {
         if (chr_scan(vec_get(args, 1), "%ld", &(w->pri.ln)) != 1)
         {

@@ -164,6 +164,7 @@ static void kill_all(void)
 static void load_string(win *w, char *str)
 {
     int fds[2];
+    file f;
 
     file_clr_win(w);
 
@@ -175,7 +176,9 @@ static void load_string(win *w, char *str)
 
     close(fds[1]);
 
-    file_load_win(w, fdopen(fds[0], "r"));
+    file_init_pipe(&f, fdopen(fds[0], "r"));
+    file_load(&f, w->b);
+    file_close(&f);    
 }
 
 static void loop(void)

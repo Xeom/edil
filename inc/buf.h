@@ -7,21 +7,21 @@
 typedef struct buf_s buf;
 
 # include "cur.h"
+# include "file.h"
 
 /* Bit flags describing attributes of buffers */
 typedef enum
 {
     buf_readonly   = 0x01, /* Don't modify this                            */
     buf_modified   = 0x02, /* This has been modified                       */
-    buf_associated = 0x04, /* This buffer is associated with a filename    */
-    buf_nofile     = 0x08, /* Buffer cannot be associated with a filename  */
+    buf_nofile     = 0x04, /* Buffer cannot be associated with a filename  */
 } buf_flags;
 
 /* A representation of some text */
 struct buf_s
 {
     vec       lines; /* A vector of lines */
-    vec       fname; /* The filename associated with this buf, NULL term. */
+    file      finfo;
     buf_flags flags; /* The flags of the buffer */
 };
 
@@ -35,6 +35,8 @@ void buf_ins(buf *b, cur loc, chr *chrs, size_t n);
 
 void buf_del(buf *b, cur loc, size_t n);
 
+void buf_clr(buf *b);
+
 void buf_ins_nl(buf *b, cur loc);
 
 void buf_ins_line(buf *b, cur loc);
@@ -43,7 +45,7 @@ void buf_del_line(buf *b, cur loc);
 
 size_t buf_len(buf *b);
 
-size_t buf_line_len(buf *b, cur loc);
+ssize_t buf_line_len(buf *b, cur loc);
 
 vec *buf_line(buf *b, cur loc);
 

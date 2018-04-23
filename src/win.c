@@ -2,6 +2,7 @@
 
 #include "out.h"
 #include "ui.h"
+#include "file.h"
 
 #include "win.h"
 
@@ -112,25 +113,11 @@ void win_bar_fill_pos(win *w, vec *bar)
 
 void win_bar_fill_fname(win *w, vec *bar)
 {
-    size_t ind;
-    vec *fn;
+    file *f;
+    f = &(w->b->finfo);
 
-    fn = &(w->b->fname);
-
-    if (!(w->b->flags & buf_associated))
-        return;
-
-    ind = vec_len(fn);
-
-    while (ind--)
-    {
-        char *c;
-        c = vec_get(fn, ind);
-        if (*c == '/')
-            break;
-    }
-
-    chr_format(bar, " (%s)", vec_get(&(w->b->fname), ind + 1));
+    if (file_associated(f))
+        chr_format(bar, " (%s)", vec_get(&(f->basename), 0));
 }
 
 static void win_bar_fill_query(win *w, vec *bar)
