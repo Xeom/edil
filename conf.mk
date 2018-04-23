@@ -1,4 +1,4 @@
-FILES=buf chr cmd col cur indent inp namevec out ring vec ui win \
+FILES=buf chr cmd col cur file indent inp namevec out ring vec ui win \
       cmd/file cmd/nav cmd/indent
 
 SRCDIR=src/
