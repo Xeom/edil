@@ -205,8 +205,8 @@ static void loop(void)
 static void colour_edil(buf *b)
 {
     size_t ln;
-    col_desc textfnt = { .fg = col_cyan, .bg = col_null };
-    col_desc linefnt = { .fg = col_cyan | col_bright, .bg = col_null, .set = col_under };
+    col_desc textfnt = { .fg = col_red | col_bright, .bg = col_null };
+    col_desc linefnt = { .fg = col_red, .bg = col_null, .set = col_under };
     col_desc copyfnt = { .fg = col_black | col_bright, .bg = col_null };
 
     for (ln = 2; ln < 8; ln++)

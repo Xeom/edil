@@ -35,7 +35,7 @@ chr win_sec_chr = {
     .utf8 = "\xc2\xab", .fnt = { .fg = col_none, .bg = col_none }
 };
 col_desc win_sec_col = {
-    .inv = col_under, .fg = col_blue, .bg = col_null
+    .set = col_under, .fg = col_blue, .bg = col_null
 };
 
 void win_init(win *w, buf *b)
