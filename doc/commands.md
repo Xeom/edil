@@ -38,6 +38,12 @@ Commands for Buffers
 
 * `next`, `prev` - Switch the current window to the next and previous buffers
 
+* `bufinfo` - Print the various flags attached to the current buffer, and the path
+    of any file associated with it. The flags are `assoc` - The buffer is associated
+    with a pipe or file. `cr` - The buffer uses `\r\n` style newlines. `pipe` - The
+    buffer is associated with a pipe. `ro` - The buffer is read-only. `mod` - The
+    buffer is modified. `nofile` - No file should be associated with this buffer.
+
 Commands for Navigation
 -----------------------
 
@@ -55,6 +61,9 @@ Commands for Regions
 
 * `paste [buf]` - Insert the contents of the clipboard buffer at the current location.
     If a buffer is specified instead, insert the contents of that buffer instead.
+
+* `cut` - Run the copy command on the current region, then delete the contents of e
+    region.
 
 Commands for Indentation
 ------------------------
