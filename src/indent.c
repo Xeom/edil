@@ -206,7 +206,7 @@ void indent_set_depth(buf *b, cur c, size_t depth)
         vec_rep(&whitespace, 0, 1, &space, spaces);
         vec_rep(&whitespace, 0, 1, &tab,   tabs);
 
-        buf_ins(b, c, vec_get(&whitespace, 0), vec_len(&whitespace));
+        buf_ins(b, c, vec_first(&whitespace), vec_len(&whitespace));
 
         vec_kill(&whitespace);
     }

@@ -59,7 +59,7 @@ void vec_sort(vec *v, int (*cmpfunc)(const void *a, const void *b))
     if (!v || !cmpfunc) return;
     if (v->usage == 0)  return;
 
-    qsort(vec_get(v, 0), vec_len(v), v->width, cmpfunc);
+    qsort(v->data, vec_len(v), v->width, cmpfunc);
 }
 
 /* Reverse a vector */
@@ -206,13 +206,7 @@ void *vec_cpy(vec *v, vec *other)
     ind = vec_len(v);
 
     if (num)
-    {
-        const char *data;
-
-        data = vec_get(other, 0);
-
-        return vec_rep(v, ind, num, data, 1);
-    }
+        return vec_rep(v, ind, num, other->data, 1);
     else
         return NULL;
 }

@@ -64,7 +64,7 @@ void out_log(vec *chrs, FILE *f)
     len = (ssize_t)vec_len(chrs);
 
     vec_init(&colchrs, sizeof(chr));
-    vec_ins(&colchrs, 0, len, vec_get(chrs, 0));
+    vec_ins(&colchrs, 0, len, vec_first(chrs));
 
     for (ind = 0; ind < len; ind++)
     {
@@ -86,7 +86,7 @@ void out_log(vec *chrs, FILE *f)
 
     out_goto(0, out_rows, f);
 
-    out_chrs(vec_get(&colchrs, 0), out_cols, 0, f);
+    out_chrs(vec_first(&colchrs), out_cols, 0, f);
 
     vec_kill(&colchrs);
 }

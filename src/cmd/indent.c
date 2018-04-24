@@ -65,7 +65,7 @@ void indent_cmd_indentmode(vec *rtn, vec *args, win *w)
         chr_to_str(arg, &str);
         vec_ins(&str, vec_len(&str), 1, NULL);
 
-        indent_mode_arg(vec_get(&str, 0), rtn);
+        indent_mode_arg(vec_first(&str), rtn);
 
         vec_kill(&str);
     }

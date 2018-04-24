@@ -164,18 +164,7 @@ void cur_del(win *w)
 
     if ((ssize_t)len == c.cn)
     {
-        vec *line;
-        size_t num;
-        cur delcur = { .ln = c.ln + 1, .cn = 0 };
-
-        /* The line to move to this line */
-        line = vec_get(&(w->b->lines), delcur.ln);
-        if (!line) return;
-
-        num = vec_len(line);
-
-        buf_ins(w->b, c, vec_get(line, 0), num);
-        buf_del_line(w->b, delcur);
+        buf_del_nl(w->b, c);
 
         if (w->sec.ln > c.ln)      w->sec.ln -= 1;
         if (w->sec.ln == c.ln + 1) w->sec.cn += len;
@@ -205,7 +194,7 @@ void cur_ins(win *w, vec *text)
 
     num = vec_len(text);
 
-    buf_ins(w->b, c, vec_get(text, 0), num);
+    buf_ins(w->b, c, vec_first(text), num);
     c.cn += num;
 
     c = cur_check_bounds(c, w->b);
@@ -305,8 +294,6 @@ void cur_move_region(win *w, cur dir)
         cur delcur, inscur;
         vec *line;
 
-        vec_init(&tmp, sizeof(chr));
-
         if (dir.ln > 0) /* Shifting forward */
         {
             /* Delete the line one past the end */
@@ -328,13 +315,15 @@ void cur_move_region(win *w, cur dir)
             end->ln   -= 1;
         }
 
+        vec_init(&tmp, sizeof(chr));
+
         line = buf_line(w->b, delcur);
-        vec_ins(&tmp, 0, vec_len(line), vec_get(line, 0));
+        vec_cpy(&tmp, line);
 
         buf_del_line(w->b, delcur);
         buf_ins_line(w->b, inscur);
 
-        buf_ins(w->b, inscur, vec_get(&tmp, 0), vec_len(&tmp));
+        buf_ins(w->b, inscur, vec_first(&tmp), vec_len(&tmp));
 
         win_out_after(w, (cur){ .ln = start->ln });
 
@@ -385,4 +374,53 @@ void cur_move_region(win *w, cur dir)
             }
         }
     }
+}
+
+void cur_del_region(win *w)
+{
+    cur *start, *end;
+    buf *b;
+
+    b = w->b;
+
+    if (w->b->flags & buf_readonly) return;
+    w->b->flags |= buf_modified;
+
+    start = cur_region_start(w);
+    end   = cur_region_end(w);
+
+    if (end->ln != start->ln)
+    {
+        ssize_t numdel, nummov;
+        numdel = buf_line_len(b, *start) - start->cn;
+        nummov = buf_line_len(b, *end)   - end->cn - 1;
+
+        if (numdel) buf_del(b, *start, numdel);
+
+        if (nummov > 0)
+        {
+            chr *data;
+
+            data = buf_chr(b, *end);
+            buf_ins(b, *start, data + 1, nummov);
+        }
+    }
+    else if (end->ln == start->ln)
+    {
+        size_t numdel;
+        numdel = end->cn - start->ln;
+
+        if (start->cn < buf_line_len(b, *start))
+            numdel += 1;
+
+        buf_del(b, *start, numdel);
+    }
+
+    while (end->ln > start->ln)
+    {
+        buf_del_line(b, *end);
+        end->ln -= 1;
+    }
+
+    *end = *start;
 }

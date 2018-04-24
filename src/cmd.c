@@ -4,9 +4,11 @@
 #include "namevec.h"
 #include "chr.h"
 
+#include "cmd/buf.h"
 #include "cmd/file.h"
 #include "cmd/nav.h"
 #include "cmd/indent.h"
+#include "cmd/region.h"
 
 #include "cmd.h"
 
@@ -16,26 +18,32 @@ vec cmd_items;
 
 static namevec_item cmd_items_static[] =
 {
-    CMD_ITEM(new,       file_cmd_new),
-    CMD_ITEM(next,      file_cmd_next),
-    CMD_ITEM(prev,      file_cmd_prev),
-    CMD_ITEM(load,      file_cmd_load),
-    CMD_ITEM(save,      file_cmd_save),
-    CMD_ITEM(discard,   file_cmd_discard),
-    CMD_ITEM(associate, file_cmd_assoc),
-    CMD_ITEM(cd,        file_cmd_chdir),
-    CMD_ITEM(copy,      file_cmd_copy),
-    CMD_ITEM(paste,     file_cmd_paste),
-    CMD_ITEM(goto,      nav_cmd_goto),
-    CMD_ITEM(swap,      nav_cmd_swap),
-    CMD_ITEM(snap,      nav_cmd_snap),
-    CMD_ITEM(tabwidth,  indent_cmd_tabwidth),
-    CMD_ITEM(lvlwidth,  indent_cmd_lvlwidth),
+    CMD_ITEM(new,        file_cmd_new),
+    CMD_ITEM(load,       file_cmd_load),
+    CMD_ITEM(save,       file_cmd_save),
+    CMD_ITEM(discard,    file_cmd_discard),
+    CMD_ITEM(associate,  file_cmd_assoc),
+    CMD_ITEM(cd,         file_cmd_chdir),
+
+    CMD_ITEM(cut,        region_cmd_cut),
+    CMD_ITEM(copy,       region_cmd_copy),
+    CMD_ITEM(paste,      region_cmd_paste),
+
+    CMD_ITEM(goto,       nav_cmd_goto),
+    CMD_ITEM(swap,       nav_cmd_swap),
+    CMD_ITEM(snap,       nav_cmd_snap),
+
+    CMD_ITEM(tabwidth,   indent_cmd_tabwidth),
+    CMD_ITEM(lvlwidth,   indent_cmd_lvlwidth),
     CMD_ITEM(indentmode, indent_cmd_indentmode),
     CMD_ITEM(incrindent, indent_cmd_incrindent),
     CMD_ITEM(decrindent, indent_cmd_decrindent),
     CMD_ITEM(autoindent, indent_cmd_autoindent),
-    CMD_ITEM(indent,     indent_cmd_indent)
+    CMD_ITEM(indent,     indent_cmd_indent),
+
+    CMD_ITEM(bufinfo,    buf_cmd_info),
+    CMD_ITEM(next,       buf_cmd_next),
+    CMD_ITEM(prev,       buf_cmd_prev),
 };
 
 /* Increment ind until whitespace isn't found, return this *
@@ -64,7 +72,7 @@ void cmd_run(vec *args, vec *rtn, win *w)
     len = vec_len(args);
     if (len == 0) return;
 
-    arg  = vec_get(args, 0);
+    arg  = vec_first(args);
     item = namevec_get_chrs(&cmd_items, arg, &number);
 
     if (!item || number == 0)

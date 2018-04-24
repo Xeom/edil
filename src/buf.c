@@ -21,6 +21,8 @@ void buf_kill(buf *b)
     for (ln = 0; ln < buf_len(b); ln++)
         vec_kill(vec_get(&(b->lines), ln));
 
+    file_kill(&(b->finfo));
+
     vec_kill(&(b->lines));
 }
 
@@ -112,7 +114,7 @@ void buf_ins_nl(buf *b, cur loc)
 
     newloc = (cur){ .ln = loc.ln + 1 };
 
-    line = vec_get(&(b->lines), loc.ln);
+    line = buf_line(b, loc);
     if (!line) return;
 
     if (loc.cn > (ssize_t)vec_len(line))
@@ -132,6 +134,29 @@ void buf_ins_nl(buf *b, cur loc)
         buf_ins(b, newloc, text, num);
         buf_del(b, loc, num);
     }
+}
+
+void buf_del_nl(buf *b, cur loc)
+{
+    size_t num;
+    cur    nextloc;
+    vec   *line, *nextline;
+
+    line = buf_line(b, loc);
+    if (!line) return;
+
+    if (loc.ln >= (ssize_t)buf_len(b) - 1)
+        return;
+
+    nextloc = (cur){ .ln = loc.ln + 1 };
+
+    num  = buf_line_len(b, nextloc);
+    nextline = buf_line(b, nextloc);
+
+    loc.cn = buf_line_len(b, loc);
+
+    buf_ins(b, loc, vec_first(nextline), num);
+    buf_del_line(b, nextloc);
 }
 
 void buf_ins_line(buf *b, cur loc)

@@ -39,6 +39,8 @@ void buf_clr(buf *b);
 
 void buf_ins_nl(buf *b, cur loc);
 
+void buf_del_nl(buf *b, cur loc);
+
 void buf_ins_line(buf *b, cur loc);
 
 void buf_del_line(buf *b, cur loc);

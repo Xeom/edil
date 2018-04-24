@@ -46,11 +46,22 @@ char *file_name(file *f)
 {
     static char *empty = "";
 
-    if (!file_associated(f))
+    if (!file_associated(f) || f->flags & file_pipe)
         return empty;
 
-    return vec_get(&(f->fname), 0);
+    return vec_first(&(f->fname));
 }
+
+char *file_base(file *f)
+{
+    static char *empty = "";
+
+    if (!file_associated(f) || f->flags & file_pipe)
+        return empty;
+
+    return vec_first(&(f->basename));
+}
+
 
 int file_assoc(file *f, vec *chrname)
 {
@@ -80,13 +91,13 @@ int file_associated(file *f)
 
 int file_exists(file *f)
 {
-    return access(vec_get(&(f->fname), 0), F_OK) != -1;
+    return access(vec_first(&(f->fname)), F_OK) != -1;
 }
 
 int file_open(file *f, const char *mode)
 {
     char *path;
-    path = vec_get(&(f->fname), 0);
+    path = vec_first(&(f->fname));
 
     if (f->flags & file_pipe)
         return 0;
@@ -186,7 +197,11 @@ int file_load_line(file *f, buf *b)
             ind   = 0;
         }
 
-        if (c == '\r') continue;
+        if (c == '\r')
+        {
+            f->flags |= file_cr;
+            continue;
+        }
         if (c == '\n') break;
 
         utfchr.utf8[ind++] = c;
@@ -290,8 +305,8 @@ int file_set_paths(file *f, vec *chrname)
     /* We get our base and dir. These should NOT be free'd, as *
      * they may be inside dirvec and basevec. If not, they are *
      * statically allocated memory.                            */
-    dir  = dirname( vec_get(&dirvec,  0));
-    base = basename(vec_get(&basevec, 0));
+    dir  =  dirname(vec_first(&dirvec));
+    base = basename(vec_first(&basevec));
 
     vec_clr(&(f->basename));
     vec_clr(&(f->dirname));

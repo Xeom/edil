@@ -86,7 +86,7 @@ namevec_item *namevec_get_chrs(vec *v, vec *chrs, size_t *n)
     chr_to_str(chrs, &str);
     vec_ins(&str, vec_len(&str), 1, NULL);
 
-    rtn = namevec_get_str(v, vec_get(&str, 0), n);
+    rtn = namevec_get_str(v, vec_first(&str), n);
 
     vec_kill(&str);
 

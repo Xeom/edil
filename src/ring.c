@@ -91,7 +91,7 @@ buf *ring_new(void)
 
     vec_init(&msg, sizeof(chr));
     chr_format(&msg, "This is buffer number %ld.", vec_len(&ring_bufs));
-    buf_ins(b, (cur){0, 0}, vec_get(&msg, 0), vec_len(&msg));
+    buf_ins(b, (cur){0, 0}, vec_first(&msg), vec_len(&msg));
     vec_kill(&msg);
 
     vec_app(&ring_bufs, &b);

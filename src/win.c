@@ -58,7 +58,7 @@ void win_kill(win *w)
 
 vec *win_line(win *w, size_t ln)
 {
-    return vec_get(&(w->b->lines), ln);
+    return buf_line(w->b, (cur){ .ln = ln });
 }
 
 ssize_t win_max_ln(win *w)
@@ -117,7 +117,7 @@ void win_bar_fill_fname(win *w, vec *bar)
     f = &(w->b->finfo);
 
     if (file_associated(f))
-        chr_format(bar, " (%s)", vec_get(&(f->basename), 0));
+        chr_format(bar, " (%s)", vec_first(&(f->basename)));
 }
 
 static void win_bar_fill_query(win *w, vec *bar)
@@ -184,7 +184,7 @@ void win_out_bar(win *w)
     }
 
     out_goto(w->xpos + 1, w->ypos + w->rows, stdout);
-    out_chrs(vec_get(&bar, 0), w->cols, 0, stdout);
+    out_chrs(vec_first(&bar), w->cols, 0, stdout);
 
     vec_kill(&bar);
 }
@@ -194,7 +194,7 @@ void win_bar_ins(win *w, vec *chrs)
     vec *v;
 
     v = &(w->bartyped);
-    vec_ins(v, w->barcur, vec_len(chrs), vec_get(chrs, 0));
+    vec_ins(v, w->barcur, vec_len(chrs), vec_first(chrs));
     w->barcur += vec_len(chrs);
 }
 

@@ -28,6 +28,8 @@ void file_init_pipe(file *f, FILE *pipe);
 
 void file_kill(file *f);
 
+char *file_base(file *f);
+
 char *file_name(file *f);
 
 int file_assoc(file *f, vec *chrname);

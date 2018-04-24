@@ -50,5 +50,7 @@ cur *cur_region_end(win *w);
 
 void cur_move_region(win *w, cur dir);
 
+void cur_del_region(win *w);
+
 void cur_ins_buf(win *w, buf *other, cur loc, cur end);
 #endif

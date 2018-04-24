@@ -5,17 +5,16 @@
 
 int chr_utf8_len(char c)
 {
-    unsigned char utf8;
+#define _uc *(unsigned char *)(&c)
+    if (_uc <= 0x7f) return 1;
+    if (_uc <= 0xbf) return 1; /* This is an error :( */
+    if (_uc <= 0xdf) return 2;
+    if (_uc <= 0xef) return 3;
+    if (_uc <= 0xf7) return 4;
+    if (_uc <= 0xfb) return 5;
+    if (_uc <= 0xfd) return 6;
+#undef _uc
 
-    utf8 = *(unsigned char *)(&c);
-
-    if (utf8 <= 0x7f) return 1;
-    if (utf8 <= 0xbf) return 1; /* This is an error :( */
-    if (utf8 <= 0xdf) return 2;
-    if (utf8 <= 0xef) return 3;
-    if (utf8 <= 0xf7) return 4;
-    if (utf8 <= 0xfb) return 5;
-    if (utf8 <= 0xfd) return 6;
     return 1;
 }
 
@@ -50,7 +49,7 @@ void chr_from_vec(vec *chrs, vec *str)
     size_t len, ind;
     len = vec_len(str);
 
-    ind = chr_from_mem(chrs, vec_get(str, 0), len);
+    ind = chr_from_mem(chrs, vec_first(str), len);
 
     vec_del(str, 0, ind);
 }
@@ -164,7 +163,7 @@ int chr_scan(vec *chrs, char *fmt, ...)
     chr_to_str(chrs, &str);
     vec_ins(&str, vec_len(&str), 1, NULL);
 
-    rtn = vsscanf(vec_get(&str, 0), fmt, args);
+    rtn = vsscanf(vec_first(&str), fmt, args);
 
     va_end(args);
 
