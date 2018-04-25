@@ -408,7 +408,7 @@ void cur_del_region(win *w)
     else if (end->ln == start->ln)
     {
         size_t numdel;
-        numdel = end->cn - start->ln;
+        numdel = end->cn - start->cn;
 
         if (start->cn < buf_line_len(b, *start))
             numdel += 1;
