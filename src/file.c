@@ -183,8 +183,6 @@ int file_load_line(file *f, buf *b)
         int c;
         c = fgetc(f->fptr);
 
-        if (c == EOF) break;
-
         if (width == ind)
         {
             if (width)
@@ -196,6 +194,8 @@ int file_load_line(file *f, buf *b)
             width = chr_utf8_len(c);
             ind   = 0;
         }
+
+        if (c == EOF) break;
 
         if (c == '\r')
         {
