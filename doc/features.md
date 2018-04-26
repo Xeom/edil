@@ -15,7 +15,7 @@ of *Edil*.
 - [x] More navigation controls.
 - [x] Support for multiple buffers.
 
-## 0.0.3
+## 0.0.3 (Complete)
 
 - [x] Command-line options for commands & opening files.
 - [x] Tabs auto mode understands blank lines.
@@ -25,6 +25,8 @@ of *Edil*.
 
 ## 0.0.4
 
+- [x] file struct
+- [ ] "Are you sure?" messages.
 - [ ] More efficient rendering of window bars.
 - [ ] Log buffers.
 
