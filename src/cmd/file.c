@@ -21,8 +21,6 @@
 
 #include "cmd/file.h"
 
-
-
 void file_cmd_new(vec *rtn, vec *args, win *w)
 {
     buf *b;
@@ -91,7 +89,6 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
         chr_format(rtn, "err: Buffer cannot be a file");
         return;
     }
-
 
     if (vec_len(args) == 2)
     {

@@ -255,7 +255,7 @@ static void ui_handle_shortcut(inp_key key)
     switch (key)
     {
     case 'n' | inp_key_esc: cmd = "new "; break;
-    case 'a' | inp_key_esc: cmd = "associate "; break;
+    case 'a' | inp_key_esc: cmd = "load "; break;
     case 's' | inp_key_esc: cmd = "save "; break;
     case 'g' | inp_key_esc: cmd = "goto "; break;
     }

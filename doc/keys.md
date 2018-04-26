@@ -41,7 +41,7 @@ Shortcuts
 | Key             | Binding                                           |
 | ---             |   ---                                             |
 | `Esc+n`         | The `new` command, with a blank argument.         |
-| `Esc+a`         | The `associate` command, with a blank argument.   |
+| `Esc+a`         | The `load` command, with a blank argument.        |
 | `Esc+s`         | The `save` command, but does not run it.          |
 | `Esc+g`         | The `goto` command, with blank arguments.         |
 | `Ctrl+c`        | Run the command `swap`.                           |
