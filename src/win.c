@@ -113,11 +113,7 @@ void win_bar_fill_pos(win *w, vec *bar)
 
 void win_bar_fill_fname(win *w, vec *bar)
 {
-    file *f;
-    f = &(w->b->finfo);
-
-    if (file_associated(f))
-        chr_format(bar, " (%s)", vec_first(&(f->basename)));
+    chr_format(bar, " (%s)", buf_get_name(w->b));
 }
 
 static void win_bar_fill_query(win *w, vec *bar)

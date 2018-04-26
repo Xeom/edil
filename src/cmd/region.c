@@ -12,6 +12,7 @@ void region_cmd_copy(vec *rtn, vec *args, win *w)
     {
         region_clipboard = ring_new();
         region_clipboard->flags |= buf_nofile;
+        buf_set_name(region_clipboard, "'clipboard'");
 
         chr_format(
             rtn,

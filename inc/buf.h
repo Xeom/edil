@@ -22,6 +22,7 @@ struct buf_s
 {
     vec       lines; /* A vector of lines */
     file      finfo;
+    vec       name;
     buf_flags flags; /* The flags of the buffer */
 };
 
@@ -56,5 +57,9 @@ chr *buf_chr(buf *b, cur loc);
 cur buf_last_cur(buf *b);
 
 void buf_ins_buf(buf *b, cur *c, buf *other, cur loc, cur end);
+
+char *buf_get_name(buf *b);
+
+void buf_set_name(buf *b, char *name);
 
 #endif

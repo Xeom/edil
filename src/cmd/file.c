@@ -232,6 +232,8 @@ void file_clr_win(win *w)
 
     w->pri = (cur){0, 0};
     w->sec = (cur){0, 0};
+    w->scrx = 0;
+    w->scry = 0;
 
     while ((loc.ln)--)
         buf_del_line(w->b, loc);

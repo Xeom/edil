@@ -6,6 +6,7 @@
 void buf_init(buf *b)
 {
     vec_init(&(b->lines), sizeof(vec));
+    vec_init(&(b->name),  sizeof(char));
 
     file_init(&(b->finfo));
 
@@ -270,3 +271,26 @@ void buf_ins_buf(buf *b, cur *c, buf *other, cur loc, cur end)
     }
 }
 
+void buf_set_name(buf *b, char *name)
+{
+    vec_clr(&(b->name));
+    vec_str(&(b->name), name);
+    vec_app(&(b->name), "\0");
+}
+
+char *buf_get_name(buf *b)
+{
+    static char *noname = "???";
+    char *fname;
+
+    fname = file_base(&(b->finfo));
+
+    if (strlen(fname))
+        return fname;
+
+    else if (vec_len(&(b->name)))
+        return vec_first(&(b->name));
+
+    else
+        return noname;
+}

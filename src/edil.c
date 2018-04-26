@@ -239,6 +239,8 @@ int main(int argc, char **argv)
     init_all();
 
     b = ring_new();
+    buf_set_name(b, "'welcome'");
+
     win_init(&w, b);
 
     win_cur = &w;

@@ -22,4 +22,5 @@ void cmd_run(vec *args, vec *rtn, win *w);
 
 void cmd_parse(vec *args, vec *chrs, size_t ind);
 
+void cmd_log(vec *chrs, int iscmd);
 #endif
