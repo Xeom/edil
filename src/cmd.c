@@ -3,6 +3,7 @@
 #include "vec.h"
 #include "namevec.h"
 #include "chr.h"
+#include "ring.h"
 
 #include "cmd/buf.h"
 #include "cmd/file.h"
@@ -13,6 +14,8 @@
 #include "cmd.h"
 
 vec cmd_items;
+
+buf *cmd_log_buf = NULL;
 
 #define CMD_ITEM(name, fname) { #name, .data.cmdfunct = fname }
 
@@ -201,4 +204,39 @@ static size_t cmd_parse_word(vec *str, vec *chrs, size_t ind)
     }
 
     return ind;
+}
+
+void cmd_log(vec *chrs, int iscmd)
+{
+    cur loc = {0, 0};
+
+    if (cmd_log_buf == NULL)
+    {
+        cmd_log_buf = ring_new();
+        buf_set_name(cmd_log_buf, "'cmd log'");
+    }
+
+    loc.ln = buf_len(cmd_log_buf);
+    buf_ins_line(cmd_log_buf, loc);
+
+    if (iscmd)
+    {
+        vec prefix;
+        vec_init(&prefix, sizeof(chr));
+
+        chr_from_str(&prefix, ">> ");
+
+        buf_ins(cmd_log_buf, loc, vec_first(&prefix), vec_len(&prefix));
+        loc.cn += vec_len(&prefix);
+
+        vec_kill(&prefix);
+    }
+
+    buf_ins(cmd_log_buf, loc, vec_first(chrs), vec_len(chrs));
+
+    if (buf_len(cmd_log_buf) > 256)
+    {
+        buf_del_line(cmd_log_buf, (cur){0, 0});
+        buf_del_line(cmd_log_buf, (cur){0, 0});
+    }
 }

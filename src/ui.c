@@ -28,11 +28,13 @@ void ui_cmd_cb(win *w, vec *chrs)
 
     vec_init(&args, sizeof(vec));
     vec_init(&rtn,  sizeof(chr));
-
+    
     cmd_parse(&args, chrs, 0);
+    cmd_log(chrs, 1);
     cmd_run(&args, &rtn, w);
 
     out_log(&rtn, stdout);
+    cmd_log(&rtn, 0);
 
     for (argind = 0; argind < vec_len(&args); ++argind)
         vec_kill(vec_get(&args, argind));
