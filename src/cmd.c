@@ -16,6 +16,9 @@
 vec cmd_items;
 
 buf *cmd_log_buf = NULL;
+col_desc cmd_log_cmd_col    = { .fg = col_yellow, .bg = col_null };
+col_desc cmd_log_rtn_col    = { .fg = col_white | col_bright, .bg = col_null };
+col_desc cmd_log_prefix_col = { .fg = col_yellow | col_bright, .bg = col_null };
 
 #define CMD_ITEM(name, fname) { #name, .data.cmdfunct = fname }
 
@@ -213,26 +216,37 @@ void cmd_log(vec *chrs, int iscmd)
     if (cmd_log_buf == NULL)
     {
         cmd_log_buf = ring_new();
+        cmd_log_buf->flags |= buf_readonly | buf_nofile;
+        buf_clr(cmd_log_buf);
         buf_set_name(cmd_log_buf, "'cmd log'");
     }
 
-    loc.ln = buf_len(cmd_log_buf);
+    loc.ln = buf_len(cmd_log_buf) - 1;
     buf_ins_line(cmd_log_buf, loc);
+
+    buf_ins(cmd_log_buf, loc, vec_first(chrs), vec_len(chrs));
 
     if (iscmd)
     {
         vec prefix;
-        vec_init(&prefix, sizeof(chr));
+        int len;
 
+        vec_init(&prefix, sizeof(chr));
         chr_from_str(&prefix, ">> ");
 
-        buf_ins(cmd_log_buf, loc, vec_first(&prefix), vec_len(&prefix));
-        loc.cn += vec_len(&prefix);
+        len = vec_len(&prefix);
 
+        buf_ins(cmd_log_buf, loc, vec_first(&prefix), len);
+        buf_setcol(cmd_log_buf, loc, len, cmd_log_prefix_col);
+        loc.cn += len;
+
+        buf_setcol(cmd_log_buf, loc, vec_len(chrs), cmd_log_cmd_col);
         vec_kill(&prefix);
     }
-
-    buf_ins(cmd_log_buf, loc, vec_first(chrs), vec_len(chrs));
+    else
+    {
+        buf_setcol(cmd_log_buf, loc, vec_len(chrs), cmd_log_rtn_col);
+    }
 
     if (buf_len(cmd_log_buf) > 256)
     {
