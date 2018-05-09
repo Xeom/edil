@@ -23,6 +23,7 @@ struct buf_s
     vec       lines; /* A vector of lines */
     file      finfo;
     vec       name;
+    cur       prihint;
     buf_flags flags; /* The flags of the buffer */
 };
 

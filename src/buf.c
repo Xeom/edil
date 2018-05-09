@@ -12,6 +12,8 @@ void buf_init(buf *b)
 
     b->flags = 0;
 
+    b->prihint = (cur){0, 0};
+
     buf_ins_line(b, (cur){0, 0});
 }
 

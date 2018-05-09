@@ -377,3 +377,14 @@ void win_out_all(void)
 {
     win_out_after(win_cur, (cur){0, 0});
 }
+
+void win_reset(win *w)
+{
+    w->scrx = 0;
+    w->scry = 0;
+
+    w->sec = (cur){0, 0};
+    w->pri = cur_check_bounds(w->b->prihint, w->b);
+    
+    win_out_all();
+}

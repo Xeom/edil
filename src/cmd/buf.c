@@ -27,10 +27,11 @@ void buf_cmd_next(vec *rtn, vec *args, win *w)
     buf *prev;
     prev = w->b;
 
+    w->b->prihint = w->pri;
+    
     w->b = ring_next(prev);
 
-    w->pri = (cur){0, 0};
-    w->sec = (cur){0, 0};
+    win_reset(w);
 
     win_out_after(w, (cur){0, 0});
     chr_format(rtn, "switched buffer %d -> %d", ring_get_ind(prev), ring_get_ind(w->b));
@@ -41,11 +42,12 @@ void buf_cmd_prev(vec *rtn, vec *args, win *w)
     buf *prev;
     prev = w->b;
 
+    w->b->prihint = w->pri;
+    
     w->b = ring_prev(prev);
 
-    w->pri = (cur){0, 0};
-    w->sec = (cur){0, 0};
-
+    win_reset(w);
+    
     win_out_after(w, (cur){0, 0});
     chr_format(
         rtn,
