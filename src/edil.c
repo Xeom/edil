@@ -219,8 +219,6 @@ static void colour_edil(buf *b)
     buf_setcol(b, (cur){ .cn = 1, .ln = 8 }, 27, linefnt);
 
     buf_setcol(b, (cur){ .ln = 13 }, 20, copyfnt);
-
-    b->flags |= buf_readonly;
 }
 
 int main(int argc, char **argv)
@@ -240,6 +238,7 @@ int main(int argc, char **argv)
 
     b = ring_new();
     buf_set_name(b, "'welcome'");
+    b->flags |= buf_readonly | buf_nofile;
 
     win_init(&w, b);
 
