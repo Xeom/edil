@@ -58,4 +58,6 @@ void win_out_all(void);
 
 void win_show_cur(win *w, cur c);
 
+void win_reset(win *w);
+
 #endif
