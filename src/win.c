@@ -38,6 +38,13 @@ col_desc win_sec_col = {
     .set = col_under, .fg = col_blue, .bg = col_null
 };
 
+chr win_trailing_chr = {
+    .utf8 = ";",
+    .fnt = {
+        .fg = col_red, .bg = col_red | col_bright, .attr = 0
+    }
+};
+
 void win_init(win *w, buf *b)
 {
     memset(w, 0, sizeof(win));
@@ -246,6 +253,32 @@ void win_bar_cancel(win *w)
     w->barcb = NULL;
 }
 
+static vec *win_add_trailing_space(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
+{
+    chr *c;
+
+    c = vec_get(line, vec_len(line) - 1);
+
+    if (!c) return line;
+
+    if (*(c->utf8) == ' ' && (*mod == 0))
+    {
+        vec *modline;
+
+        modline = malloc(sizeof(vec));
+        vec_init(modline, sizeof(chr));
+        vec_cpy(modline,  line);
+
+        *mod = 1;
+        c = vec_get(modline, vec_len(modline) - 1);
+        *c = win_trailing_chr;
+
+        return modline;
+    }
+
+    return line;
+}
+
 static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
 {
     size_t linelen;
@@ -254,7 +287,7 @@ static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
 
     *mod = 0;
 
-    if (pri.ln == ln || sec.ln == ln)
+    if ((pri.ln == ln || sec.ln == ln) && (*mod == 0))
     {
         vec *modline;
 
@@ -295,7 +328,7 @@ static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
 
 void win_out_line(win *w, cur c)
 {
-    int      needsfree;
+    int      needsfree = 0;
     vec     *line;
     ssize_t   outlen;
 
@@ -310,7 +343,14 @@ void win_out_line(win *w, cur c)
     line = win_line(w, c.ln);
     if (!line) return;
 
+    line = win_add_trailing_space(w->pri, w->sec, c.ln, line, &needsfree);
     line = win_add_cur(w->pri, w->sec, c.ln, line, &needsfree);
+
+    if (needsfree)
+    {
+        c.cn = 0;
+        win_out_goto(w, &c);
+    }
 
     outlen = vec_len(line) - c.cn;
     if (outlen < 0)       outlen = 0;
@@ -385,6 +425,8 @@ void win_reset(win *w)
 
     w->sec = (cur){0, 0};
     w->pri = cur_check_bounds(w->b->prihint, w->b);
-    
+
+    win_show_cur(w, w->pri);
+
     win_out_all();
 }
