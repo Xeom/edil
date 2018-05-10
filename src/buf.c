@@ -104,6 +104,7 @@ void buf_clr(buf *b)
 {
     cur loc;
     loc.ln = buf_len(b);
+    b->prihint = (cur){0, 0};
 
     while ((loc.ln)--)
         buf_del_line(b, loc);
