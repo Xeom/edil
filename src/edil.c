@@ -28,14 +28,14 @@
 #endif
 
 static char *welcome = "\n"
-"          Welcome, to            \n"
-"       _____   ___      __   __  \n"
-"      / ___/  / _ \\    / /  / /  \n"
-"     / /_    / / | |  / /  / /   \n"
-"    / __/   / / / /  / /  / /    \n"
-"   / /__   / /_/ /  / /  / /__   \n"
-"  /____/  /_____/  /_/  /____/   \n"
-"                      v" STRIFY(VERSION) "            \n\n"
+"          Welcome, to           .\n"
+"       _____   ___      __   __\n"
+"      / ___/  / _ \\    / /  / /\n"
+"     / /_    / / | |  / /  / /\n"
+"    / __/   / / / /  / /  / /\n"
+"   / /__   / /_/ /  / /  / /_\n"
+"  /____/  /_____/  /_/  /____/\n"
+"                      v" STRIFY(VERSION) "\n\n"
 
 "     My text editor,\n"
 "          by Francis Wharf\n\n"
@@ -178,7 +178,7 @@ static void load_string(win *w, char *str)
 
     file_init_pipe(&f, fdopen(fds[0], "r"));
     file_load(&f, w->b);
-    file_close(&f);    
+    file_close(&f);
 }
 
 static void loop(void)
@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 
     b = ring_new();
     buf_set_name(b, "'welcome'");
-    b->flags |= buf_readonly | buf_nofile;
+    b->flags |= buf_readonly | buf_nofile | buf_nokill;
 
     win_init(&w, b);
 

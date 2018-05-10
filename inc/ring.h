@@ -16,4 +16,6 @@ buf *ring_prev(buf *b);
 
 buf *ring_new(void);
 
+buf *ring_del(buf *b);
+
 #endif
