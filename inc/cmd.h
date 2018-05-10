@@ -13,6 +13,25 @@ typedef enum
     cmd_pipe_cmd
 } cmd_pipe_type;
 
+
+typedef struct cmd_info_s cmd_info;
+
+struct cmd_info_s
+{
+    char *name;
+    void (*fptr)(vec *, vec *, win *);
+    char *desc;
+    char *notes;
+    int   nargs;
+    struct
+    {
+        int   optional;
+        char *name;
+        char *desc;
+        char *notes;
+    } args[];
+};
+
 extern vec cmd_items;
 
 void cmd_init(void);

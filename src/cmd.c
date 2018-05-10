@@ -50,6 +50,7 @@ static namevec_item cmd_items_static[] =
     CMD_ITEM(bufinfo,    buf_cmd_info),
     CMD_ITEM(next,       buf_cmd_next),
     CMD_ITEM(prev,       buf_cmd_prev),
+    CMD_ITEM(kill,       buf_cmd_kill)
 };
 
 /* Increment ind until whitespace isn't found, return this *
@@ -216,7 +217,7 @@ void cmd_log(vec *chrs, int iscmd)
     if (cmd_log_buf == NULL)
     {
         cmd_log_buf = ring_new();
-        cmd_log_buf->flags |= buf_readonly | buf_nofile;
+        cmd_log_buf->flags |= buf_readonly | buf_nofile | buf_nokill;
         buf_clr(cmd_log_buf);
         buf_set_name(cmd_log_buf, "'cmd log'");
     }

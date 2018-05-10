@@ -44,6 +44,9 @@ Commands for Buffers
     buffer is associated with a pipe. `ro` - The buffer is read-only. `mod` - The
     buffer is modified. `nofile` - No file should be associated with this buffer.
 
+* `kill [buffer]` - Kill the buffer specified. If no buffer is specified, then kill
+    the current buffer.
+
 Commands for Navigation
 -----------------------
 
