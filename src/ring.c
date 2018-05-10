@@ -98,3 +98,21 @@ buf *ring_new(void)
 
     return b;
 }
+
+buf *ring_del(buf *b)
+{
+    int ind;
+    ind = ring_get_ind(b);
+
+    if (vec_len(&ring_bufs) == 1)
+        return b;
+
+    vec_del(&ring_bufs, ind, 1);
+    buf_kill(b);
+
+    if ((int)vec_len(&ring_bufs) == ind)
+        return *(buf **)vec_first(&ring_bufs);
+
+    else
+        return *(buf **)vec_get(&ring_bufs, ind);
+}
