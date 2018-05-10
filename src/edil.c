@@ -197,7 +197,6 @@ static void loop(void)
             out_goto(0, out_rows, stdout);
             out_clr_line(stdout);
             win_out_all();
-            win_out_bar(win_cur);
         }
     }
 }
@@ -256,7 +255,6 @@ int main(int argc, char **argv)
     run_startup_cmd();
 
     win_out_after(&w, (cur){0, 0});
-    win_out_bar(&w);
 
     loop();
 

@@ -3,8 +3,11 @@
 # include <stdio.h>
 # include <unistd.h>
 
-typedef struct win_s win;
-
+# if !defined(BAR_H)
+ typedef struct win_s win;
+#endif
+ 
+# include "bar.h"
 # include "cur.h"
 
 struct win_s
@@ -18,11 +21,8 @@ struct win_s
     buf   *b;
     cur pri, sec;
 
-    /* Stuff for bar mode */
-    vec     bartyped;
-    vec     barprompt;
-    ssize_t barcur;
-    void  (*barcb)(win *w, vec *chrs);
+    /* Bar at the bottom */
+    bar basebar;
 };
 
 extern win *win_cur;
@@ -36,17 +36,7 @@ ssize_t win_max_cn(win *w);
 ssize_t win_min_ln(win *w);
 ssize_t win_min_cn(win *w);
 
-void win_bar_ins(win *w, vec *chrs);
-void win_bar_move(win *w, int n);
-void win_bar_back(win *w);
-void win_bar_del(win *w);
-void win_bar_run(win *w);
-void win_bar_query(win *w, vec *prompt, void (*cb)(win *w, vec *chrs));
-void win_bar_cancel(win *w);
-
 void win_kill(win *w);
-
-void win_out_bar(win *w);
 
 void win_out_line(win *w, cur c);
 void win_out_after(win *w, cur c);

@@ -70,7 +70,7 @@ void ui_ins_flush(void)
     switch (ui_mode)
     {
         case ui_mode_buf: cur_ins(w, &ui_ins_buf); break;
-        case ui_mode_bar: win_bar_ins(w, &ui_ins_buf); break;
+        case ui_mode_bar: bar_ins(&(w->basebar), &ui_ins_buf); break;
     }
 
     win_show_cur(w, w->pri);
@@ -81,7 +81,7 @@ void ui_flush(void)
 {
     ui_ins_flush();
 
-    win_out_bar(win_cur);
+    bar_out(&(win_cur->basebar));
 }
 
 int ui_is_typable(inp_key key)
@@ -96,7 +96,7 @@ void ui_activate_cmd(void)
 
     vec_init(&cmdprompt, sizeof(chr));
     chr_from_str(&cmdprompt, ui_cmd_prompt);
-    win_bar_query(win_cur, &cmdprompt, ui_cmd_cb);
+    bar_query(&(win_cur->basebar), &cmdprompt, ui_cmd_cb);
     vec_kill(&cmdprompt);
 }
 
@@ -116,7 +116,7 @@ void ui_handle(inp_key key)
         if (ui_mode == ui_mode_bar)
         {
             ui_mode = ui_mode_buf;
-            win_bar_cancel(win_cur);
+            bar_cancel(&(win_cur->basebar));
         }
         else
             ui_activate_cmd();
@@ -264,9 +264,15 @@ static void ui_handle_shortcut(inp_key key)
 
     if (cmd)
     {
+        vec chrs;
+        vec_init(&chrs, sizeof(chr));
+        chr_from_str(&chrs, cmd);
+
         ui_activate_cmd();
-        chr_from_str(&(w->bartyped), cmd);
-        w->barcur = vec_len(&(w->bartyped));
+
+        bar_ins(&(w->basebar), &chrs);
+
+        vec_kill(&chrs);
 
         return;
     }
@@ -315,7 +321,9 @@ static void ui_handle_indent(inp_key key)
 static void ui_handle_bar(inp_key key)
 {
     win *w;
+    bar *b;
     w = win_cur;
+    b = &(w->basebar);
 
     if (ui_is_typable(key))
     {
@@ -324,12 +332,12 @@ static void ui_handle_bar(inp_key key)
 
     switch (key)
     {
-    case inp_key_enter: win_bar_run(w); ui_mode = ui_mode_buf; break;
+    case inp_key_enter: bar_run(b); ui_mode = ui_mode_buf; break;
 
-    case inp_key_left:  win_bar_move(w, -1); break;
-    case inp_key_right: win_bar_move(w,  1); break;
+    case inp_key_left:  bar_move(b, -1); break;
+    case inp_key_right: bar_move(b,  1); break;
 
-    case inp_key_back:  win_bar_back(w); break;
-    case inp_key_del:   win_bar_del(w);  break;
+    case inp_key_back:  bar_back(b); break;
+    case inp_key_del:   bar_del(b);  break;
     }
 }
