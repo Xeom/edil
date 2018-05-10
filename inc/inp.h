@@ -42,7 +42,7 @@ struct inp_keycode_s
     char *name;
 };
 
-inp_key inp_get_key(char c);
+inp_key inp_get_key(unsigned char c);
 
 void inp_key_name(inp_key key, char *str, size_t len);
 

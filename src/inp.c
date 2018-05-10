@@ -69,7 +69,7 @@ static int inp_keycode_cmp(const void *a, const void *b)
     return strcmp(acode->code, bcode->code);
 }
 
-static inp_key inp_get_escaped_key(char chr)
+static inp_key inp_get_escaped_key(unsigned char chr)
 {
     static char code[16];
     static int  code_ind   = 0;
@@ -118,7 +118,7 @@ static inp_key inp_get_escaped_key(char chr)
     return rtn;
 }
 
-inp_key inp_get_key(char c)
+inp_key inp_get_key(unsigned char c)
 {
     static int escaped = 0;
     inp_key    rtn;
