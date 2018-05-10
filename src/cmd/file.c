@@ -127,6 +127,7 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
             chr_format(rtn, "Loaded '%s'", file_name(f));
         }
 
+        win_reset(w);
         win_out_after(w, (cur){0, 0});
     }
     else
@@ -227,13 +228,11 @@ void file_cmd_chdir(vec *rtn, vec *args, win *w)
 void file_clr_win(win *w)
 {
     cur loc;
+
+    win_reset(w);
+    
     loc.ln = buf_len(w->b);
     loc.cn = 0;
-
-    w->pri = (cur){0, 0};
-    w->sec = (cur){0, 0};
-    w->scrx = 0;
-    w->scry = 0;
 
     while ((loc.ln)--)
         buf_del_line(w->b, loc);

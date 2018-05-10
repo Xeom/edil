@@ -48,6 +48,17 @@ col out_log_space_col = {
     .fg = col_black | col_bright, .bg = col_none, .attr = col_under
 };
 
+col out_trailing_space_col = {
+    .fg = col_red, .bg = col_none, .attr = 0
+};
+
+chr out_trailing_space_chr = {
+    .utf8 = ";",
+    .fnt = {
+        .fg = col_red, .bg = col_none, .attr = 0
+    }
+};
+
 static struct termios out_tattr_orig;
 
 void out_goto(int cn, int ln, FILE *f)
@@ -118,13 +129,13 @@ void out_chrs(chr *chrs, size_t n, size_t off, FILE *f)
 
         c = &chrs[ind];
 
-        if (strcmp(c->utf8, "\t") == 0)
+        if (*(c->utf8) == '\t')
         {
             indent_print_tab(ind + off, f, c->fnt);
             prevcol = c->fnt;
         }
         else if (!chr_is_blank(c))
-        {
+        {       
             currcol = c->fnt;
             if (memcmp(&currcol, &prevcol, sizeof(col)) != 0)
                 col_print(currcol, f);

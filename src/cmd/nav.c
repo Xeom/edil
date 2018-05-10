@@ -1,7 +1,36 @@
 #include "vec.h"
 #include "win.h"
+#include "cmd.h"
 
 #include "cmd/nav.h"
+
+cmd_info cmd_info_goto =
+{
+    .fptr = nav_cmd_goto,
+    .name = "goto",
+    .desc = "Go to a specific location in the buffer",
+    .notes = "After the command is run, it prints out the"
+             " cursor's new location, even if it is given"
+             " no arguments. If the specified new location"
+             " is not a valid location in the buffer, the"
+             " nearest valid location is used instead.",
+    .nargs = 2,
+    .args =
+    {
+        {
+            .optional = 1,
+            .name = "Line number",
+            .desc = "The number of the line to go to."
+                    " (starting from 1)"
+        },
+        {
+            .optional = 1,
+            .name = "Column number",
+            .desc = "The number of the column to go to."
+                    " (starting from 1)"
+        }
+    }
+};
 
 void nav_cmd_goto(vec *rtn, vec *args, win *w)
 {
@@ -44,6 +73,14 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
     );
 }
 
+cmd_info cmd_info_swap =
+{
+    .fptr = nav_cmd_swap,
+    .name = "swap",
+    .desc = "Swap the positions of the primary and secondary cursors",
+    .nargs = 0
+};
+
 void nav_cmd_swap(vec *rtn, vec *args, win *w)
 {
     cur tmp;
@@ -65,6 +102,14 @@ void nav_cmd_swap(vec *rtn, vec *args, win *w)
     win_out_line(w, w->pri);
     win_out_line(w, w->sec);
 }
+
+cmd_info cmd_info_snap =
+{
+    .fptr = nav_cmd_snap,
+    .name = "snap",
+    .desc = "Move the secondary cursor to the primary cursors",
+    .nargs = 0
+};
 
 void nav_cmd_snap(vec *rtn, vec *args, win *w)
 {

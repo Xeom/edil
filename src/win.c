@@ -41,7 +41,7 @@ col_desc win_sec_col = {
 chr win_trailing_chr = {
     .utf8 = ";",
     .fnt = {
-        .fg = col_red, .bg = col_red | col_bright, .attr = 0
+        .fg = col_red, .bg = col_none, .attr = 0
     }
 };
 

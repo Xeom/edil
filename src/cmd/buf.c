@@ -29,7 +29,7 @@ void buf_cmd_next(vec *rtn, vec *args, win *w)
     prev = w->b;
 
     w->b->prihint = w->pri;
-    
+
     w->b = ring_next(prev);
 
     win_reset(w);
@@ -43,11 +43,11 @@ void buf_cmd_prev(vec *rtn, vec *args, win *w)
     prev = w->b;
 
     w->b->prihint = w->pri;
-    
+
     w->b = ring_prev(prev);
 
     win_reset(w);
-    
+
     chr_format(
         rtn,
         "switched buffer %d -> %d",
@@ -97,7 +97,7 @@ void buf_cmd_kill(vec *rtn, vec *args, win *w)
         chr_from_str(rtn, "err: Buffer not killable");
         return;
     }
-    
+
     new   = ring_del(todel);
 
     if (todel == w->b)
