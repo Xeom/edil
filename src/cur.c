@@ -278,6 +278,60 @@ void cur_ins_buf(win *w, buf *other, cur loc, cur end)
     win_out_after(w, prev);
 }
 
+int cur_move_region_lr_chk(win *w, ssize_t ln, ssize_t inscn, ssize_t delcn)
+{
+    ssize_t len;
+    len = buf_line_len(w->b, (cur){ .ln = ln });
+
+    fprintf(stderr, "%ld %ld %ld\n", ln, inscn, delcn);
+    
+    if (inscn >= len && delcn >= len) return 1;
+    if (inscn < 0 || inscn >= len)  return 0;
+    if (delcn < 0 || delcn >= len) return 0;
+
+    return 1;
+}
+
+int cur_move_region_lr(win *w, cur dir, ssize_t cn1, ssize_t cn2, ssize_t ln1, ssize_t ln2)
+{
+    ssize_t inscn, delcn, ln;
+
+    if (dir.cn > 0)
+    {
+        delcn = cn2 + 1;
+        inscn = cn1;
+    }
+    else
+    {
+        delcn = cn1 - 1;
+        inscn = cn2;
+    }
+
+    for (ln = ln1; ln <= ln2; ++ln)
+    {
+        if (!cur_move_region_lr_chk(w, ln, inscn, delcn))
+            return 0;
+    }
+
+    for (ln = ln1; ln <= ln2; ++ln)
+    {
+        cur delcur = { .ln = ln, .cn = delcn };
+        cur inscur = { .ln = ln, .cn = inscn };
+        chr tmp, *c;
+
+        c = buf_chr(w->b, delcur);
+
+        if (!c) continue;
+
+        tmp = *c;
+
+        buf_del(w->b, delcur, 1);
+        buf_ins(w->b, inscur, &tmp, 1);
+    }
+
+    return 1;
+}
+
 void cur_move_region(win *w, cur dir)
 {
     vec tmp;
@@ -330,48 +384,23 @@ void cur_move_region(win *w, cur dir)
         vec_kill(&tmp);
     }
 
-    if (dir.cn != 0 && start->ln == end->ln)
+    if (dir.cn != 0)
     {
-        cur delcur, inscur;
+        ssize_t cn1, cn2, ln1, ln2;
+        int rtn;
 
-        if (dir.cn > 0)
-        { /* Forward */
-            delcur = *end;
-            delcur.cn += 1;
-            inscur = *start;
-        }
-        else
-        { /* Back */
-            delcur = *start;
-            delcur.cn -= 1;
-            inscur = *end;
-        }
+        ln1 = start->ln;
+        ln2 = end->ln;
 
-        if (delcur.cn >= 0)
+        cn1 = (start->cn > end->cn) ? end->cn   : start->cn;
+        cn2 = (start->cn > end->cn) ? start->cn : end->cn;
+
+        rtn = cur_move_region_lr(w, dir, cn1, cn2, ln1, ln2);
+
+        if (rtn)
         {
-            chr tmp;
-            size_t len;
-            chr *c;
-
-            c = buf_chr(w->b, delcur);
-            len  = buf_line_len(w->b, delcur);
-
-            if (inscur.cn >= (ssize_t)len && dir.cn < 0)
-            {
-                inscur.cn -= 1;
-                end->cn   -= 1;
-            }
-
-            if (c)
-            {
-                tmp = *c;
-
-                w->pri.cn += dir.cn;
-                w->sec.cn += dir.cn;
-
-                buf_del(w->b, delcur, 1);
-                buf_ins(w->b, inscur, &tmp, 1);
-            }
+            end->cn   += dir.cn;
+            start->cn += dir.cn;
         }
     }
 }
