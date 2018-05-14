@@ -50,7 +50,8 @@ static namevec_item cmd_items_static[] =
     CMD_ITEM(bufinfo,    buf_cmd_info),
     CMD_ITEM(next,       buf_cmd_next),
     CMD_ITEM(prev,       buf_cmd_prev),
-    CMD_ITEM(kill,       buf_cmd_kill)
+    CMD_ITEM(kill,       buf_cmd_kill),
+    CMD_ITEM(quit,       buf_cmd_quit)
 };
 
 /* Increment ind until whitespace isn't found, return this *
@@ -80,6 +81,7 @@ void cmd_run(vec *args, vec *rtn, win *w)
     if (len == 0) return;
 
     arg  = vec_first(args);
+
     item = namevec_get_chrs(&cmd_items, arg, &number);
 
     if (!item || number == 0)
@@ -107,6 +109,7 @@ void cmd_run(vec *args, vec *rtn, win *w)
     {
         item->data.cmdfunct(rtn, args, w);
     }
+
 }
 
 void cmd_parse(vec *args, vec *chrs, size_t ind)

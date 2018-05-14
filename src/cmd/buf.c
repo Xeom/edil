@@ -1,6 +1,7 @@
 #include "file.h"
 #include "buf.h"
 #include "ring.h"
+#include "ui.h"
 
 #include "cmd/buf.h"
 
@@ -28,13 +29,13 @@ void buf_cmd_next(vec *rtn, vec *args, win *w)
     buf *prev;
     prev = w->b;
 
-    w->b->prihint = w->pri;
+    win_set_buf(w, ring_next(prev));
 
-    w->b = ring_next(prev);
-
-    win_reset(w);
-
-    chr_format(rtn, "switched buffer %d -> %d", ring_get_ind(prev), ring_get_ind(w->b));
+    chr_format(
+        rtn,
+        "switched buffer %d -> %d",
+        ring_get_ind(prev), ring_get_ind(w->b)
+    );
 }
 
 void buf_cmd_prev(vec *rtn, vec *args, win *w)
@@ -42,11 +43,7 @@ void buf_cmd_prev(vec *rtn, vec *args, win *w)
     buf *prev;
     prev = w->b;
 
-    w->b->prihint = w->pri;
-
-    w->b = ring_prev(prev);
-
-    win_reset(w);
+    win_set_buf(w, ring_prev(prev));
 
     chr_format(
         rtn,
@@ -102,7 +99,7 @@ void buf_cmd_kill(vec *rtn, vec *args, win *w)
 
     if (todel == w->b)
     {
-        w->b = new;
+        win_set_buf(w, new);
         win_reset(w);
     }
 
@@ -115,4 +112,30 @@ void buf_cmd_kill(vec *rtn, vec *args, win *w)
             "Deleted buffer %d, switched to %d",
             delind, ring_get_ind(new)
         );
+}
+
+void buf_cmd_quit(vec *rtn, vec *args, win *w)
+{
+    size_t ind, len;
+
+    if (vec_len(args) != 1)
+    {
+        chr_from_str(rtn, "err: Command takes no arguments");
+        return;
+    }
+
+    len = vec_len(&ring_bufs);
+    for (ind = 0; ind < len; ++ind)
+    {
+        buf **b;
+        b = vec_get(&ring_bufs, ind);
+        if ((*b)->flags & buf_modified)
+        {
+            chr_format(rtn, "err: Buf %ld modified", ind);
+            win_set_buf(w, *b);
+            return;
+        }
+    }
+
+    ui_alive = 0;
 }
