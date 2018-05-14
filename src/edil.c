@@ -6,6 +6,7 @@
 # include <stdio.h>
 #endif
 
+#include "bind.h"
 #include "ring.h"
 #include "win.h"
 #include "out.h"
@@ -57,7 +58,7 @@ static char *help = "\n"
 "                     file when edil starts up.\n"
 "    --help     -h    Display this help message.\n"
 "    --version  -v    Show the current version of edil, and\n"
-"                     its compilation time\n";
+"                     its compilation time\n\n";
 
 static char *version =
 "Edil v" STRIFY(VERSION) ", -- Compiled (" STRIFY(COMPILETIME) ")\n";
@@ -128,6 +129,7 @@ void run_startup_cmd(void)
         vec *cmd;
         cmd = vec_get(&startup_cmd, ind);
         ui_cmd_cb(win_cur, cmd);
+
         vec_kill(cmd);
     }
 
@@ -149,12 +151,12 @@ static void init_all(void)
     cmd_init();
     out_init(stdout);
     inp_init();
-    ui_init();
+    bind_init();
 }
 
 static void kill_all(void)
 {
-    ui_kill();
+    bind_kill();
     inp_kill();
     out_kill(stdout);
     cmd_kill();
@@ -204,9 +206,11 @@ static void loop(void)
 static void colour_edil(buf *b)
 {
     size_t ln;
+
     col_desc textfnt = { .fg = col_red | col_bright, .bg = col_null };
     col_desc linefnt = { .fg = col_red, .bg = col_null, .set = col_under };
     col_desc copyfnt = { .fg = col_black | col_bright, .bg = col_null };
+
 
     for (ln = 2; ln < 8; ln++)
     {
@@ -245,7 +249,6 @@ int main(int argc, char **argv)
 
     load_string(&w, welcome);
     colour_edil(b);
-
     w.cols = out_cols;
     w.rows = out_rows - 1;
 

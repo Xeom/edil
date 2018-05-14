@@ -283,8 +283,6 @@ int cur_move_region_lr_chk(win *w, ssize_t ln, ssize_t inscn, ssize_t delcn)
     ssize_t len;
     len = buf_line_len(w->b, (cur){ .ln = ln });
 
-    fprintf(stderr, "%ld %ld %ld\n", ln, inscn, delcn);
-    
     if (inscn >= len && delcn >= len) return 1;
     if (inscn < 0 || inscn >= len)  return 0;
     if (delcn < 0 || delcn >= len) return 0;
@@ -379,7 +377,7 @@ void cur_move_region(win *w, cur dir)
 
         buf_ins(w->b, inscur, vec_first(&tmp), vec_len(&tmp));
 
-        win_out_after(w, (cur){ .ln = start->ln });
+        win_out_after(w, (cur){ .ln = start->ln - 1 });
 
         vec_kill(&tmp);
     }
@@ -402,6 +400,8 @@ void cur_move_region(win *w, cur dir)
             end->cn   += dir.cn;
             start->cn += dir.cn;
         }
+
+        win_out_after(w, (cur){ .ln = start->ln });
     }
 }
 
@@ -452,4 +452,8 @@ void cur_del_region(win *w)
     }
 
     *end = *start;
+}
+
+void cur_ins_region(win *w, vec *text)
+{
 }

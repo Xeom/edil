@@ -16,6 +16,7 @@
 #include <pthread.h>
 #include <sys/types.h>
 
+#include "bind.h"
 #include "ui.h"
 #include "vec.h"
 #include "out.h"
@@ -235,15 +236,14 @@ static void *inp_listen(void *arg)
     return NULL;
 }
 
-
 void inp_empty_pipe(void)
 {
     inp_key key;
 
     while (read(inp_fd_out, &key, sizeof(inp_key)) != -1)
-        ui_handle(key);
+        bind_handle_key(key);
 
-    ui_flush();
+    bind_flush();
     /* Flush */
 }
 

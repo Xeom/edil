@@ -1,5 +1,6 @@
 #if !defined(INP_H)
 # define INP_H
+# include <stddef.h>
 
 typedef enum
 {

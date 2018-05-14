@@ -91,7 +91,7 @@ void *vec_rep(vec *v, size_t ind, size_t n, const void *data, size_t reps)
     size_t bytesafter, offset, bytesins, bytessing;
 
     if (!v) return NULL;
-    if (n == 0) return NULL;
+    if (n == 0 || reps == 0) return NULL;
 
     offset     = ind * v->width;
     bytessing  = n   * v->width;
@@ -132,7 +132,6 @@ size_t vec_bst(
 {
     size_t ltind, gtind;
     int cmp;
-    puts((char *)item);
 
     if (!v || !cmpfunc) return 0;
     /* An empty vector returns 0 always */

@@ -30,6 +30,15 @@ void bind_init(void)
     vec_init(&bind_ins_buf, sizeof(chr));
 }
 
+void bind_kill(void)
+{
+    bind_bar_kill();
+    bind_buf_kill();
+    bind_kcd_kill();
+
+    vec_kill(&bind_ins_buf);
+}
+
 void bind_handle_key(inp_key key)
 {
     bind_fptr *funct;

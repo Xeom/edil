@@ -64,7 +64,7 @@ void bar_set_format(bar *b, char *fmt)
     if (b->format)
         free(b->format);
 
-    b->format = malloc(strlen(fmt));
+    b->format = malloc(strlen(fmt) + 1);
     strcpy(b->format, fmt);
 }
 
@@ -87,6 +87,8 @@ void bar_ins(bar *b, vec *chrs)
 {
     vec_ins(&(b->typed), b->ind, vec_len(chrs), vec_first(chrs));
     b->ind += vec_len(chrs);
+
+    bar_out(b);
 }
 
 void bar_back(bar *b)
@@ -94,6 +96,7 @@ void bar_back(bar *b)
     if (b->ind == 0) return;
 
     b->ind -= 1;
+
     bar_del(b);
 }
 
@@ -106,6 +109,9 @@ void bar_del(bar *b)
         return;
 
     vec_del(typ, b->ind, 1);
+
+
+    bar_out(b);
 }
 
 void bar_move(bar *b, int n)
@@ -117,6 +123,8 @@ void bar_move(bar *b, int n)
 
     if      (b->ind < 0)   b->ind = 0;
     else if (b->ind > len) b->ind = len;
+
+    bar_out(b);
 }
 
 void bar_run(bar *b)
@@ -134,6 +142,8 @@ void bar_cancel(bar *b)
 
     b->ind = 0;
     b->cb  = NULL;
+
+    bar_out(b);
 }
 
 void bar_query(bar *b, vec *prompt, void (*cb)(win *w, vec *chrs))
@@ -142,6 +152,8 @@ void bar_query(bar *b, vec *prompt, void (*cb)(win *w, vec *chrs))
 
     vec_cpy(&(b->prompt), prompt);
     b->cb = cb;
+
+    bar_out(b);
 }
 
 void bar_out(bar *b)
@@ -173,7 +185,8 @@ void bar_out(bar *b)
     for (; ind < len; ind++)
         chr_set_cols(vec_get(&chrs, ind), bar_typed_col);
 
-    vec_rep(&chrs, len, 1, &bar_blank_chr, w->cols - len);
+    if (w->cols > (ssize_t)len)
+        vec_rep(&chrs, len, 1, &bar_blank_chr, w->cols - len);
 
     out_goto(w->xpos + 1, w->ypos + w->rows, stdout);
     out_chrs(vec_first(&chrs), w->cols, 0, stdout);

@@ -166,6 +166,7 @@ void out_init(FILE *f)
 {
     struct termios tattr;
     struct sigaction act;
+    vec    empty;
 
     /* Set terminal attributes */
     tcgetattr(fileno(f), &tattr);
@@ -192,7 +193,8 @@ void out_init(FILE *f)
 
     sigaction(SIGWINCH, &act, NULL);
 
-    out_log(&(vec){ .width = 1 }, stdout);
+    vec_init(&empty, sizeof(chr));
+    out_log(&empty, stdout);
 }
 
 void out_kill(FILE *f)
