@@ -16,7 +16,7 @@ DFLAGS=$(addprefix -D, $(DEFINES)) \
        -DVERSION='$(VERSION)'
 
 WFLAGS=$(addprefix -W, $(WARNINGS))
-FLAGS+=$(WFLAGS) --std=c99 -pedantic -pthread -I$(INCDIR) -fPIC -fdiagnostics-color=always $(DFLAGS)
+FLAGS+=$(WFLAGS) --std=c99 -pedantic -pthread -I$(INCDIR) -fPIC -fdiagnostics-color=always  $(DFLAGS)
 
 HFILES=$(addprefix $(INCDIR), $(addsuffix .h, $(FILES)))
 CFILES=$(addprefix $(SRCDIR), $(addsuffix .c, $(FILES)))
@@ -48,24 +48,14 @@ $(DEPDIR)%.d: $(SRCDIR)%.c $(HFILES) conf.mk
 	@gcc -MM -MG -MT $(@:$(DEPDIR)%.d=%.o) $(FLAGS) $< >> $@
 	@printf "Created $@\n"
 
-$(BINDIR)libedil.so: $(OFILES)
-	@mkdir -p $(@D)
-	@gcc $(FLAGS) -shared $^ -o $@ $(ERRPIPE)
-	@printf "Linked $@\n"
-
-$(BINDIR)libedil.a: $(OFILES)
-	@mkdir -p $(@D)
-	@ar rcs $@ $^ $(ERRPIPE)
-	@printf "Linked $@\n"
-
-$(BINDIR)edil: $(SRCDIR)edil.c $(BINDIR)libedil.a
+$(BINDIR)edil: $(OFILES) $(SRCDIR)edil.c
 	@mkdir -p $(@D)
 	@gcc $(FLAGS) $^ -o $@ $(ERRPIPE)
 	@printf "Built $@\n"
 
 deps: $(DFILES)
 
-all: deps $(BINDIR)libedil.a $(BINDIR)libedil.so $(BINDIR)edil
+all: deps $(BINDIR)edil
 	@if [ -s errs.txt ]; then cat errs.txt | less -r; rm errs.txt; fi
 
 clean: clean_err clean_bin clean_obj clean_dep
