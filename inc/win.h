@@ -6,7 +6,7 @@
 # if !defined(BAR_H)
  typedef struct win_s win;
 #endif
- 
+
 # include "bar.h"
 # include "cur.h"
 
@@ -49,5 +49,7 @@ void win_out_all(void);
 void win_show_cur(win *w, cur c);
 
 void win_reset(win *w);
+
+void win_set_buf(win *w, buf *b);
 
 #endif

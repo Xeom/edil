@@ -26,7 +26,7 @@ void file_cmd_new(vec *rtn, vec *args, win *w)
     buf *b;
 
     b = ring_new();
-    w->b = b;
+    win_set_buf(w, b);
 
     chr_format(rtn, "New buffer [%d]", ring_get_ind(b));
 
@@ -35,11 +35,6 @@ void file_cmd_new(vec *rtn, vec *args, win *w)
         chr_from_str(rtn, ", ");
         file_cmd_load(rtn, args, w);
     }
-
-    w->pri = (cur){0, 0};
-    w->sec = (cur){0, 0};
-
-    win_out_after(w, (cur){0, 0});
 }
 
 void file_cmd_discard(vec *rtn, vec *args, win *w)
@@ -230,7 +225,7 @@ void file_clr_win(win *w)
     cur loc;
 
     win_reset(w);
-    
+
     loc.ln = buf_len(w->b);
     loc.cn = 0;
 

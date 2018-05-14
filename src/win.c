@@ -263,6 +263,7 @@ void win_buf_out_after(buf *b, cur c)
 void win_out_all(void)
 {
     win_out_after(win_cur, (cur){0, 0});
+    bar_out(&(win_cur->basebar));
 }
 
 void win_reset(win *w)
@@ -276,4 +277,11 @@ void win_reset(win *w)
     win_show_cur(w, w->pri);
 
     win_out_all();
+}
+
+void win_set_buf(win *w, buf *b)
+{
+    w->b->prihint = w->pri;
+    w->b = b;
+    win_reset(w);
 }
