@@ -25,13 +25,18 @@ of *Edil*.
 
 ## 0.0.4
 
+- [x] bar struct
+- [ ] New bind system
+- [ ] Jump to buffers when quitting if they are mod.
+- [x] Closing buffers.
 - [x] file struct
 - [ ] "Are you sure?" messages.
 - [ ] More efficient rendering of window bars.
-- [ ] Log buffers.
+- [x] Log buffers.
 
 ## 0.0.5
 
+- [ ] Long cursor mode
 - [ ] Support for multiple windows.
 
 ## Features that are needed sometime

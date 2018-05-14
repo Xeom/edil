@@ -13,9 +13,6 @@ typedef enum
 
 extern bind_mode_type bind_mode;
 
-extern table bind_kcd;
-extern table bind_bar;
-
 typedef void(*bind_fptr)(inp_key k, win *w);
 
 #define RLY_CONCAT(a, b) a ## b
@@ -48,7 +45,10 @@ typedef void(*bind_fptr)(inp_key k, win *w);
 
 void bind_ins_flush(void);
 void bind_handle_key(inp_key key);
+
 void bind_init(void);
+void bind_kill(void);
+
 void bind_flush(void);
 
 #endif
