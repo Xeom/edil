@@ -10,6 +10,7 @@
 #define TABLE_MAX_USAGE(cap) ((cap >> 2) + (cap >> 3))
 #define TABLE_MIN_USAGE(cap) ((cap >> 3) + (cap >> 6))
 
+static inline size_t    table_blk_ind        (table *t, void *blk);
 static inline uint64_t *table_blk_hash       (table *t, size_t ind);
 static inline char     *table_blk_key        (table *t, size_t ind);
 static inline char     *table_blk_val        (table *t, size_t ind);
@@ -44,6 +45,12 @@ void table_kill(table *t)
 size_t table_len(table *t)
 {
     return t->usage;
+}
+
+static inline size_t table_blk_ind(table *t, void *blk)
+{
+    size_t diff = (char *)blk - t->data;
+    return diff / t->blkwidth;
 }
 
 static inline uint64_t *table_blk_hash(table *t, size_t ind)
@@ -126,6 +133,32 @@ static void table_resize_smaller(table *t)
     table_realloc(t, t->capacity >> 1);
 }
 
+void *table_next(table *t, void *val, void **key)
+{
+    size_t ind;
+
+    if (!val) ind = 0;
+    else      ind = table_blk_ind(t, val) + 1;
+
+    if (key) *key = NULL;
+
+    for (;;)
+    {
+
+        if (!table_blk_isnull(t, ind))
+        {
+            if (key) *key = table_blk_key(t, ind);
+
+            return table_blk_val(t, ind);
+        }
+
+        ind++;
+
+        if (ind >= t->capacity)
+            return NULL;
+    }
+}
+
 static size_t table_find_blk(table *t, const void *k, int *new)
 {
     size_t ind;
@@ -141,8 +174,8 @@ static size_t table_find_blk(table *t, const void *k, int *new)
         if (table_blk_isnull(t, ind))
             break;
 
-        if (*table_blk_hash(t, ind) == hash &&
-            memcmp(table_blk_key(t, ind), k, t->keywidth) == 0)
+        if (*table_blk_hash(t, ind) == hash
+            && memcmp(table_blk_key(t, ind), k, t->keywidth) == 0)
             return ind;
 
         ind++;
@@ -162,13 +195,10 @@ void *table_set(table *t, const void *k, const void *value)
 
     ind = table_find_blk(t, k, &new);
 
-    if (new)
-        memcpy(table_blk_key(t, ind), k,     t->keywidth);
+    if (new)   memcpy(table_blk_key(t, ind), k,     t->keywidth);
 
-    if (value)
-        memcpy(table_blk_val(t, ind), value, t->valwidth);
-    else
-        memset(table_blk_val(t, ind), 0,     t->valwidth);
+    if (value) memcpy(table_blk_val(t, ind), value, t->valwidth);
+    else       memset(table_blk_val(t, ind), 0,     t->valwidth);
 
     *table_blk_hash(t, ind) = table_hash(k, t->keywidth);
 

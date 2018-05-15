@@ -43,4 +43,5 @@ void *table_get(table *t, const void *k);
 /* Remove a key from the table */
 void table_delete(table *t, const void *k);
 
+void *table_next(table *t, void *val, void **key);
 #endif
