@@ -58,7 +58,8 @@ static char *help = "\n"
 "                     file when edil starts up.\n"
 "    --help     -h    Display this help message.\n"
 "    --version  -v    Show the current version of edil, and\n"
-"                     its compilation time\n\n";
+"                     its compilation time\n"
+"    --binds    -b    Display edil's keybindings\n\n";
 
 static char *version =
 "Edil v" STRIFY(VERSION) ", -- Compiled (" STRIFY(COMPILETIME) ")\n";
@@ -102,7 +103,16 @@ static void process_arg(int argc, char **argv, int *n)
         cmd = new_startup_cmd();
         chr_from_str(cmd, argv[*n]);
     }
-    else if (strncmp(argv[*n], "--", 2) == 0)
+    else if (argis(--binds) || argis(-b))
+    {
+        inp_init();
+        bind_init();
+        bind_print(stdout);
+        bind_kill();
+        inp_kill();
+        exit(0);
+    }
+    else if (strncmp(argv[*n], "-", 1) == 0)
     {
         fputs(argerror(Unknown argument), stdout);
         exit(0);
