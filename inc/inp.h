@@ -54,4 +54,7 @@ void inp_init(void);
 void inp_kill(void);
 
 void inp_wait(void);
+
+int inp_key_cmp(const void *aptr, const void *bptr);
+
 #endif

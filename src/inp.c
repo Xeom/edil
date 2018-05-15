@@ -192,9 +192,9 @@ void inp_key_name(inp_key key, char *str, size_t len)
     }
 
     if (name)
-        snprintf(str, len, "(%03x %s%s) ", key, prefix, name);
+        snprintf(str, len, "%03x %s%s ", key, prefix, name);
     else
-        snprintf(str, len, "(%03x %s%02x) ", key, prefix, key & 0xff);
+        snprintf(str, len, "%03x %s%02x ", key, prefix, key & 0xff);
 }
 
 static void inp_listen_term(int sign)
@@ -326,4 +326,24 @@ void inp_wait(void)
 
     if (FD_ISSET(inp_fd_out, &fds))
         inp_empty_pipe();
+}
+
+int inp_key_cmp(const void *aptr, const void *bptr)
+{
+    inp_key a, b;
+    int basea, baseb;
+
+    a = *(inp_key *)aptr;
+    b = *(inp_key *)bptr;
+
+    basea = 0x1ff & a;
+    baseb = 0x1ff & b;
+
+    if (basea > baseb) return 1;
+    if (basea < baseb) return -1;
+
+    if (a > b) return 1;
+    if (a < b) return -1;
+
+    else return 0;
 }
