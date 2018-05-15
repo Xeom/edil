@@ -56,8 +56,8 @@ BIND_FUNCT(buf_ins_tab,
 #define RCUT(cmd) \
     BIND_FUNCT(buf_ ## cmd ## _cmd, bind_buf_shortcut_run(#cmd, w))
 
-#define SCUT_TO(cmd, key) \
-    BIND_TO(buf_ ## cmd ## _cmd, key)
+#define SCUT_TO(cmd, key, desc) \
+    BIND_TO(buf_ ## cmd ## _cmd, key, desc)
 
 SCUT(new) SCUT(load) SCUT(save) SCUT(goto) SCUT(quit)
 
@@ -72,48 +72,50 @@ BIND_FUNCT(buf_to_cmd, bind_buf_activate_cmd(w))
 void bind_buf_init(void)
 {
     table *tab = &bind_buf;
-    table_init(tab, sizeof(bind_fptr), sizeof(inp_key));
+    table_init(tab, sizeof(bind_info), sizeof(inp_key));
 
-    BIND_TO(buf_mv_u, inp_key_up);
-    BIND_TO(buf_mv_d, inp_key_down);
-    BIND_TO(buf_mv_l, inp_key_left);
-    BIND_TO(buf_mv_r, inp_key_right);
+    BIND_TO(buf_mv_u, inp_key_up,    Move the cursor up);
+    BIND_TO(buf_mv_d, inp_key_down,  Move the cursor down);
+    BIND_TO(buf_mv_l, inp_key_left,  Move the cursor left);
+    BIND_TO(buf_mv_r, inp_key_right, Move the cursor right);
 
-    BIND_TO(buf_rmv_u, inp_key_up    | inp_key_esc);
-    BIND_TO(buf_rmv_d, inp_key_down  | inp_key_esc);
-    BIND_TO(buf_rmv_l, inp_key_left  | inp_key_esc);
-    BIND_TO(buf_rmv_r, inp_key_right | inp_key_esc);
+    BIND_TO(buf_rmv_u, inp_key_up    | inp_key_esc, Shift the current region up);
+    BIND_TO(buf_rmv_d, inp_key_down  | inp_key_esc, Shift the current region down);
+    BIND_TO(buf_rmv_l, inp_key_left  | inp_key_esc, Shift the current region left);
+    BIND_TO(buf_rmv_r, inp_key_right | inp_key_esc, Shift the current region right);
 
-    BIND_TO(buf_home, inp_key_home);
-    BIND_TO(buf_end,  inp_key_end);
-    BIND_TO(buf_pgup, inp_key_pgup);
-    BIND_TO(buf_pgdn, inp_key_pgdn);
+    BIND_TO(buf_home, inp_key_home, Move the cursor to the beginning of the line);
+    BIND_TO(buf_end,  inp_key_end,  Move the cursor to the end of the line);
+    BIND_TO(buf_pgup, inp_key_pgup, Move the cursor to the top of the screen);
+    BIND_TO(buf_pgdn, inp_key_pgdn, Move the cursor to the bottom of the screen);
 
-    BIND_TO(buf_line, inp_key_ctrl | 'L');
+    BIND_TO(buf_line, inp_key_ctrl | 'L', Select the current line as the region);
 
-    BIND_TO(buf_enter, inp_key_enter);
-    BIND_TO(buf_del,   inp_key_del);
-    BIND_TO(buf_back,  inp_key_back);
+    BIND_TO(buf_enter, inp_key_enter, Insert a newline);
+    BIND_TO(buf_del,   inp_key_del,   Delete a character forward);
+    BIND_TO(buf_back,  inp_key_back,  Delete a character backward);
 
-    BIND_TO(buf_ins_tab, inp_key_tab);
+    BIND_TO(buf_ins_tab, inp_key_tab | inp_key_esc, Insert a tab character);
 
-    SCUT_TO(new,  inp_key_esc | 'n');
-    SCUT_TO(load, inp_key_esc | 'a');
-    SCUT_TO(save, inp_key_esc | 's');
-    SCUT_TO(goto, inp_key_esc | 'g');
-    SCUT_TO(quit, inp_key_esc | inp_key_ctrl | 'K');
+    SCUT_TO(new,  inp_key_esc | 'n', Shortcut for 'new' command);
+    SCUT_TO(load, inp_key_esc | 'a', Shortcut for 'load' command);
+    SCUT_TO(save, inp_key_esc | 's', Shortcut for 'save' command);
+    SCUT_TO(goto, inp_key_esc | 'g', Shortcut for 'goto' command);
 
-    SCUT_TO(swap,  inp_key_ctrl | 'C');
-    SCUT_TO(snap,  inp_key_ctrl | 'Z');
-    SCUT_TO(next,  inp_key_ctrl | 'N');
-    SCUT_TO(prev,  inp_key_ctrl | 'V');
-    SCUT_TO(copy,  inp_key_ctrl | 'Y');
-    SCUT_TO(paste, inp_key_ctrl | 'P');
-    SCUT_TO(incrindent, inp_key_tab);
-    SCUT_TO(decrindent, inp_key_esc | '[');
+    SCUT_TO(quit, inp_key_esc | inp_key_ctrl | 'K', Shortcut for 'quit' command);
 
-    BIND_TO(buf_to_kcd, inp_key_ctrl | 'K');
-    BIND_TO(buf_to_cmd, inp_key_ctrl | 'X');
+    SCUT_TO(swap,  inp_key_ctrl | 'C', Run 'swap' command);
+    SCUT_TO(snap,  inp_key_ctrl | 'Z', Run 'snap' command);
+    SCUT_TO(next,  inp_key_ctrl | 'N', Run 'next' command);
+    SCUT_TO(prev,  inp_key_ctrl | 'V', Run 'prev' command);
+    SCUT_TO(copy,  inp_key_ctrl | 'Y', Run 'copy' command);
+    SCUT_TO(paste, inp_key_ctrl | 'P', Run 'paste' command);
+
+    SCUT_TO(incrindent, inp_key_tab,       Run 'incrindent' command);
+    SCUT_TO(decrindent, inp_key_esc | '[', Run 'decrindent' command);
+
+    BIND_TO(buf_to_kcd, inp_key_ctrl | 'K', Switch to keycode mode);
+    BIND_TO(buf_to_cmd, inp_key_ctrl | 'X', Switch to command mode);
 }
 
 void bind_buf_kill(void)

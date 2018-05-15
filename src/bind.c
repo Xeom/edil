@@ -41,15 +41,18 @@ void bind_kill(void)
 
 void bind_handle_key(inp_key key)
 {
-    bind_fptr *funct;
+    bind_info *info;
     table *bindings;
 
-    if ((IS_TYPABLE(key) &&
+    if (IS_TYPABLE(key) &&
             (bind_mode == bind_mode_buf || bind_mode == bind_mode_bar))
-        ||  (bind_mode == bind_mode_kcd && key != (inp_key_ctrl | 'A')))
     {
         bind_ins(key);
         return;
+    }
+    else if (bind_mode == bind_mode_kcd && key != (inp_key_ctrl | 'A'))
+    {
+        bind_kcd_key(key, win_cur);
     }
     else
     {
@@ -63,11 +66,11 @@ void bind_handle_key(inp_key key)
     case bind_mode_bar: bindings = &bind_bar; break;
     }
 
-    funct = table_get(bindings, &key);
+    info = table_get(bindings, &key);
 
-    if (!funct) return;
+    if (!info) return;
 
-    (*funct)(key, win_cur);
+    (*info->fptr)(key, win_cur);
     win_show_cur(win_cur, win_cur->pri);
 }
 
@@ -103,7 +106,6 @@ void bind_ins_flush(void)
     switch (bind_mode)
     {
     case bind_mode_buf: bind_buf_ins(w, &bind_ins_buf); break;
-    case bind_mode_kcd: bind_kcd_ins(w, &bind_ins_buf); break;
     case bind_mode_bar: bind_bar_ins(w, &bind_ins_buf); break;
     }
 
@@ -116,4 +118,42 @@ void bind_flush(void)
     bar_out(&(win_cur->basebar));
 }
 
-#pragma GCC diagnostic pop
+#define BIND_PRINT_HEADER "\n"\
+    " | Key             | Binding                                       |\n" \
+    " |-----------------|-----------------------------------------------|\n"
+
+void bind_print(FILE *stream)
+{
+    fputs("\nBuffer mode\n-----------" BIND_PRINT_HEADER, stream);
+    bind_print_table(&bind_buf, stream);
+    fputs("\nKeycode mode\n------------" BIND_PRINT_HEADER, stream);
+    bind_print_table(&bind_kcd, stream);
+    fputs("\nBar mode\n--------" BIND_PRINT_HEADER, stream);
+    bind_print_table(&bind_bar, stream);
+}
+
+void bind_print_table(table *t, FILE *stream)
+{
+    vec  keys;
+    bind_info *val = NULL;
+    inp_key   *key;
+    size_t     ind, len;
+
+    vec_init(&keys, sizeof(inp_key));
+
+    while ((val = table_next(t, val, (void *)&key)))
+        vec_app(&keys, key);
+
+    vec_sort(&keys, inp_key_cmp);
+
+    len = vec_len(&keys);
+    for (ind = 0; ind < len; ++ind)
+    {
+        char buf[64];
+        key = vec_get(&keys, ind);
+        val = table_get(t, key);
+        if (!val) return;
+        inp_key_name(*key, buf, 64);
+        fprintf(stream, " | %-16s| %-45s |\n", buf, val->desc);
+    }
+}

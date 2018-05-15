@@ -25,17 +25,17 @@ BIND_FUNCT(bar_to_kcd,
 void bind_bar_init(void)
 {
     table *tab = &bind_bar;
-    table_init(tab, sizeof(bind_fptr), sizeof(inp_key));
+    table_init(tab, sizeof(bind_info), sizeof(inp_key));
 
-    BIND_TO(bar_mv_l,  inp_key_left);
-    BIND_TO(bar_mv_r,  inp_key_right);
-    BIND_TO(bar_enter, inp_key_enter);
-    BIND_TO(bar_back,  inp_key_back);
-    BIND_TO(bar_del,   inp_key_del);
+    BIND_TO(bar_mv_l,  inp_key_left,  Move cursor left);
+    BIND_TO(bar_mv_r,  inp_key_right, Move cursor right);
+    BIND_TO(bar_enter, inp_key_enter, Submit contents of bar);
+    BIND_TO(bar_back,  inp_key_back,  Delete backward);
+    BIND_TO(bar_del,   inp_key_del,   Delete forward);
 
-    BIND_TO(bar_to_buf, inp_key_ctrl | 'A');
-    BIND_TO(bar_to_buf, inp_key_ctrl | 'X');
-    BIND_TO(bar_to_kcd, inp_key_ctrl | 'K');
+    BIND_TO(bar_to_buf, inp_key_ctrl | 'A', Switch to buffer mode);
+    BIND_TO(bar_to_buf, inp_key_ctrl | 'X', Switch to buffer mode);
+    BIND_TO(bar_to_kcd, inp_key_ctrl | 'K', Switch to keycode mode);
 }
 
 void bind_bar_kill(void)
