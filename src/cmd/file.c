@@ -21,9 +21,17 @@
 
 #include "cmd/file.h"
 
+static int file_switch_if_found(win *w, vec *fname, vec *rtn);
+static buf *file_find(file *f);
+
 void file_cmd_new(vec *rtn, vec *args, win *w)
 {
     buf *b;
+
+    if (file_switch_if_found(w, vec_get(args, 1), rtn))
+    {
+        return;
+    }
 
     b = ring_new();
     win_set_buf(w, b);
@@ -66,6 +74,11 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
 
     b = w->b;
     f = &(b->finfo);
+
+    if (file_switch_if_found(w, vec_get(args, 1), rtn))
+    {
+        return;
+    }
 
     if (w->b->flags & buf_modified)
     {
@@ -123,10 +136,66 @@ void file_cmd_load(vec *rtn, vec *args, win *w)
         }
 
         win_reset(w);
-        win_out_after(w, (cur){0, 0});
     }
     else
         chr_from_str(rtn, "err: No associated file");
+}
+
+static int file_switch_if_found(win *w, vec *fname, vec *rtn)
+{
+    file f;
+    buf *found, *prev;
+
+    file_init(&f);
+
+    if (!fname) return 0;
+
+    if (file_assoc(&f, fname) == -1)
+    {
+        file_kill(&f);
+        return 0;
+    }
+
+    found = file_find(&f);
+    file_kill(&f);
+
+    if (found)
+    {
+        prev = w->b;
+        win_set_buf(w, found);
+
+        chr_format(
+            rtn,
+            "Switched buffer %d -> %d",
+            ring_get_ind(prev), ring_get_ind(w->b)
+        );
+
+        return 1;
+    }
+
+    return 0;
+}
+
+static buf *file_find(file *f)
+{
+    size_t ind, len;
+
+    len = vec_len(&ring_bufs);
+    for (ind = 0; ind < len; ++ind)
+    {
+        buf **b;
+        file *foth;
+
+        b = vec_get(&ring_bufs, ind);
+        foth = &(*b)->finfo;
+
+        if (foth == f) continue;
+
+        if (strcmp(file_name(f), file_name(foth)) == 0)
+            return *b;
+    }
+
+    return NULL;
 }
 
 void file_cmd_assoc(vec *rtn, vec *args, win *w)
@@ -209,13 +278,9 @@ void file_cmd_chdir(vec *rtn, vec *args, win *w)
     }
 
     if (getcwd(cwd, PATH_MAX) == NULL)
-    {
         chr_format(rtn, "err: [%d] %s", errno, strerror(errno));
-    }
     else
-    {
         chr_format(rtn, "cwd: %s", cwd);
-    }
 
     free(cwd);
 }

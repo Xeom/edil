@@ -167,7 +167,7 @@ int file_load_line(file *f, buf *b)
     vec line;
 
     vec_init(&line, sizeof(chr));
-    
+
     cur loc = {0, 0};
 
     loc.ln = buf_len(b);

@@ -17,7 +17,7 @@ that file.
 
 * `load [file]` - If a file is specifed, associate that file with the
     current buffer, then load the contents of the associated file to the
-    buffer.
+    buffer. If the file is already open in a buffer, switch to that buffer.
 
 * `associate [file]` - If a file is specified, associate that file with
     the current buffer. Display the name of the currently associated file.
@@ -34,7 +34,8 @@ Commands for Buffers
 --------------------
 
 * `new [file]` - Open a new buffer. If a file is specified, run
-    `load [file]` on that new buffer.
+    `load [file]` on that new buffer. If the specified file is already open,
+    switch to that buffer rather than making a new one.
 
 * `next`, `prev` - Switch the current window to the next and previous buffers
 
