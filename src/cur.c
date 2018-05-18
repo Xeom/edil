@@ -175,7 +175,7 @@ void cur_del(win *w)
     {
         buf_del(w->b, w->pri, 1);
 
-        if (w->sec.ln == c.ln && w->sec.cn > c.ln)
+        if (w->sec.ln == c.ln && w->sec.cn > c.cn)
             w->sec.cn -= 1;
 
         win_out_line(w, w->pri);
@@ -302,7 +302,7 @@ int cur_move_region_lr(win *w, cur dir, ssize_t cn1, ssize_t cn2, ssize_t ln1, s
     else
     {
         delcn = cn1 - 1;
-        inscn = cn2;
+        inscn = cn2 + 1;
     }
 
     for (ln = ln1; ln <= ln2; ++ln)
@@ -319,12 +319,26 @@ int cur_move_region_lr(win *w, cur dir, ssize_t cn1, ssize_t cn2, ssize_t ln1, s
 
         c = buf_chr(w->b, delcur);
 
-        if (!c) continue;
+        while (chr_is_blank(c))
+        {
+            delcur.cn -= 1;
+            c = buf_chr(w->b, delcur);
+        }
+
+        if (!c) return;
 
         tmp = *c;
 
-        buf_del(w->b, delcur, 1);
-        buf_ins(w->b, inscur, &tmp, 1);
+        if (dir.cn > 0)
+        {
+            buf_del(w->b, delcur, 1);
+            buf_ins(w->b, inscur, &tmp, 1);
+        }
+        else
+        {
+            buf_ins(w->b, inscur, &tmp, 1);
+            buf_del(w->b, delcur, 1);
+        }
     }
 
     return 1;
