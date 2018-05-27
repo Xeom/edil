@@ -1,473 +1,452 @@
 #include <string.h>
+#include <limits.h>
 
 #include "indent.h"
 
 #include "cur.h"
 
-cur_mode_type cur_mode;
+#define CHK_FLAGS(b) \
+    { if ((b)->flags & buf_readonly) return; \
+      (b)->flags    |= buf_modified; }
 
-cur cur_check_bounds(cur c, buf *b)
+#define PRI_SEC \
+    (cur *[]){ &(w->pri), &(w->sec) }, 2
+
+static void cur_set_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[]);
+static void cur_get_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[]);
+
+static int cur_can_shift_line(win *w, ssize_t ln, int dir);
+
+int cur_chk_bounds(cur *c, buf *b)
 {
-    size_t len;
+    ssize_t len;
+    cur     prev;
+
+    prev = *c;
 
     len = buf_len(b);
+    if      (c->ln <  0)   c->ln = 0;
+    else if (c->ln >= len) c->ln = len - 1;
 
-    if (c.ln <  0) c.ln = 0;
-    else if (c.ln >= (ssize_t)len) c.ln = len - 1;
+    len = buf_line_len(b, *c);
+    if      (c->cn <  0)   c->cn = 0;
+    else if (c->cn >= len) c->cn = len;
 
-    len = buf_line_len(b, c);
-
-    if (c.cn < 0) c.cn = 0;
-    else if (c.cn >  (ssize_t)len) c.cn = len;
-
-    return c;
+    return (memcpy(&prev, c, sizeof(cur)) == 0) ? 0 : -1;
 }
 
-/* Make sure a cursor isn't inside a multi-column character */
-cur cur_check_blank(cur c, buf *b, cur dir)
+int cur_chk_blank(cur *c, buf *b, cur dir)
 {
-    vec *line;
-    size_t len;
+    ssize_t len;
+    cur     prev;
 
-    line = vec_get(&(b->lines), c.ln);
+    prev = *c;
 
-    if (!line) return c;
-
-    len  = vec_len(line);
-
-    while (c.cn != 0 && c.cn != (ssize_t)len)
+    len = buf_line_len(b, *c);
+    while (c->cn > 0 && c->cn < len)
     {
-        if (!chr_is_blank(vec_get(line, c.cn)))
+        if (!chr_is_blank(buf_chr(b, *c)))
             break;
 
         if (dir.ln != 0 || dir.cn < 0)
-            c.cn -= 1;
+            c->cn -= 1;
         else
-            c.cn += 1;
+            c->cn += 1;
     }
 
-    return c;
+    return (memcpy(&prev, c, sizeof(cur)) == 0) ? 0 : -1;
 }
 
-void cur_move(win *w, cur dir)
+static void cur_get_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[])
 {
-    cur c, prev;
-    c = w->pri;
-
-    c.ln += dir.ln;
-    c.cn += dir.cn;
-
-    if (c.cn < 0)
+    int ind;
+    for (ind = 0; ind < numaffect; ++ind)
     {
-        c.ln -= 1;
-        c.cn  = buf_line_len(w->b, c);
+        cur a;
+        a = *affect[ind];
+
+        rel[ind].ln = a.ln - c.ln;
+        rel[ind].cn = a.cn - c.cn;
     }
+}
 
-    if (c.cn > (ssize_t)buf_line_len(w->b, c) &&
-        c.ln < (ssize_t)buf_len(w->b) - 1)
+static void cur_set_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[])
+{
+    int ind;
+    for (ind = 0; ind < numaffect; ++ind)
     {
-        if (dir.ln == 0)
+        cur r, *a, prev, delta;
+        a = affect[ind];
+        r = rel[ind];
+        prev = *a;
+
+        /* If we're on the same line */
+        if (r.ln == 0)
         {
-            c.ln += 1;
-            c.cn  = 0;
+            /* c has not changed lines but moved from after to before a */
+            if (a->ln == c.ln && r.cn < 0 && a->cn > c.cn) a->cn = c.cn;
+            /* after original c */
+            if (r.cn >= 0)
+            {
+                a->cn = c.cn + r.cn;
+                a->ln = c.ln;
+            }
         }
-        else
-        {
-            c.cn = buf_line_len(w->b, c);
-        }
+
+        /* if we're on a line after c */
+        if (r.ln >= 0) a->ln = c.ln + r.ln;
+
+        /* if we're on a line before c and c has moved before a */
+        if (r.ln < 0 && c.ln < a->ln) a->ln = MIN(c.ln, a->ln);
+
+        delta = *a;
+        delta.ln -= prev.ln;
+        delta.cn -= prev.cn;
+
+        cur_chk_bounds(a, b);
+        cur_chk_blank(a, b, delta);
     }
+}
 
-    c = cur_check_bounds(c, w->b);
-    c = cur_check_blank(c, w->b, dir);
+void cur_del(cur c, buf *b, cur *affect[], int numaffect)
+{
+    cur rel[numaffect];
+    ssize_t len;
 
-    prev = w->pri;
-    w->pri = c;
-
-    if (c.ln == prev.ln)
+    len = buf_line_len(b, c);
+    if (len == c.cn)
     {
-        win_out_line(w, (prev.cn < c.cn) ? prev : c);
+        cur pretendprev = { .ln = c.ln + 1 };
+
+        cur_get_rel_pos(pretendprev, b, affect, numaffect, rel);
+        buf_del_nl(b, c);
+        cur_set_rel_pos(c, b, affect, numaffect, rel);
     }
     else
     {
-        win_out_line(w, prev);
-        win_out_line(w, c);
+        cur pretendprev = c;
+        pretendprev.cn += indent_get_width(buf_chr(b, c), c.ln);;
+
+        cur_get_rel_pos(pretendprev, b, affect, numaffect, rel);
+        buf_del(b, c, 1);
+        cur_set_rel_pos(c, b, affect, numaffect, rel);
     }
 }
 
-void cur_home(win *w)
+void cur_ins(cur c, buf *b, vec *text, cur *affect[], int numaffect)
 {
-    w->pri.cn = 0;
-    win_out_line(w, w->pri);
+    cur rel[numaffect];
+    ssize_t origlen, newlen;
+
+    cur_get_rel_pos(c, b, affect, numaffect, rel);
+    origlen = buf_line_len(b, c);
+    buf_ins(b, c, vec_first(text), vec_len(text));
+    newlen  = buf_line_len(b, c);
+
+    c.cn += newlen - origlen;
+    cur_set_rel_pos(c, b, affect, numaffect, rel);
 }
 
-void cur_end(win *w)
+void cur_enter(cur c, buf *b, cur *affect[], int numaffect)
 {
-    w->pri.cn = (ssize_t)buf_line_len(w->b, w->pri);
-    win_out_line(w, w->pri);
+    cur rel[numaffect];
+
+    cur_get_rel_pos(c, b, affect, numaffect, rel);
+    buf_ins_nl(b, c);
+    c.cn  = 0;
+    c.ln += 1;
+    cur_set_rel_pos(c, b, affect, numaffect, rel);
 }
 
-void cur_pgdn(win *w)
+/* * * * * * * * * * *
+ * Window  functions *
+ * * * * * * * * * * */
+
+void cur_ins_win(win *w, vec *text)
 {
-    cur c;
-    c = w->pri;
+    cur  prev;
+    buf *b;
+    b = w->b;
+    CHK_FLAGS(b);
 
-    c.ln = win_max_ln(w) + 1;
+    prev = w->pri;
+    cur_ins(w->pri, b, text, PRI_SEC);
 
-    c = cur_check_bounds(c, w->b);
-    c = cur_check_blank(c, w->b, (cur){ .ln = 1 });
-
-    w->pri = c;
-
-    win_out_after(w, (cur){0, 0});
+    win_out_line(w, prev);
 }
 
-void cur_pgup(win *w)
+void cur_del_win(win *w)
 {
-    cur c;
-    c = w->pri;
+    int isnl;
+    buf *b;
+    b = w->b;
+    CHK_FLAGS(b);
 
-    c.ln = win_min_ln(w) - 1;
+    isnl = (w->pri.cn == buf_line_len(b, w->pri));
 
-    c = cur_check_bounds(c, w->b);
-    c = cur_check_blank(c, w->b, (cur){ .ln = -1 });
+    cur_del(w->pri, b, PRI_SEC);
 
-    w->pri = c;
+    if (isnl)
+        win_out_after(w, w->pri);
+    else
+        win_out_line(w, w->pri);
 
-    win_out_after(w, (cur){0, 0});
 }
 
-void cur_lineify(win *w)
+void cur_enter_win(win *w)
 {
+    buf *b;
     cur prev;
-    prev = w->sec;
+    b = w->b;
+    CHK_FLAGS(b);
 
-    w->pri.cn = (ssize_t)buf_line_len(w->b, w->pri);
-    w->sec = (cur){ .ln = w->pri.ln };
+    prev = w->pri;
+    cur_enter(w->pri, b, PRI_SEC);
+
+    win_out_after(w, prev);
+}
+
+void cur_move_win(win *w, cur dir)
+{
+    ssize_t len;
+    cur *c, prev;
+
+    c = &(w->pri);
+    prev = *c;
+
+    len = buf_line_len(w->b, w->pri);
+
+    c->cn += dir.cn;
+    c->ln += dir.ln;
+
+    if (c->cn > len)        *c = (cur){ .ln = c->ln + 1 };
+    if (c->cn < 0 && c->ln) *c = (cur){ .ln = c->ln - 1, .cn = LONG_MAX };
+    cur_chk_bounds(c, w->b);
+    cur_chk_blank(c,  w->b, (cur){ .ln = -1 });
+
+
+    if (c->ln == prev.ln)
+    {
+        win_out_line(w, CUR_START(w->pri, prev));
+    }
+    else
+    {
+        win_out_line(w, w->pri);
+        win_out_line(w, prev);
+    }
+}
+
+void cur_home_win(win *w)
+{
+    cur *c;
+    c = &(w->pri);
+
+    c->cn = 0;
+    win_out_line(w, *c);
+}
+
+void cur_end_win(win *w)
+{
+    cur *c;
+    ssize_t len;
+    c   = &(w->pri);
+    len = buf_line_len(w->b, *c);
+
+    c->cn = len;
+    win_out_line(w, *c);
+}
+
+void cur_pgup_win(win *w)
+{
+    cur *c;
+    c = &(w->pri);
+
+    c->ln = win_min_ln(w) - 1;
+
+    cur_chk_bounds(c, w->b);
+    cur_chk_blank(c,  w->b, (cur){ .ln = -1 });
+
+    win_out_after(w, (cur){0, 0});
+}
+
+void cur_pgdn_win(win *w)
+{
+    cur *c;
+    c = &(w->pri);
+
+    c->ln = win_max_ln(w) + 1;
+
+    cur_chk_bounds(c, w->b);
+    cur_chk_blank(c,  w->b, (cur){ .ln = 1 });
+
+    win_out_after(w, (cur){0, 0});
+}
+
+void cur_lineify_win(win *w)
+{
+    cur prevsec;
+    ssize_t len;
+
+    prevsec = w->sec;
+
+    len = buf_line_len(w->b, w->pri);
+    w->pri.cn = len;
+
+    w->sec.cn = 0;
+    w->sec.ln = w->pri.ln;
 
     win_out_line(w, w->sec);
 
-    if (prev.ln != w->pri.ln)
-        win_out_line(w, prev);
+    if (prevsec.ln != w->sec.ln)
+        win_out_line(w, CUR_START(prevsec, w->pri));
 }
 
-void cur_del(win *w)
+static int cur_can_shift_line(win *w, ssize_t ln, int dir)
 {
-    cur c;
-    size_t len;
+    ssize_t cn1, cn2, len;
 
-    c = w->pri;
+    cn1 = MIN(w->pri.cn, w->sec.cn);
+    cn2 = MAX(w->pri.cn, w->sec.cn) + 1;
 
-    if (w->b->flags & buf_readonly) return;
-    w->b->flags |= buf_modified;
-
-    len = buf_line_len(w->b, c);
-
-    if ((ssize_t)len == c.cn)
-    {
-        buf_del_nl(w->b, c);
-
-        if (w->sec.ln > c.ln)      w->sec.ln -= 1;
-        if (w->sec.ln == c.ln + 1) w->sec.cn += len;
-
-        win_out_after(w, w->pri);
-    }
-    else
-    {
-        buf_del(w->b, w->pri, 1);
-
-        if (w->sec.ln == c.ln && w->sec.cn > c.cn)
-            w->sec.cn -= 1;
-
-        win_out_line(w, w->pri);
-    }
-}
-
-void cur_ins(win *w, vec *text)
-{
-    size_t num;
-    cur    c, prev;
-
-    c = w->pri;
-
-    if (w->b->flags & buf_readonly) return;
-    w->b->flags |= buf_modified;
-
-    num = vec_len(text);
-
-    buf_ins(w->b, c, vec_first(text), num);
-    c.cn += num;
-
-    c = cur_check_bounds(c, w->b);
-    c = cur_check_blank(c, w->b, (cur){ .cn = 1 });
-
-    prev = w->pri;
-    w->pri = c;
-
-    if (w->sec.ln == prev.ln && w->sec.cn >= prev.cn)
-        w->sec.cn += 1;
-
-    win_out_after(w, prev);
-}
-
-void cur_enter(win *w)
-{
-    cur prev, rtn;
-
-    rtn = (cur){ .ln = w->pri.ln + 1 };
-
-    if (w->b->flags & buf_readonly) return;
-    w->b->flags |= buf_modified;
-
-    buf_ins_nl(w->b, w->pri);
-
-    rtn = indent_auto_depth(w->b, rtn);
-
-    indent_trim_end(w->b, w->pri);
-
-    prev = w->pri;
-    w->pri = rtn;
-
-    if (w->sec.ln > prev.ln)
-    {
-        w->sec.ln += 1;
-    }
-    else if (memcmp(&(w->sec), &prev, sizeof(cur)) == 0)
-    {
-        w->sec.ln += 1;
-        w->sec.cn  = 0;
-    }
-
-    win_out_after(w, (cur){ .ln = prev.ln });
-}
-
-int cur_greater(cur a, cur b)
-{
-    if (a.ln == b.ln)
-        return a.cn > b.cn;
-    else
-        return a.ln > b.ln;
-}
-
-cur *cur_region_start(win *w)
-{
-    if (cur_greater(w->pri, w->sec))
-        return &(w->sec);
-    else
-        return &(w->pri);
-}
-
-cur *cur_region_end(win *w)
-{
-    if (cur_greater(w->pri, w->sec))
-        return &(w->pri);
-    else
-        return &(w->sec);
-}
-
-void cur_ins_buf(win *w, buf *other, cur loc, cur end)
-{
-    cur prev;
-
-    if (w->b->flags & buf_readonly) return;
-    w->b->flags |= buf_modified;
-
-    prev = w->pri;
-
-    buf_ins_buf(w->b, &(w->pri), other, loc, end);
-
-    win_out_after(w, prev);
-}
-
-int cur_move_region_lr_chk(win *w, ssize_t ln, ssize_t inscn, ssize_t delcn)
-{
-    ssize_t len;
     len = buf_line_len(w->b, (cur){ .ln = ln });
 
-    if (inscn >= len && delcn >= len) return 1;
-    if (inscn < 0 || inscn >= len)  return 0;
-    if (delcn < 0 || delcn >= len) return 0;
+    if (cn1 > len) return 1;
+    if (cn2 < len) return 1;
 
-    return 1;
+    return 0;
 }
 
-int cur_move_region_lr(win *w, cur dir, ssize_t cn1, ssize_t cn2, ssize_t ln1, ssize_t ln2)
+static void cur_shift_line(win *w, ssize_t ln, int dir)
 {
-    ssize_t inscn, delcn, ln;
+    ssize_t cn1, cn2, len;
+    cur cur1, cur2;
+    chr tmp, *c;
 
-    if (dir.cn > 0)
+    cn1 = MIN(w->pri.cn, w->sec.cn);
+    cn2 = MAX(w->pri.cn, w->sec.cn) + 1;
+
+    cur1 = (cur){ .ln = ln, .cn = cn1 };
+    cur2 = (cur){ .ln = ln, .cn = cn2 };
+
+    len = buf_line_len(w->b, cur1);
+
+    if (cn1 > len) return;
+
+    if (dir == 1)
     {
-        delcn = cn2 + 1;
-        inscn = cn1;
-    }
-    else
-    {
-        delcn = cn1 - 1;
-        inscn = cn2 + 1;
-    }
-
-    for (ln = ln1; ln <= ln2; ++ln)
-    {
-        if (!cur_move_region_lr_chk(w, ln, inscn, delcn))
-            return 0;
-    }
-
-    for (ln = ln1; ln <= ln2; ++ln)
-    {
-        cur delcur = { .ln = ln, .cn = delcn };
-        cur inscur = { .ln = ln, .cn = inscn };
-        chr tmp, *c;
-
-        c = buf_chr(w->b, delcur);
-
-        while (chr_is_blank(c))
-        {
-            delcur.cn -= 1;
-            c = buf_chr(w->b, delcur);
-        }
-
-        if (!c) return;
-
+        c = buf_chr(w->b, cur2);
         tmp = *c;
-
-        if (dir.cn > 0)
-        {
-            buf_del(w->b, delcur, 1);
-            buf_ins(w->b, inscur, &tmp, 1);
-        }
-        else
-        {
-            buf_ins(w->b, inscur, &tmp, 1);
-            buf_del(w->b, delcur, 1);
-        }
+        buf_del(w->b, cur2, 1);
+        buf_ins(w->b, cur1, &tmp, 1);
     }
-
-    return 1;
+    else if (dir == -1)
+    {
+        c = buf_chr(w->b, cur1);
+        tmp = *c;
+        buf_ins(w->b, cur2, &tmp, 1);
+        buf_del(w->b, cur1, 1);
+    }
 }
 
-void cur_move_region(win *w, cur dir)
+void cur_shift(win *w, cur dir)
 {
-    vec tmp;
     cur *start, *end;
 
-    if (w->b->flags & buf_readonly) return;
-    w->b->flags |= buf_modified;
+    start = CUR_START(&(w->pri), &(w->sec));
+    end   = CUR_END  (&(w->pri), &(w->sec));
 
-    start = cur_region_start(w);
-    end   = cur_region_end(w);
-
-    if ((dir.ln < 0 && start->ln > 0) || dir.ln > 0)
+    if (dir.cn)
     {
-        cur delcur, inscur;
+        ssize_t ln;
+
+        for (ln = start->ln; ln < end->ln; ++ln)
+            if (!cur_can_shift_line(w, ln, dir.cn))
+                return;
+
+        for (ln = start->ln; ln < end->ln; ++ln)
+            cur_shift_line(w, ln, dir.cn);
+    }
+    else if (dir.ln > 0)
+    {
         vec *line;
 
-        if (dir.ln > 0) /* Shifting forward */
-        {
-            /* Delete the line one past the end */
-            delcur = (cur){ .ln = end->ln + 1 };
-            /* Insert it again at the start */
-            inscur = (cur){ .ln = start->ln   };
+        buf_ins_line(w->b, *start);
 
-            start->ln += 1;
-            end->ln   += 1;
-        }
-        else
-        {
-            /* Delete the line one before the start */
-            delcur = (cur){ .ln = start->ln - 1 };
-            /* Insert it at the end this time */
-            inscur = (cur){ .ln = end->ln       };
+        line = buf_line(w->b, (cur){ .ln = end->ln + 1 });
+        if (!line) return;
 
-            start->ln -= 1;
-            end->ln   -= 1;
-        }
-
-        vec_init(&tmp, sizeof(chr));
-
-        line = buf_line(w->b, delcur);
-        vec_cpy(&tmp, line);
-
-        buf_del_line(w->b, delcur);
-        buf_ins_line(w->b, inscur);
-
-        buf_ins(w->b, inscur, vec_first(&tmp), vec_len(&tmp));
-
-        win_out_after(w, (cur){ .ln = start->ln - 1 });
-
-        vec_kill(&tmp);
+        buf_ins(w->b, (cur){ .ln = start->ln }, vec_first(line), vec_len(line));
+        buf_del_line(w->b, (cur){ .ln = end->ln + 1 });
     }
-
-    if (dir.cn != 0)
+    else if (dir.ln < 0)
     {
-        ssize_t cn1, cn2, ln1, ln2;
-        int rtn;
+        vec *line;
 
-        ln1 = start->ln;
-        ln2 = end->ln;
+        buf_ins_line(w->b, *end);
 
-        cn1 = (start->cn > end->cn) ? end->cn   : start->cn;
-        cn2 = (start->cn > end->cn) ? start->cn : end->cn;
+        line = buf_line(w->b, *start);
+        if (!line) return;
 
-        rtn = cur_move_region_lr(w, dir, cn1, cn2, ln1, ln2);
-
-        if (rtn)
-        {
-            end->cn   += dir.cn;
-            start->cn += dir.cn;
-        }
-
-        win_out_after(w, (cur){ .ln = start->ln });
+        buf_ins(w->b, (cur){ .ln = end->ln + 1 }, vec_first(line), vec_len(line));
+        buf_del_line(w->b, *start);
     }
+
+    start->ln += dir.ln;
+    end->ln   += dir.ln;
+    start->cn += dir.cn;
+    end->cn   += dir.cn;
+
+    win_out_after(w, (cur){ .ln = start->ln - 1 });
 }
 
 void cur_del_region(win *w)
 {
-    cur *start, *end;
     buf *b;
+    cur *start, *end, c;
 
     b = w->b;
 
-    if (w->b->flags & buf_readonly) return;
-    w->b->flags |= buf_modified;
+    start = CUR_START(&(w->pri), &(w->sec));
+    end   = CUR_END  (&(w->pri), &(w->sec));
 
-    start = cur_region_start(w);
-    end   = cur_region_end(w);
-
-    if (end->ln != start->ln)
+    if (start->ln == end->ln)
     {
-        ssize_t numdel, nummov;
-        numdel = buf_line_len(b, *start) - start->cn;
-        nummov = buf_line_len(b, *end)   - end->cn - 1;
-
-        if (numdel) buf_del(b, *start, numdel);
-
-        if (nummov > 0)
-        {
-            chr *data;
-
-            data = buf_chr(b, *end);
-            buf_ins(b, *start, data + 1, nummov);
-        }
+        buf_del(b, *start, end->cn - start->ln);
+        return;
     }
-    else if (end->ln == start->ln)
+    else
     {
-        size_t numdel;
-        numdel = end->cn - start->cn;
+        buf_del(b, *start, buf_line_len(b, *start) - start->cn);
+        buf_del(b, (cur){ .ln = end->ln }, end->cn);
 
-        if (end->cn < buf_line_len(b, *start))
-            numdel += 1;
+        for (c.ln = end->ln - 1; c.ln > end->ln; --(c.ln))
+            buf_del_line(b, c);
 
-        buf_del(b, *start, numdel);
-    }
-
-    while (end->ln > start->ln)
-    {
-        buf_del_line(b, *end);
-        end->ln -= 1;
+        buf_del_nl(b, *start);
     }
 
     *end = *start;
+    win_out_after(w, *start);
 }
 
-void cur_ins_region(win *w, vec *text)
+void cur_ins_buf(win *w, buf *oth)
 {
+    buf *b;
+    ssize_t len;
+    cur from = (cur){0, 0};
+
+    b   = w->b;
+    len = buf_len(oth);
+
+    for (; from.cn < len; ++(from.cn))
+    {
+        vec *text;
+
+        text = buf_line(oth, from);
+
+        if (from.cn == 0)
+            cur_enter(w->pri, b, PRI_SEC);
+
+        cur_ins(w->pri, b, text, PRI_SEC);
+    }
 }

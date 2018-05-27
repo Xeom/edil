@@ -257,8 +257,8 @@ cur indent_incr_depth(buf *b, cur c)
     else
         c.cn += depth - orig;
 
-    c = cur_check_bounds(c, b);
-    c = cur_check_blank(c, b, (cur){ .cn = 1 });
+    cur_chk_bounds(&c, b);
+    cur_chk_blank(&c, b, (cur){ .cn = 1 });
 
     return c;
 }
@@ -284,8 +284,8 @@ cur indent_decr_depth(buf *b, cur c)
 
     if (c.cn < 0) c.cn = 0;
 
-    c = cur_check_bounds(c, b);
-    c = cur_check_blank(c, b, (cur){ .cn = -1 });
+    cur_chk_bounds(&c, b);
+    cur_chk_blank(&c, b, (cur){ .cn = -1 });
 
     return c;
 }

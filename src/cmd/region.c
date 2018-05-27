@@ -32,8 +32,8 @@ void region_cmd_copy(vec *rtn, vec *args, win *w)
     while ((loc.ln)--)
         buf_del_line(region_clipboard, loc);
 
-    start = *cur_region_start(w);
-    end   = *cur_region_end(w);
+    start = CUR_START(w->pri, w->sec);
+    end   = CUR_END(w->pri,   w->sec);
 
     if (end.cn < buf_line_len(w->b, end))
         end.cn += 1;
@@ -85,7 +85,7 @@ void region_cmd_paste(vec *rtn, vec *args, win *w)
         return;
     }
 
-    cur_ins_buf(w, source, (cur){0, 0}, buf_last_cur(source));
+    cur_ins_buf(w, source);
 
     chr_format(
         rtn,

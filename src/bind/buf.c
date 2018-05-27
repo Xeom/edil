@@ -12,32 +12,32 @@ static void bind_buf_shortcut(char *str, win *w);
 static void bind_buf_activate_cmd(win *w);
 
 /* Move cursor */
-BIND_FUNCT(buf_mv_u, cur_move(w, (cur){ .ln = -1 }))
-BIND_FUNCT(buf_mv_d, cur_move(w, (cur){ .ln =  1 }))
-BIND_FUNCT(buf_mv_l, cur_move(w, (cur){ .cn = -1 }))
-BIND_FUNCT(buf_mv_r, cur_move(w, (cur){ .cn =  1 }))
+BIND_FUNCT(buf_mv_u, cur_move_win(w, (cur){ .ln = -1 }))
+BIND_FUNCT(buf_mv_d, cur_move_win(w, (cur){ .ln =  1 }))
+BIND_FUNCT(buf_mv_l, cur_move_win(w, (cur){ .cn = -1 }))
+BIND_FUNCT(buf_mv_r, cur_move_win(w, (cur){ .cn =  1 }))
 
 /* Move region */
-BIND_FUNCT(buf_rmv_u, cur_move_region(w, (cur){ .ln = -1 }))
-BIND_FUNCT(buf_rmv_d, cur_move_region(w, (cur){ .ln =  1 }))
-BIND_FUNCT(buf_rmv_l, cur_move_region(w, (cur){ .cn = -1 }))
-BIND_FUNCT(buf_rmv_r, cur_move_region(w, (cur){ .cn =  1 }))
+BIND_FUNCT(buf_rmv_u, cur_shift(w, (cur){ .ln = -1 }))
+BIND_FUNCT(buf_rmv_d, cur_shift(w, (cur){ .ln =  1 }))
+BIND_FUNCT(buf_rmv_l, cur_shift(w, (cur){ .cn = -1 }))
+BIND_FUNCT(buf_rmv_r, cur_shift(w, (cur){ .cn =  1 }))
 
 /* Move cursor using navigation keys */
-BIND_FUNCT(buf_home, cur_home(w))
-BIND_FUNCT(buf_end,  cur_end(w))
-BIND_FUNCT(buf_pgup, cur_pgup(w))
-BIND_FUNCT(buf_pgdn, cur_pgdn(w))
+BIND_FUNCT(buf_home, cur_home_win(w))
+BIND_FUNCT(buf_end,  cur_end_win(w))
+BIND_FUNCT(buf_pgup, cur_pgup_win(w))
+BIND_FUNCT(buf_pgdn, cur_pgdn_win(w))
 
-BIND_FUNCT(buf_line, cur_lineify(w))
+BIND_FUNCT(buf_line, cur_lineify_win(w))
 
-BIND_FUNCT(buf_enter, cur_enter(w))
-BIND_FUNCT(buf_del,   cur_del(w))
+BIND_FUNCT(buf_enter, cur_enter_win(w))
+BIND_FUNCT(buf_del,   cur_del_win(w))
 BIND_FUNCT(buf_back,
     if (memcmp(&(w->pri), &(cur){0, 0}, sizeof(cur)) != 0)
     {
-        cur_move(w, (cur){ .cn = -1 });
-        cur_del(w);
+        cur_move_win(w, (cur){ .cn = -1 });
+        cur_del_win(w);
     }
 )
 
@@ -46,7 +46,7 @@ BIND_FUNCT(buf_ins_tab,
     vec_init(&tabvec, sizeof(chr));
     vec_app(&tabvec, &CHR("\t"));
 
-    cur_ins(w, &tabvec);
+    cur_ins_win(w, &tabvec);
 
     vec_kill(&tabvec);
 )
@@ -149,7 +149,7 @@ static void bind_buf_shortcut_run(char *str, win *w)
 
 void bind_buf_ins(win *w, vec *text)
 {
-    cur_ins(w, text);
+    cur_ins_win(w, text);
 }
 
 void bind_buf_activate_cmd(win *w)

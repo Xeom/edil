@@ -30,7 +30,7 @@ void bind_kcd_key(inp_key k, win *w)
 
     vec_init(&chrbuf, sizeof(chr));
     chr_from_str(&chrbuf, buf);
-    cur_ins(w, &chrbuf);
-    cur_enter(w);
+    cur_ins_win(w, &chrbuf);
+    cur_enter_win(w);
     vec_kill(&chrbuf);
 }

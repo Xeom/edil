@@ -272,7 +272,8 @@ void win_reset(win *w)
     w->scry = 0;
 
     w->sec = (cur){0, 0};
-    w->pri = cur_check_bounds(w->b->prihint, w->b);
+    w->pri = w->b->prihint;
+    cur_chk_bounds(&(w->pri), w->b);
 
     win_show_cur(w, w->pri);
 

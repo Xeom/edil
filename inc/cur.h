@@ -1,17 +1,6 @@
 #if !defined(CUR_H)
 # define CUR_H
-# include "vec.h"
-
 # include <unistd.h>
-
-typedef enum
-{
-    cmd_mode_bar,
-    cmd_mode_buf,
-    cmd_mode_mnu,
-    cmd_mode_sel,
-    cmd_mode_rct
-} cur_mode_type;
 
 typedef struct cur_s cur;
 
@@ -20,37 +9,53 @@ struct cur_s
     ssize_t cn, ln;
 };
 
-extern cur_mode_type cur_mode;
-
-/* Down here because these require cur */
 # include "buf.h"
 # include "win.h"
 
-void cur_enter(win *w);
+# if !defined(MAX)
+#  define MAX(a, b) ((a) > (b)) ? (a) : (b)
+# endif
 
-cur cur_check_bounds(cur c, buf *b);
-cur cur_check_blank(cur c, buf *b, cur dir);
+# if !defined(MIN)
+#  define MIN(a, b) ((a) > (b)) ? (b) : (a)
+# endif
 
-void cur_move(win *w, cur dir);
+static inline ssize_t cur_cn_ptr(cur *c) { return c->cn; }
+static inline ssize_t cur_ln_ptr(cur *c) { return c->ln; }
+static inline ssize_t cur_cn(cur c)      { return c.cn; }
+static inline ssize_t cur_ln(cur c)      { return c.ln; }
 
-void cur_home(win *w);
-void cur_end(win *w);
-void cur_pgup(win *w);
-void cur_pgdn(win *w);
+# define _CUR_CN(c) _Generic((c), cur: cur_cn, cur *: cur_cn_ptr)(c)
+# define _CUR_LN(c) _Generic((c), cur: cur_ln, cur *: cur_ln_ptr)(c)
 
-void cur_lineify(win *w);
+# define CUR_GREATER(a, b) \
+    (_CUR_LN(a)  > _CUR_LN(b) || \
+    (_CUR_LN(a) == _CUR_LN(b) && _CUR_CN(a) > _CUR_CN(b)))
 
-void cur_del(win *w);
-void cur_ins(win *w, vec *text);
+# define CUR_START(a, b) ((CUR_GREATER(a, b)) ? (b) : (a))
+# define CUR_END(a, b)   ((CUR_GREATER(a, b)) ? (a) : (b))
 
-int cur_greater(cur a, cur b);
+int cur_chk_bounds(cur *c, buf *b);
+int cur_chk_blank(cur *c, buf *b, cur dir);
 
-cur *cur_region_start(win *w);
-cur *cur_region_end(win *w);
+void cur_del(cur c, buf *b, cur *affect[], int numaffect);
+void cur_ins(cur c, buf *b, vec *text, cur *affect[], int numaffect);
+void cur_enter(cur c, buf *b, cur *affect[], int numaffect);
 
-void cur_move_region(win *w, cur dir);
+void cur_ins_win(win *w, vec *text);
+void cur_del_win(win *w);
+void cur_enter_win(win *w);
+
+void cur_move_win(win *w, cur dir);
+void cur_home_win(win *w);
+void cur_end_win(win *w);
+void cur_pgup_win(win *w);
+void cur_pgdn_win(win *w);
+void cur_lineify_win(win *w);
+
+void cur_shift(win *w, cur dir);
 
 void cur_del_region(win *w);
+void cur_ins_buf(win *w, buf *oth);
 
-void cur_ins_buf(win *w, buf *other, cur loc, cur end);
 #endif
