@@ -411,15 +411,14 @@ void cur_del_region(win *w)
 
     if (start->ln == end->ln)
     {
-        buf_del(b, *start, end->cn - start->ln);
-        return;
+        buf_del(b, *start, end->cn - start->ln + 1);
     }
     else
     {
         buf_del(b, *start, buf_line_len(b, *start) - start->cn);
-        buf_del(b, (cur){ .ln = end->ln }, end->cn);
+        buf_del(b, (cur){ .ln = end->ln }, end->cn + 1);
 
-        for (c.ln = end->ln - 1; c.ln > end->ln; --(c.ln))
+        for (c.ln = end->ln - 1; c.ln > start->ln; --(c.ln))
             buf_del_line(b, c);
 
         buf_del_nl(b, *start);
@@ -438,13 +437,13 @@ void cur_ins_buf(win *w, buf *oth)
     b   = w->b;
     len = buf_len(oth);
 
-    for (; from.cn < len; ++(from.cn))
+    for (; from.ln < len; ++(from.ln))
     {
         vec *text;
 
         text = buf_line(oth, from);
 
-        if (from.cn == 0)
+        if (from.ln != 0)
             cur_enter(w->pri, b, PRI_SEC);
 
         cur_ins(w->pri, b, text, PRI_SEC);
