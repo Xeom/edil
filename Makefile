@@ -16,7 +16,7 @@ DFLAGS=$(addprefix -D, $(DEFINES)) \
        -DVERSION='$(VERSION)'
 
 WFLAGS=$(addprefix -W, $(WARNINGS))
-FLAGS+=$(WFLAGS) --std=c99 -pedantic -pthread -I$(INCDIR) -fPIC -fdiagnostics-color=always  $(DFLAGS)
+FLAGS+=$(WFLAGS) --std=$(STD) -pedantic -pthread -I$(INCDIR) -fPIC -fdiagnostics-color=always  $(DFLAGS)
 
 HFILES=$(addprefix $(INCDIR), $(addsuffix .h, $(FILES)))
 CFILES=$(addprefix $(SRCDIR), $(addsuffix .c, $(FILES)))
