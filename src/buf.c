@@ -86,14 +86,14 @@ void buf_del(buf *b, cur loc, size_t n)
         loc.cn -= 1;
         n      += 1;
     }
-
+/*
     while (loc.cn + n < len)
     {
         c = vec_get(line, loc.cn + n);
         if (!chr_is_blank(c)) break;
         n += 1;
     }
-
+*/
     if (!line) return;
 
     vec_del(line, loc.cn, n);
