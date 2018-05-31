@@ -310,8 +310,12 @@ static int cur_can_shift_line(win *w, ssize_t ln, int dir)
 
     len = buf_line_len(w->b, (cur){ .ln = ln });
 
-    if (cn1 > len) return 1;
-    if (cn2 < len) return 1;
+    if (dir == -1 && cn1 == 0) return 0;
+    if (dir ==  1 && cn2 == len) return 0;
+
+    if (cn1 >= len) return 1;
+    if (cn2 <= len) return 1;
+
 
     return 0;
 }
@@ -341,6 +345,8 @@ static void cur_shift_line(win *w, ssize_t ln, int dir)
     }
     else if (dir == -1)
     {
+        cur1.cn -= 1;
+
         c = buf_chr(w->b, cur1);
         tmp = *c;
         buf_ins(w->b, cur2, &tmp, 1);
@@ -350,7 +356,10 @@ static void cur_shift_line(win *w, ssize_t ln, int dir)
 
 void cur_shift(win *w, cur dir)
 {
+    buf *b;
     cur *start, *end;
+
+    b = w->b;
 
     start = CUR_START(&(w->pri), &(w->sec));
     end   = CUR_END  (&(w->pri), &(w->sec));
@@ -359,42 +368,50 @@ void cur_shift(win *w, cur dir)
     {
         ssize_t ln;
 
-        for (ln = start->ln; ln < end->ln; ++ln)
+        for (ln = start->ln; ln <= end->ln; ++ln)
             if (!cur_can_shift_line(w, ln, dir.cn))
                 return;
 
-        for (ln = start->ln; ln < end->ln; ++ln)
+        for (ln = start->ln; ln <= end->ln; ++ln)
             cur_shift_line(w, ln, dir.cn);
     }
     else if (dir.ln > 0)
     {
         vec *line;
 
-        buf_ins_line(w->b, *start);
+        buf_ins_line(b, *start);
 
-        line = buf_line(w->b, (cur){ .ln = end->ln + 1 });
-        if (!line) return;
-
-        buf_ins(w->b, (cur){ .ln = start->ln }, vec_first(line), vec_len(line));
-        buf_del_line(w->b, (cur){ .ln = end->ln + 1 });
+        line = buf_line(b, (cur){ .ln = end->ln + 2 });
+        if (line)
+        {
+            buf_ins(b, (cur){ .ln = start->ln }, vec_first(line), vec_len(line));
+            buf_del_line(b, (cur){ .ln = end->ln + 2 });
+        }
     }
-    else if (dir.ln < 0)
+    else if (dir.ln < 0 && start->ln)
     {
         vec *line;
 
-        buf_ins_line(w->b, *end);
+        buf_ins_line(b, (cur){ .ln = end->ln + 1 });
 
-        line = buf_line(w->b, *start);
-        if (!line) return;
-
-        buf_ins(w->b, (cur){ .ln = end->ln + 1 }, vec_first(line), vec_len(line));
-        buf_del_line(w->b, *start);
+        line = buf_line(b, (cur){ .ln = start->ln - 1 });
+        if (line)
+        {
+            buf_ins(b, (cur){ .ln = end->ln + 1 }, vec_first(line), vec_len(line));
+            buf_del_line(b, (cur){ .ln = start->ln - 1 });
+        }
     }
 
     start->ln += dir.ln;
     end->ln   += dir.ln;
     start->cn += dir.cn;
     end->cn   += dir.cn;
+
+    cur_chk_bounds(start, b);
+    cur_chk_bounds(end,   b);
+
+    cur_chk_blank(start, b, dir);
+    cur_chk_blank(end,   b, dir);
 
     win_out_after(w, (cur){ .ln = start->ln - 1 });
 }

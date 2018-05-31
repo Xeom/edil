@@ -13,11 +13,11 @@ struct cur_s
 # include "win.h"
 
 # if !defined(MAX)
-#  define MAX(a, b) ((a) > (b)) ? (a) : (b)
+#  define MAX(a, b) (((a) > (b)) ? (a) : (b))
 # endif
 
 # if !defined(MIN)
-#  define MIN(a, b) ((a) > (b)) ? (b) : (a)
+#  define MIN(a, b) (((a) > (b)) ? (b) : (a))
 # endif
 
 static inline ssize_t cur_cn_ptr(cur *c) { return c->cn; }
