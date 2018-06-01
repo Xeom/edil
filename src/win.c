@@ -199,7 +199,7 @@ void win_out_line(win *w, cur c)
         win_out_goto(w, &c);
     }
 
-    outlen = vec_len(line) - c.cn;
+    outlen = (ssize_t)vec_len(line) - c.cn;
     if (outlen < 0)       outlen = 0;
     if (outlen > w->cols) outlen = w->cols;
 

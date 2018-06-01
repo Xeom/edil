@@ -72,6 +72,7 @@ void buf_del(buf *b, cur loc, size_t n)
     len  = vec_len(line);
 
     if (loc.cn     < 0)   loc.cn = 0;
+    if (n          > len) n = len;
     if (loc.cn + n > len) loc.cn = len - n;
 
     if (len == 0) return;

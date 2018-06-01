@@ -45,6 +45,7 @@ void cur_enter(cur c, buf *b, cur *affect[], int numaffect);
 void cur_ins_win(win *w, vec *text);
 void cur_del_win(win *w);
 void cur_enter_win(win *w);
+void cur_enter_line_win(win *w);
 
 void cur_move_win(win *w, cur dir);
 void cur_home_win(win *w);
