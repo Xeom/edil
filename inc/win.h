@@ -52,4 +52,6 @@ void win_reset(win *w);
 
 void win_set_buf(win *w, buf *b);
 
+vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *tofree);
+
 #endif

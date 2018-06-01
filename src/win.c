@@ -7,7 +7,6 @@
 #include "win.h"
 
 static int  win_out_goto(win *w, cur *c);
-static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *tofree);
 
 win *win_cur = NULL;
 
@@ -126,13 +125,11 @@ static vec *win_add_trailing_space(cur pri, cur sec, ssize_t ln, vec *line, int 
     return line;
 }
 
-static vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
+vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
 {
     size_t linelen;
 
     linelen = vec_len(line);
-
-    *mod = 0;
 
     if ((pri.ln == ln || sec.ln == ln) && (*mod == 0))
     {
