@@ -444,7 +444,7 @@ void cur_del_region(win *w)
 
     if (start->ln == end->ln)
     {
-        buf_del(b, *start, end->cn - start->ln + 1);
+        buf_del(b, *start, end->cn - start->cn + 1);
     }
     else
     {
@@ -465,12 +465,13 @@ void cur_ins_buf(win *w, buf *oth)
 {
     buf *b;
     ssize_t len;
-    cur from = (cur){0, 0};
+    cur from = (cur){0, 0}, prev;
     b = w->b;
     CHK_FLAGS(b);
 
     b   = w->b;
     len = buf_len(oth);
+    prev = w->pri;
 
     for (; from.ln < len; ++(from.ln))
     {
@@ -483,4 +484,6 @@ void cur_ins_buf(win *w, buf *oth)
 
         cur_ins(w->pri, b, text, PRI_SEC);
     }
+
+    w->pri = prev;
 }
