@@ -8,55 +8,55 @@ Buffer mode
 -----------
  | Key             | Binding                                       |
  |-----------------|-----------------------------------------------|
- | Ctrl+C          | Run 'swap' command                            |
- | Ctrl+I          | Run 'incrindent' command                      |
- | Ctrl+Esc+I      | Insert a tab character                        |
- | Ctrl+J          | Insert a newline                              |
- | Ctrl+Esc+J      | Insert a newline before current line          |
- | Ctrl+K          | Switch to keycode mode                        |
- | Ctrl+Esc+K      | Shortcut for 'quit' command                   |
- | Ctrl+L          | Select the current line as the region         |
- | Ctrl+N          | Run 'next' command                            |
- | Ctrl+P          | Run 'paste' command                           |
- | Ctrl+V          | Run 'prev' command                            |
- | Ctrl+X          | Switch to command mode                        |
- | Ctrl+Y          | Run 'copy' command                            |
- | Ctrl+Z          | Run 'snap' command                            |
- | Esc+[           | Run 'decrindent' command                      |
- | Esc+a           | Shortcut for 'load' command                   |
- | Esc+g           | Shortcut for 'goto' command                   |
- | Esc+n           | Shortcut for 'new' command                    |
- | Esc+s           | Shortcut for 'save' command                   |
- | 7f              | Delete a character backward                   |
- | up              | Move the cursor up                            |
- | Esc+up          | Shift the current region up                   |
- | down            | Move the cursor down                          |
- | Esc+down        | Shift the current region down                 |
- | right           | Move the cursor right                         |
- | Esc+right       | Shift the current region right                |
- | left            | Move the cursor left                          |
- | Esc+left        | Shift the current region left                 |
- | home            | Move the cursor to the beginning of the line  |
- | del             | Delete a character forward                    |
- | end             | Move the cursor to the end of the line        |
- | pgup            | Move the cursor to the top of the screen      |
- | pgdn            | Move the cursor to the bottom of the screen   |
+ | `443` `Ctrl+C`         | Run 'swap' command                            |
+ | `449` `Ctrl+I`         | Run 'incrindent' command                      |
+ | `649` `Ctrl+Esc+I`     | Insert a tab character                        |
+ | `44a` `Ctrl+J`         | Insert a newline                              |
+ | `64a` `Ctrl+Esc+J`     | Insert a newline before current line          |
+ | `44b` `Ctrl+K`         | Switch to keycode mode                        |
+ | `64b` `Ctrl+Esc+K`     | Shortcut for 'quit' command                   |
+ | `44c` `Ctrl+L`         | Select the current line as the region         |
+ | `44e` `Ctrl+N`         | Run 'next' command                            |
+ | `450` `Ctrl+P`         | Run 'paste' command                           |
+ | `456` `Ctrl+V`         | Run 'prev' command                            |
+ | `458` `Ctrl+X`         | Switch to command mode                        |
+ | `459` `Ctrl+Y`         | Run 'copy' command                            |
+ | `45a` `Ctrl+Z`         | Run 'snap' command                            |
+ | `25b` `Esc+[`          | Run 'decrindent' command                      |
+ | `261` `Esc+a`          | Shortcut for 'load' command                   |
+ | `267` `Esc+g`          | Shortcut for 'goto' command                   |
+ | `26e` `Esc+n`          | Shortcut for 'new' command                    |
+ | `273` `Esc+s`          | Shortcut for 'save' command                   |
+ | `07f` `backspace`      | Delete a character backward                   |
+ | `101` `up`             | Move the cursor up                            |
+ | `301` `Esc+up`         | Shift the current region up                   |
+ | `102` `down`           | Move the cursor down                          |
+ | `302` `Esc+down`       | Shift the current region down                 |
+ | `103` `right`          | Move the cursor right                         |
+ | `303` `Esc+right`      | Shift the current region right                |
+ | `104` `left`           | Move the cursor left                          |
+ | `304` `Esc+left`       | Shift the current region left                 |
+ | `105` `home`           | Move the cursor to the beginning of the line  |
+ | `106` `del`            | Delete a character forward                    |
+ | `107` `end`            | Move the cursor to the end of the line        |
+ | `108` `pgup`           | Move the cursor to the top of the screen      |
+ | `109` `pgdn`           | Move the cursor to the bottom of the screen   |
 
 Keycode mode
 ------------
  | Key             | Binding                                       |
  |-----------------|-----------------------------------------------|
- | Ctrl+A          | Switch to buffer mode                         |
+ | `441` `Ctrl+A`         | Switch to buffer mode                         |
 
 Bar mode
 --------
  | Key             | Binding                                       |
  |-----------------|-----------------------------------------------|
- | Ctrl+A          | Switch to buffer mode                         |
- | Ctrl+J          | Submit contents of bar                        |
- | Ctrl+K          | Switch to keycode mode                        |
- | Ctrl+X          | Switch to buffer mode                         |
- | 7f              | Delete backward                               |
- | right           | Move cursor right                             |
- | left            | Move cursor left                              |
- | del             | Delete forward                                |
+ | `441` `Ctrl+A`         | Switch to buffer mode                         |
+ | `44a` `Ctrl+J`         | Submit contents of bar                        |
+ | `44b` `Ctrl+K`         | Switch to keycode mode                        |
+ | `458` `Ctrl+X`         | Switch to buffer mode                         |
+ | `07f` `backspace`      | Delete backward                               |
+ | `103` `right`          | Move cursor right                             |
+ | `104` `left`           | Move cursor left                              |
+ | `106` `del`            | Delete forward                                |

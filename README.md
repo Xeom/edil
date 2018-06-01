@@ -35,7 +35,7 @@ built to compile on Linux, and is tested and used by me on the
 [simple terminal](https://st.suckless.org/).
 
 ```
- ~/edil-2.0 $ make bin/edil
+ ~/edil-2.0 $ make all
 ...
 Built bin/edil
  ~/edil-2.0 $ ./bin/edil -v
@@ -59,12 +59,15 @@ Edil v0.0.2 -- Compiled (2018-04-09 11:56 +0100)
    save the file in the current buffer.
 
 4. To exit Edil, you can use the key combination `Ctrl-Esc-k`. This
-   will close edil.
+   will close edil. If you don't wish to save what changes you have
+   made, you can run the `discard` command by pressing `Ctrl-x` and
+   typing `discard`, then pressing enter.
 
-### Full documentation
+### Further documentation
 
 More detailed information can be found in the `doc/` directory:
 
 * [Command documentation](doc/commands.md) can be found in `doc/commands.md`.
 * [Keybind documentation](doc/keys.md) can be found in `doc/keys.md`.
-
+* [Basic editing guide](doc/editing.md) can be found in `doc/editing.md`.
+* [Command-line options](doc/options.md) can be found in `doc/options.md`.

@@ -36,6 +36,8 @@ vec inp_keycodes;
 
 inp_keycode inp_keycodes_static[] =
 {
+    {inp_key_tab,    "",     "tab"},
+    {inp_key_back,   "",     "backspace"},
     {inp_key_up,     "[A",   "up"},
     {inp_key_down,   "[B",   "down"},
     {inp_key_right,  "[C",   "right"},
