@@ -4,12 +4,13 @@
 
 typedef enum
 {
-    inp_key_back  = 0x07f,
-    inp_key_tab   = 0x449,
-    inp_key_enter = 0x44a,
-    inp_key_esc   = 0x200,
-    inp_key_ctrl  = 0x400,
-    inp_key_none  = 0x100,
+    inp_key_back      = 0x07f,
+    inp_key_shiftback = 0x44b,
+    inp_key_tab       = 0x449,
+    inp_key_enter     = 0x44a,
+    inp_key_esc       = 0x200,
+    inp_key_ctrl      = 0x400,
+    inp_key_none      = 0x100,
     inp_key_up,
     inp_key_down,
     inp_key_right,
@@ -20,6 +21,8 @@ typedef enum
     inp_key_pgup,
     inp_key_pgdn,
     inp_key_insert,
+    inp_key_shifttab,
+    inp_key_shiftdel,
     inp_key_f1,
     inp_key_f2,
     inp_key_f3,

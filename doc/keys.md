@@ -22,7 +22,6 @@ Buffer mode
  | `Ctrl+X`        | Switch to command mode                        |
  | `Ctrl+Y`        | Run 'copy' command                            |
  | `Ctrl+Z`        | Run 'snap' command                            |
- | `Esc+[`         | Run 'decrindent' command                      |
  | `Esc+a`         | Shortcut for 'load' command                   |
  | `Esc+g`         | Shortcut for 'goto' command                   |
  | `Esc+n`         | Shortcut for 'new' command                    |
@@ -41,6 +40,7 @@ Buffer mode
  | `end`           | Move the cursor to the end of the line        |
  | `pgup`          | Move the cursor to the top of the screen      |
  | `pgdn`          | Move the cursor to the bottom of the screen   |
+ | `Shift+tab`     | Run 'decrindent' command                      |
 
 Keycode mode
 ------------

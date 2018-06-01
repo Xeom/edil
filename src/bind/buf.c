@@ -40,6 +40,7 @@ BIND_FUNCT(buf_back,
         cur_del_win(w);
     }
 )
+BIND_FUNCT(buf_enter_line, cur_enter_line_win(w))
 
 BIND_FUNCT(buf_ins_tab,
     vec tabvec;
@@ -95,6 +96,8 @@ void bind_buf_init(void)
     BIND_TO(buf_del,   inp_key_del,   Delete a character forward);
     BIND_TO(buf_back,  inp_key_back,  Delete a character backward);
 
+    BIND_TO(buf_enter_line, inp_key_enter | inp_key_esc, Insert a newline before current line);
+
     BIND_TO(buf_ins_tab, inp_key_tab | inp_key_esc, Insert a tab character);
 
     SCUT_TO(new,  inp_key_esc | 'n', Shortcut for 'new' command);
@@ -111,8 +114,8 @@ void bind_buf_init(void)
     SCUT_TO(copy,  inp_key_ctrl | 'Y', Run 'copy' command);
     SCUT_TO(paste, inp_key_ctrl | 'P', Run 'paste' command);
 
-    SCUT_TO(incrindent, inp_key_tab,       Run 'incrindent' command);
-    SCUT_TO(decrindent, inp_key_esc | '[', Run 'decrindent' command);
+    SCUT_TO(incrindent, inp_key_tab,      Run 'incrindent' command);
+    SCUT_TO(decrindent, inp_key_shifttab, Run 'decrindent' command);
 
     BIND_TO(buf_to_kcd, inp_key_ctrl | 'K', Switch to keycode mode);
     BIND_TO(buf_to_cmd, inp_key_ctrl | 'X', Switch to command mode);
