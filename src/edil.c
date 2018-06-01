@@ -110,6 +110,7 @@ static void process_arg(int argc, char **argv, int *n)
         bind_print(stdout);
         bind_kill();
         inp_kill();
+        fflush(stdout);
         exit(0);
     }
     else if (strncmp(argv[*n], "-", 1) == 0)
