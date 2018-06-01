@@ -38,6 +38,7 @@ inp_keycode inp_keycodes_static[] =
 {
     {inp_key_tab,  "", "tab"},
     {inp_key_back, "", "backspace"},
+    {inp_key_enter, "", "enter"},
 
     {inp_key_up,    "[A", "up"},
     {inp_key_down,  "[B", "down"},
@@ -160,8 +161,6 @@ static char *inp_key_basename(inp_key key)
     size_t len, ind;
     len = vec_len(&inp_keycodes);
 
-    key &= ~(inp_key_ctrl | inp_key_esc);
-
     for (ind = 0; ind < len; ind++)
     {
         inp_keycode *code;
@@ -178,9 +177,21 @@ void inp_key_name(inp_key key, char *str, size_t len)
 {
     char *prefix, *name;
     char chrname[2];
+    inp_key keymods;
 
     prefix = "";
     name   = NULL;
+
+    keymods = inp_key_esc;
+    if ((name = inp_key_basename(key & ~keymods)))
+        keymods &= key;
+
+    if (!name)
+    {
+        keymods = inp_key_esc | inp_key_ctrl;
+        if ((name = inp_key_basename(key & ~keymods)))
+            keymods &= key;
+    }
 
     if ((key & inp_key_ctrl) && (key & inp_key_esc))
         prefix = "Ctrl+Esc+";
@@ -188,8 +199,6 @@ void inp_key_name(inp_key key, char *str, size_t len)
         prefix = "Ctrl+";
     else if (key & inp_key_esc)
         prefix = "Esc+";
-
-    name = inp_key_basename(key);
 
     if (!name && (key & 0xff) > 0x20 && (key & 0xff) < 0x7e)
     {
