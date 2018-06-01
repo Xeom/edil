@@ -108,9 +108,9 @@ static void process_arg(int argc, char **argv, int *n)
         inp_init();
         bind_init();
         bind_print(stdout);
+        fflush(stdout);
         bind_kill();
         inp_kill();
-        fflush(stdout);
         exit(0);
     }
     else if (strncmp(argv[*n], "-", 1) == 0)

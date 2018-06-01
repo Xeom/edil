@@ -9,10 +9,6 @@ Buffer mode
  | Key                 | Binding                                       |
  |---------------------|-----------------------------------------------|
  | `Ctrl+C`            | Run 'swap' command                            |
- | `Ctrl+tab`          | Run 'incrindent' command                      |
- | `Ctrl+Esc+tab`      | Insert a tab character                        |
- | `Ctrl+enter`        | Insert a newline                              |
- | `Ctrl+Esc+enter`    | Insert a newline before current line          |
  | `Ctrl+K`            | Switch to keycode mode                        |
  | `Ctrl+Esc+K`        | Shortcut for 'quit' command                   |
  | `Ctrl+L`            | Select the current line as the region         |
@@ -26,7 +22,6 @@ Buffer mode
  | `Esc+g`             | Shortcut for 'goto' command                   |
  | `Esc+n`             | Shortcut for 'new' command                    |
  | `Esc+s`             | Shortcut for 'save' command                   |
- | `backspace`         | Delete a character backward                   |
  | `up`                | Move the cursor up                            |
  | `Esc+up`            | Shift the current region up                   |
  | `down`              | Move the cursor down                          |
@@ -36,11 +31,16 @@ Buffer mode
  | `left`              | Move the cursor left                          |
  | `Esc+left`          | Shift the current region left                 |
  | `home`              | Move the cursor to the beginning of the line  |
- | `del`               | Delete a character forward                    |
  | `end`               | Move the cursor to the end of the line        |
  | `pgup`              | Move the cursor to the top of the screen      |
  | `pgdn`              | Move the cursor to the bottom of the screen   |
  | `Shift+tab`         | Run 'decrindent' command                      |
+ | `tab`               | Run 'incrindent' command                      |
+ | `Esc+tab`           | Insert a tab character                        |
+ | `del`               | Delete a character forward                    |
+ | `backspace`         | Delete a character backward                   |
+ | `enter`             | Insert a newline                              |
+ | `Esc+enter`         | Insert a newline before current line          |
 
 Keycode mode
 ------------
@@ -53,10 +53,10 @@ Bar mode
  | Key                 | Binding                                       |
  |---------------------|-----------------------------------------------|
  | `Ctrl+A`            | Switch to buffer mode                         |
- | `Ctrl+enter`        | Submit contents of bar                        |
  | `Ctrl+K`            | Switch to keycode mode                        |
  | `Ctrl+X`            | Switch to buffer mode                         |
- | `backspace`         | Delete backward                               |
  | `right`             | Move cursor right                             |
  | `left`              | Move cursor left                              |
  | `del`               | Delete forward                                |
+ | `backspace`         | Delete backward                               |
+ | `enter`             | Submit contents of bar                        |

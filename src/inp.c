@@ -26,6 +26,11 @@
 static void *inp_listen(void *arg);
 static char *inp_key_basename(inp_key key);
 
+static inp_key inp_translate_key(inp_key key);
+static void    inp_load_keytranslate(void);
+static void    inp_load_keycodes(void);
+
+
 void inp_nonblockify(int fd);
 
 pthread_t inp_listen_thread = 0;
@@ -33,11 +38,13 @@ static int inp_fd_in;
 static int inp_fd_out;
 
 vec inp_keycodes;
+table inp_keytranslate;
 
 inp_keycode inp_keycodes_static[] =
 {
     {inp_key_tab,  "", "tab"},
     {inp_key_back, "", "backspace"},
+    {inp_key_shiftback, "", "Shift+backspace"},
     {inp_key_enter, "", "enter"},
 
     {inp_key_up,    "[A", "up"},
@@ -66,6 +73,18 @@ inp_keycode inp_keycodes_static[] =
     {inp_key_f10, "[21~",  "f10"},
     {inp_key_f11, "[23~",  "f11"},
     {inp_key_f12, "[24~",  "f12"},
+};
+
+inp_key inp_keytranslate_static[][2] =
+{
+    {inp_key_ctrl | 'J', inp_key_enter},
+    {inp_key_ctrl | 'H', inp_key_shiftback},
+    {inp_key_ctrl | 'I', inp_key_tab},
+    {'\177',             inp_key_back},
+    {inp_key_esc | inp_key_ctrl | 'J', inp_key_esc | inp_key_enter},
+    {inp_key_esc | inp_key_ctrl | 'H', inp_key_esc | inp_key_shiftback},
+    {inp_key_esc | inp_key_ctrl | 'I', inp_key_esc | inp_key_tab},
+    {inp_key_esc | '\177',             inp_key_esc | inp_key_back}
 };
 
 static int inp_keycode_cmp(const void *a, const void *b)
@@ -152,6 +171,8 @@ inp_key inp_get_key(unsigned char c)
         rtn += 0x40;
         rtn |= inp_key_ctrl;
     }
+
+    rtn = inp_translate_key(rtn);
 
     return rtn;
 }
@@ -263,17 +284,54 @@ void inp_empty_pipe(void)
     /* Flush */
 }
 
+static void inp_load_keycodes(void)
+{
+    size_t num;
+
+    /* Load the keycodes */
+    num = sizeof(inp_keycodes_static) / sizeof(inp_keycode);
+
+    vec_init(&inp_keycodes, sizeof(inp_keycode));
+    vec_ins(&inp_keycodes, 0, num, &inp_keycodes_static);
+    vec_sort(&inp_keycodes, inp_keycode_cmp);
+}
+
+static inp_key inp_translate_key(inp_key key)
+{
+    inp_key *ptr;
+
+    ptr = table_get(&inp_keytranslate, &key);
+
+    if (ptr)
+        return *ptr;
+    else
+        return  key;
+}
+
+static void inp_load_keytranslate(void)
+{
+    size_t ind, num;
+
+    num = sizeof(inp_keytranslate_static) / sizeof(inp_key[2]);
+
+    table_init(&inp_keytranslate, sizeof(inp_key), sizeof(inp_key));
+
+    for (ind = 0; ind < num; ++ind)
+    {
+        inp_key from, to;
+        from = inp_keytranslate_static[ind][0];
+        to   = inp_keytranslate_static[ind][1];
+        table_set(&inp_keytranslate, &from, &to);
+    }
+}
+
 void inp_init(void)
 {
     size_t numkeys;
     int pipefds[2];
 
-    /* Load the keycodes */
-    numkeys = sizeof(inp_keycodes_static) / sizeof(inp_keycode);
-
-    vec_init(&inp_keycodes, sizeof(inp_keycode));
-    vec_ins(&inp_keycodes, 0, numkeys, &inp_keycodes_static);
-    vec_sort(&inp_keycodes, inp_keycode_cmp);
+    inp_load_keycodes();
+    inp_load_keytranslate();
 
     if (pipe(pipefds) == -1)
     {
