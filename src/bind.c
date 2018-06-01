@@ -119,8 +119,8 @@ void bind_flush(void)
 }
 
 #define BIND_PRINT_HEADER "\n"\
-    " | Key             | Binding                                       |\n" \
-    " |-----------------|-----------------------------------------------|\n"
+    " | Key                 | Binding                                       |\n" \
+    " |---------------------|-----------------------------------------------|\n"
 
 void bind_print(FILE *stream)
 {
@@ -154,6 +154,6 @@ void bind_print_table(table *t, FILE *stream)
         val = table_get(t, key);
         if (!val) return;
         inp_key_name(*key, buf, 64);
-        fprintf(stream, " | %-16s| %-45s |\n", buf, val->desc);
+        fprintf(stream, " | %-20s| %-45s |\n", buf, val->desc);
     }
 }

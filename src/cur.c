@@ -206,6 +206,19 @@ void cur_enter_win(win *w)
     win_out_after(w, prev);
 }
 
+void cur_enter_line_win(win *w)
+{
+    buf *b;
+    cur prev;
+    b = w->b;
+    CHK_FLAGS(b);
+
+    prev = (cur){ .ln = w->pri.ln };
+    cur_enter(prev, b, PRI_SEC);
+
+    win_out_after(w, prev);
+}
+
 void cur_move_win(win *w, cur dir)
 {
     ssize_t len;
@@ -325,6 +338,9 @@ static void cur_shift_line(win *w, ssize_t ln, int dir)
     ssize_t cn1, cn2, len;
     cur cur1, cur2;
     chr tmp, *c;
+    buf *b;
+    b = w->b;
+    CHK_FLAGS(b);
 
     cn1 = MIN(w->pri.cn, w->sec.cn);
     cn2 = MAX(w->pri.cn, w->sec.cn) + 1;
@@ -332,25 +348,25 @@ static void cur_shift_line(win *w, ssize_t ln, int dir)
     cur1 = (cur){ .ln = ln, .cn = cn1 };
     cur2 = (cur){ .ln = ln, .cn = cn2 };
 
-    len = buf_line_len(w->b, cur1);
+    len = buf_line_len(b, cur1);
 
     if (cn1 > len) return;
 
     if (dir == 1)
     {
-        c = buf_chr(w->b, cur2);
+        c = buf_chr(b, cur2);
         tmp = *c;
-        buf_del(w->b, cur2, 1);
-        buf_ins(w->b, cur1, &tmp, 1);
+        buf_del(b, cur2, 1);
+        buf_ins(b, cur1, &tmp, 1);
     }
     else if (dir == -1)
     {
         cur1.cn -= 1;
 
-        c = buf_chr(w->b, cur1);
+        c = buf_chr(b, cur1);
         tmp = *c;
-        buf_ins(w->b, cur2, &tmp, 1);
-        buf_del(w->b, cur1, 1);
+        buf_ins(b, cur2, &tmp, 1);
+        buf_del(b, cur1, 1);
     }
 }
 
@@ -358,8 +374,8 @@ void cur_shift(win *w, cur dir)
 {
     buf *b;
     cur *start, *end;
-
     b = w->b;
+    CHK_FLAGS(b);
 
     start = CUR_START(&(w->pri), &(w->sec));
     end   = CUR_END  (&(w->pri), &(w->sec));
@@ -420,8 +436,8 @@ void cur_del_region(win *w)
 {
     buf *b;
     cur *start, *end, c;
-
     b = w->b;
+    CHK_FLAGS(b);
 
     start = CUR_START(&(w->pri), &(w->sec));
     end   = CUR_END  (&(w->pri), &(w->sec));
@@ -450,6 +466,8 @@ void cur_ins_buf(win *w, buf *oth)
     buf *b;
     ssize_t len;
     cur from = (cur){0, 0};
+    b = w->b;
+    CHK_FLAGS(b);
 
     b   = w->b;
     len = buf_len(oth);
