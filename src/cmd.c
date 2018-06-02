@@ -10,6 +10,7 @@
 #include "cmd/nav.h"
 #include "cmd/indent.h"
 #include "cmd/region.h"
+#include "cmd/conf.h"
 
 #include "cmd.h"
 
@@ -51,7 +52,9 @@ static namevec_item cmd_items_static[] =
     CMD_ITEM(next,       buf_cmd_next),
     CMD_ITEM(prev,       buf_cmd_prev),
     CMD_ITEM(kill,       buf_cmd_kill),
-    CMD_ITEM(quit,       buf_cmd_quit)
+    CMD_ITEM(quit,       buf_cmd_quit),
+
+    CMD_ITEM(loadconf,   conf_cmd_run_file)
 };
 
 /* Increment ind until whitespace isn't found, return this *
