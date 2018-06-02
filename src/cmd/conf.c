@@ -1,3 +1,7 @@
+#include <sys/types.h>
+#include <string.h>
+#include <pwd.h>
+
 #include "file.h"
 #include "win.h"
 #include "vec.h"
@@ -6,6 +10,14 @@
 
 #include "cmd/conf.h"
 
+static char *conf_default_files[] =
+{
+    ".edil.conf",
+    ".edil",
+    ".config/edil",
+    ".config/edil.conf"
+};
+
 void conf_run_file(file *f, win *w)
 {
     vec line;
@@ -13,11 +25,57 @@ void conf_run_file(file *f, win *w)
 
     while (!file_ended(f))
     {
+        chr *first;
+
         file_read_line(f, &line);
-        ui_cmd_cb(w, &line);
+
+        if (!vec_len(&line)) continue;
+
+        first = vec_get(&line, 0);
+
+        if (strcmp(first->utf8, "#") != 0)
+            ui_cmd_cb(w, &line);
     }
 
     vec_kill(&line);
+}
+
+void conf_run_default_files(win *w)
+{
+    size_t ind, num;
+    struct passwd *info;
+    char  *home;
+
+    info = getpwuid(getuid());
+    home = info->pw_dir;
+
+    num = sizeof(conf_default_files)/sizeof(char *);
+    for (ind = 0; ind < num; ++ind)
+    {
+        file f;
+        vec  chrname;
+        char *name;
+
+        name = conf_default_files[ind];
+
+        vec_init(&chrname, sizeof(chr));
+
+        chr_from_str(&chrname, home);
+        chr_from_str(&chrname, "/");
+        chr_from_str(&chrname, name);
+
+        file_init(&f);
+        file_assoc(&f, &chrname);
+
+        if (file_exists(&f))
+        {
+            file_open(&f, "r");
+            conf_run_file(&f, w);
+        }
+
+        file_kill(&f);
+        vec_kill(&chrname);
+    }
 }
 
 void conf_cmd_run_file(vec *rtn, vec *args, win *w)

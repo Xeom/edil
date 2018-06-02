@@ -13,6 +13,7 @@
 #include "inp.h"
 #include "ui.h"
 #include "cmd.h"
+#include "cmd/conf.h"
 #include "cmd/file.h"
 
 #include <string.h>
@@ -143,6 +144,8 @@ void run_startup_cmd(void)
 
         vec_kill(cmd);
     }
+
+    conf_run_default_files(win_cur);
 
     vec_kill(&startup_cmd);
 }

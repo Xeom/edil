@@ -6,6 +6,8 @@
 
 void conf_run_file(file *f, win *w);
 
+void conf_run_default_files(win *w);
+
 void conf_cmd_run_file(vec *rtn, vec *args, win *w);
 
 #endif

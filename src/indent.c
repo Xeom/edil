@@ -5,8 +5,8 @@
 #include "indent.h"
 
 indent_flag indent_mode      = 0;
-int         indent_tab_width = 4;
-int         indent_lvl_width = 4;
+int         indent_tab_width = 8;
+int         indent_lvl_width = 8;
 char       *indent_tab_text  = ";";
 col_desc    indent_tab_col   = { .fg = col_blue, .bg = col_none };
 
