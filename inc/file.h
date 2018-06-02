@@ -48,6 +48,8 @@ void file_kill(file *f);
 
 int file_load(file *f, buf *b);
 
+int file_read_line(file *f, vec *line);
+
 int file_load_line(file *f, buf *b);
 
 int file_save(file *f, buf *b);

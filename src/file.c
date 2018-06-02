@@ -162,31 +162,23 @@ int file_load(file *f, buf *b)
     return 0;
 }
 
-int file_load_line(file *f, buf *b)
+int file_read_line(file *f, vec *line)
 {
-    vec line;
-
-    vec_init(&line, sizeof(chr));
-
-    cur loc = {0, 0};
-
-    loc.ln = buf_len(b);
-
     size_t width, ind;
-    chr utfchr = CHR("");
+    chr    utfchr = CHR("");
+    int c;
 
-    width = 0;
     ind   = 0;
+    width = 0;
 
     while (!feof(f->fptr))
     {
-        int c;
         c = fgetc(f->fptr);
 
         if (width == ind)
         {
             if (width)
-                vec_app(&line, &utfchr);
+                vec_app(line, &utfchr);
 
             width = chr_utf8_len(c);
             ind   = 0;
@@ -204,8 +196,25 @@ int file_load_line(file *f, buf *b)
         utfchr.utf8[ind++] = c;
     }
 
-    buf_ins_line(b, loc);
+    if (ferror(f->fptr))
+        return -1;
+    else
+        return  0;
+}
+
+int file_load_line(file *f, buf *b)
+{
+    vec line;
+
+    vec_init(&line, sizeof(chr));
+
+    cur loc;
+    loc = (cur){ .ln = buf_len(b) };
+
+    file_read_line(f, &line);
+
     loc.ln -= 1;
+    buf_ins_line(b, loc);
     buf_ins(b, loc, vec_first(&line), vec_len(&line));
 
     vec_kill(&line);
