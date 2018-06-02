@@ -32,7 +32,7 @@ col_desc win_sec_col = {
 };
 
 chr win_trailing_chr = {
-    .utf8 = ";", .fnt = { .fg = col_red, .bg = col_none, .attr = 0 }
+    .utf8 = " ", .fnt = { .fg = col_red, .bg = col_black | col_bright, .attr = 0 }
 };
 
 void win_init(win *w, buf *b)
