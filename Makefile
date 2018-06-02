@@ -23,7 +23,11 @@ CFILES=$(addprefix $(SRCDIR), $(addsuffix .c, $(FILES)))
 OFILES=$(addprefix $(OBJDIR), $(addsuffix .o, $(FILES)))
 DFILES=$(addprefix $(DEPDIR), $(addsuffix .d, $(FILES)))
 
-ERRPIPE=2>>errs.txt || (less -r errs.txt && /bin/false)
+ifeq ($(DEBUG), yes)
+  ERRPIPE=2>&1 | tee -a errs.txt || (less -r errs.txt && /bin/false)
+else
+  ERRPIPE=
+endif
 
 clean_err:
 	@rm -f errs.txt

@@ -252,13 +252,15 @@ static uint64_t table_hash(const char *mem, size_t n)
 {
     int      loop;
     uint64_t hash;
+    uint32_t i;
+
+    i = 0;
 
     hash  = TABLE_HASH_RANDOM_SEED;
     loop = 1;
 
     while (loop)
     {
-        uint32_t i;
         double   recp, den;
         void    *fptr;
 
