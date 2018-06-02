@@ -26,6 +26,7 @@ void buf_kill(buf *b)
 
     file_kill(&(b->finfo));
 
+    vec_kill(&(b->name));
     vec_kill(&(b->lines));
 }
 
