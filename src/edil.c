@@ -114,6 +114,20 @@ static void process_arg(int argc, char **argv, int *n)
         inp_kill();
         exit(0);
     }
+    else if (argis(--filecmd) || argis(-f))
+    {
+        vec *cmd;
+        cmd = new_startup_cmd();
+
+        *n += 1;
+        if (*n >= argc)
+        {
+            fputs(argerror('--filecmd' needs an argument), stdout);
+            exit(0);
+        }
+
+        chr_format(cmd, "loadconf \"%s\"", argv[*n]);
+    }
     else if (strncmp(argv[*n], "-", 1) == 0)
     {
         fputs(argerror(Unknown argument), stdout);
@@ -129,11 +143,14 @@ static void process_arg(int argc, char **argv, int *n)
     *n += 1;
 }
 
+vec startup_files;
 vec startup_cmd;
 
 void run_startup_cmd(void)
 {
     size_t ind, len;
+
+    conf_run_default_files(win_cur);
 
     len = vec_len(&startup_cmd);
     for (ind = 0; ind < len; ++ind)
@@ -145,7 +162,6 @@ void run_startup_cmd(void)
         vec_kill(cmd);
     }
 
-    conf_run_default_files(win_cur);
 
     vec_kill(&startup_cmd);
 }

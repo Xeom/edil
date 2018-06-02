@@ -40,6 +40,27 @@ void conf_run_file(file *f, win *w)
     vec_kill(&line);
 }
 
+void conf_run_file_name(char *name, win *w)
+{
+    file f;
+    vec chrname;
+    vec_init(&chrname, sizeof(chr));
+
+    chr_from_str(&chrname, name);
+
+    file_init(&f);
+    file_assoc(&f, &chrname);
+
+    if (file_exists(&f))
+    {
+        file_open(&f, "r");
+        conf_run_file(&f, w);
+    }
+
+    file_kill(&f);
+    vec_kill(&chrname);
+}
+
 void conf_run_default_files(win *w)
 {
     size_t ind, num;
@@ -52,29 +73,15 @@ void conf_run_default_files(win *w)
     num = sizeof(conf_default_files)/sizeof(char *);
     for (ind = 0; ind < num; ++ind)
     {
-        file f;
-        vec  chrname;
-        char *name;
+        vec  name;
 
-        name = conf_default_files[ind];
+        vec_init(&name, sizeof(char));
 
-        vec_init(&chrname, sizeof(chr));
+        vec_str(&name, home);
+        vec_str(&name, "/");
+        vec_str(&name, conf_default_files[ind]);
 
-        chr_from_str(&chrname, home);
-        chr_from_str(&chrname, "/");
-        chr_from_str(&chrname, name);
-
-        file_init(&f);
-        file_assoc(&f, &chrname);
-
-        if (file_exists(&f))
-        {
-            file_open(&f, "r");
-            conf_run_file(&f, w);
-        }
-
-        file_kill(&f);
-        vec_kill(&chrname);
+        conf_run_file_name(vec_first(&name), w);
     }
 }
 

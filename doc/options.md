@@ -15,6 +15,10 @@ Command-Line Options
  * `--binds`, `-b` - This option prints out all of edils default
    keybindings, then exits.
 
+ * `--filecmd`, `-f` - This option takes one argument, a filename,
+   and then loads the commands stored in the specified file. This
+   done using the `loadconf` command.
+
 Usage
 =====
 
