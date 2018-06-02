@@ -159,7 +159,7 @@ void bar_query(bar *b, vec *prompt, void (*cb)(win *w, vec *chrs))
 void bar_out(bar *b)
 {
     vec chrs;
-    size_t ind, len, typedind, typedlen;
+    size_t ind, len, typedlen;
     int    needsfree = 1;
 
     vec_init(&chrs, sizeof(chr));
@@ -182,7 +182,7 @@ void bar_out(bar *b)
         chr_set_cols(vec_get(&chrs, ind), bar_prompt_col);
 
     vec_cpy(&chrs, &(b->typed));
-    if (typedlen && typedlen != b->ind)
+    if (typedlen && (int)typedlen != b->ind)
         vec_app(&chrs, &CHR(" "));
 
     if (vec_len(&(b->prompt)))

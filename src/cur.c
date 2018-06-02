@@ -94,7 +94,7 @@ static void cur_set_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel
         }
 
         /* if we're on a line after c */
-        if (r.ln >= 0) a->ln = c.ln + r.ln;
+        if (r.ln > 0) a->ln = c.ln + r.ln;
 
         /* if we're on a line before c and c has moved before a */
         if (r.ln < 0 && c.ln < a->ln) a->ln = MIN(c.ln, a->ln);
@@ -203,7 +203,10 @@ void cur_enter_win(win *w)
     prev = w->pri;
     cur_enter(w->pri, b, PRI_SEC);
 
-    win_out_after(w, prev);
+    w->pri = indent_auto_depth(b, w->pri);
+    indent_trim_end(b, prev);
+
+    win_out_after(w, (cur){ .ln = prev.ln });
 }
 
 void cur_enter_line_win(win *w)

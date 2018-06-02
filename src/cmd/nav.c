@@ -4,7 +4,7 @@
 
 #include "cmd/nav.h"
 
-cmd_info cmd_info_goto =
+/*cmd_info cmd_info_goto =
 {
     .fptr = nav_cmd_goto,
     .name = "goto",
@@ -30,7 +30,7 @@ cmd_info cmd_info_goto =
                     " (starting from 1)"
         }
     }
-};
+};*/
 
 void nav_cmd_goto(vec *rtn, vec *args, win *w)
 {

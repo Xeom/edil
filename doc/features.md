@@ -25,6 +25,7 @@ of *Edil*.
 
 ## 0.0.4
 
+- [ ] Esc+Enter inserts newline before current line.
 - [x] bar struct
 - [ ] New bind system
 - [ ] Jump to buffers when quitting if they are mod.

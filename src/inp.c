@@ -327,7 +327,6 @@ static void inp_load_keytranslate(void)
 
 void inp_init(void)
 {
-    size_t numkeys;
     int pipefds[2];
 
     inp_load_keycodes();
