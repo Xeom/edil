@@ -40,6 +40,8 @@ int file_associated(file *f);
 
 int file_exists(file *f);
 
+int file_ended(file *f);
+
 int file_open(file *f, const char *mode);
 
 int file_close(file *f);

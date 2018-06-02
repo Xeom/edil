@@ -171,6 +171,8 @@ int file_read_line(file *f, vec *line)
     ind   = 0;
     width = 0;
 
+    vec_clr(line);
+
     while (!feof(f->fptr))
     {
         c = fgetc(f->fptr);
@@ -200,6 +202,14 @@ int file_read_line(file *f, vec *line)
         return -1;
     else
         return  0;
+}
+
+int file_ended(file *f)
+{
+    if (!f->fptr)
+        return 1;
+    else
+        return feof(f->fptr);
 }
 
 int file_load_line(file *f, buf *b)
