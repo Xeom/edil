@@ -3,8 +3,6 @@
 
 extern table bind_mov;
 
-void bind_mov_init(void);
-
-void bind_mov_kill(void);
+void bind_mov_init(table *t);
 
 #endif
