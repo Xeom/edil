@@ -69,6 +69,7 @@ RCUT(incrindent) RCUT(decrindent)
 
 BIND_FUNCT(buf_to_kcd, bind_mode = bind_mode_kcd)
 BIND_FUNCT(buf_to_cmd, bind_buf_activate_cmd(w))
+BIND_FUNCT(buf_to_mov, bind_mode = bind_mode_mov)
 
 void bind_buf_init(void)
 {
@@ -119,6 +120,7 @@ void bind_buf_init(void)
 
     BIND_TO(buf_to_kcd, inp_key_ctrl | 'K', Switch to keycode mode);
     BIND_TO(buf_to_cmd, inp_key_ctrl | 'X', Switch to command mode);
+    BIND_TO(buf_to_mov, inp_key_ctrl | 'A', Switch to movement mode);
 }
 
 void bind_buf_kill(void)

@@ -8,6 +8,7 @@ Buf mode
 --------
  | Key                 | Bind name           | Description                                   |
  |---------------------|---------------------|-----------------------------------------------|
+ | `Ctrl+A (441)`      | buf_to_mov          | Switch to movement mode                       |
  | `Ctrl+C (443)`      | buf_swap_cmd        | Run 'swap' command                            |
  | `Ctrl+K (44b)`      | buf_to_kcd          | Switch to keycode mode                        |
  | `Ctrl+Esc+K (64b)`  | buf_quit_cmd        | Shortcut for 'quit' command                   |
@@ -60,3 +61,9 @@ Bar mode
  | `del (10e)`         | bar_del             | Delete forward                                |
  | `backspace (10f)`   | bar_back            | Delete backward                               |
  | `enter (110)`       | bar_enter           | Submit contents of bar                        |
+
+Mov mode
+--------
+ | Key                 | Bind name           | Description                                   |
+ |---------------------|---------------------|-----------------------------------------------|
+ | `Ctrl+A (441)`      | mov_to_buf          | Switch to buffer mode                         |

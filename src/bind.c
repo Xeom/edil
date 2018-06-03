@@ -9,6 +9,7 @@
 #include "bind/bar.h"
 #include "bind/buf.h"
 #include "bind/kcd.h"
+#include "bind/mov.h"
 
 #include "bind.h"
 
@@ -19,7 +20,6 @@ static void bind_ins(inp_key key);
 static void bind_ins_flush(void);
 
 #define IS_TYPABLE(key) (key < 0x100 && key != inp_key_back)
-
 
 static vec bind_ins_buf;
 
@@ -44,6 +44,13 @@ bind_mode_info bind_modes[] =
         &bind_kcd,
         bind_kcd_init, bind_kcd_kill,
         NULL, bind_kcd_key
+    },
+
+    [bind_mode_mov] = {
+        "mov", bind_mode_mov,
+        &bind_mov,
+        bind_mov_init, bind_mov_kill,
+        NULL, NULL
     }
 };
 
