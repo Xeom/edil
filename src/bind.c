@@ -20,7 +20,6 @@ static void bind_ins_flush(void);
 
 #define IS_TYPABLE(key) (key < 0x100 && key != inp_key_back)
 
-
 static vec bind_ins_buf;
 
 bind_mode_info bind_modes[] =
@@ -28,21 +27,21 @@ bind_mode_info bind_modes[] =
     [bind_mode_buf] = {
         "buf", bind_mode_buf,
         &bind_buf,
-        bind_buf_init, bind_buf_kill,
+        bind_buf_init,
         bind_buf_ins, NULL
     },
 
     [bind_mode_bar] = {
         "bar", bind_mode_bar,
         &bind_bar,
-        bind_bar_init, bind_bar_kill,
+        bind_bar_init,
         bind_bar_ins, NULL
     },
 
     [bind_mode_kcd] = {
         "kcd", bind_mode_kcd,
         &bind_kcd,
-        bind_kcd_init, bind_kcd_kill,
+        bind_kcd_init,
         NULL, bind_kcd_key
     }
 };
@@ -134,7 +133,11 @@ void bind_init(void)
 {
     vec_init(&bind_all, sizeof(namevec_item));
 
-    FOREACH_MODE(info, (info->initf)();)
+    FOREACH_MODE(info,
+        table *tab = info->keytable;
+        table_init(tab, sizeof(bind_info), sizeof(inp_key));
+        (info->initf)(tab);
+    )
 
     namevec_sort(&bind_all);
 
@@ -143,7 +146,7 @@ void bind_init(void)
 
 void bind_kill(void)
 {
-    FOREACH_MODE(info, (info->killf)(););
+    FOREACH_MODE(info, table_kill(info->keytable););
 
     vec_kill(&bind_ins_buf);
 }

@@ -9,17 +9,9 @@ table bind_kcd_names;
 
 BIND_FUNCT(kcd_to_buf, bind_mode = bind_mode_buf)
 
-void bind_kcd_init(void)
+void bind_kcd_init(table *tab)
 {
-    table *tab = &bind_kcd;
-    table_init(tab,  sizeof(bind_info), sizeof(inp_key));
-
     BIND_TO(kcd_to_buf, inp_key_ctrl | 'A', Switch to buffer mode);
-}
-
-void bind_kcd_kill(void)
-{
-    table_kill(&bind_kcd);
 }
 
 void bind_kcd_key(win *w, inp_key k)

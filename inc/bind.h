@@ -42,8 +42,7 @@ struct bind_mode_info_s
 
     /* These are function pointers that are expected to, when called, *
      * add all the necessary bind_infos to keytable and bind_all.     */
-    void (*initf)(void);          /* Function called on edil init      */
-    void (*killf)(void);          /* Function called on edil exit      */
+    void (*initf)(table *t);      /* Function called on edil init      */
 
     /* These two function pointers provide general handling of keys for *
      * when it is difficult to map every possible key.                  *

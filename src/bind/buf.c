@@ -70,11 +70,8 @@ RCUT(incrindent) RCUT(decrindent)
 BIND_FUNCT(buf_to_kcd, bind_mode = bind_mode_kcd)
 BIND_FUNCT(buf_to_cmd, bind_buf_activate_cmd(w))
 
-void bind_buf_init(void)
+void bind_buf_init(table *tab)
 {
-    table *tab = &bind_buf;
-    table_init(tab, sizeof(bind_info), sizeof(inp_key));
-
     BIND_TO(buf_mv_u, inp_key_up,    Move the cursor up);
     BIND_TO(buf_mv_d, inp_key_down,  Move the cursor down);
     BIND_TO(buf_mv_l, inp_key_left,  Move the cursor left);
@@ -119,11 +116,6 @@ void bind_buf_init(void)
 
     BIND_TO(buf_to_kcd, inp_key_ctrl | 'K', Switch to keycode mode);
     BIND_TO(buf_to_cmd, inp_key_ctrl | 'X', Switch to command mode);
-}
-
-void bind_buf_kill(void)
-{
-    table_kill(&bind_buf);
 }
 
 /* Command shortcuts */
