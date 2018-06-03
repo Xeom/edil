@@ -24,7 +24,7 @@ OFILES=$(addprefix $(OBJDIR), $(addsuffix .o, $(FILES)))
 DFILES=$(addprefix $(DEPDIR), $(addsuffix .d, $(FILES)))
 
 ifeq ($(DEBUG), yes)
-  ERRPIPE=2>&1 | tee -a errs.txt || (less -r errs.txt && /bin/false)
+  ERRPIPE=2>&1 | tee -a errs.txt || (less -R errs.txt && /bin/false)
 else
   ERRPIPE=
 endif
@@ -60,7 +60,7 @@ $(BINDIR)edil: $(OFILES) $(SRCDIR)edil.c
 deps: $(DFILES)
 
 all: deps $(BINDIR)edil
-	@if [ -s errs.txt ]; then cat errs.txt | less -r; rm errs.txt; fi
+	@if [ -s errs.txt ]; then cat errs.txt | less -R; rm errs.txt; fi
 
 clean: clean_err clean_bin clean_obj clean_dep
 
