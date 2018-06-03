@@ -54,7 +54,9 @@ static namevec_item cmd_items_static[] =
     CMD_ITEM(kill,       buf_cmd_kill),
     CMD_ITEM(quit,       buf_cmd_quit),
 
-    CMD_ITEM(loadconf,   conf_cmd_run_file)
+    CMD_ITEM(conffile,   conf_cmd_run_file),
+    CMD_ITEM(remap,      conf_cmd_remap),
+    CMD_ITEM(unmap,      conf_cmd_unmap)
 };
 
 /* Increment ind until whitespace isn't found, return this *

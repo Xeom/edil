@@ -126,7 +126,7 @@ static void process_arg(int argc, char **argv, int *n)
             exit(0);
         }
 
-        chr_format(cmd, "loadconf \"%s\"", argv[*n]);
+        chr_format(cmd, "conffile \"%s\"", argv[*n]);
     }
     else if (strncmp(argv[*n], "-", 1) == 0)
     {
@@ -143,7 +143,6 @@ static void process_arg(int argc, char **argv, int *n)
     *n += 1;
 }
 
-vec startup_files;
 vec startup_cmd;
 
 void run_startup_cmd(void)
