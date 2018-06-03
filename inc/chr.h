@@ -34,6 +34,10 @@ void chr_from_vec(vec *chrs, vec *str);
 size_t chr_from_str(vec *chrs, char *str);
 size_t chr_from_mem(vec *chrs, char *str, size_t len);
 
+/* Compare a vector of chrs to a string, returns the same values as *
+ * an equivialent strcmp.                                            */
+int chr_cmp_str(vec *chrs, char *str);
+
 /* Turn a vec of chrs back into utf8 chars. */
 void chr_to_str(vec *chrs, vec *str);
 

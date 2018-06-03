@@ -131,21 +131,13 @@ void buf_cmd_quit(vec *rtn, vec *args, win *w)
 
     if (vec_len(args) == 2)
     {
-        vec *arg;
-        chr *bang;
-        arg = vec_get(args, 1);
-
-        if (!vec_len(arg)) return;
-
-        bang = vec_first(arg);
-
-        if (vec_len(arg) != 1 || strcmp(bang->utf8, "!") != 0)
+        if (chr_cmp_str(vec_get(args, 1), "!") == 0)
+            forced = 1;
+        else
         {
             chr_from_str(rtn, "err: quit can only take '!' as an argument");
             return;
         }
-
-        forced = 1;
     }
 
     if (!forced)

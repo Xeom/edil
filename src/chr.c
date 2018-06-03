@@ -109,6 +109,22 @@ void chr_to_str(vec *chrs, vec *str)
     }
 }
 
+int chr_cmp_str(vec *chrs, char *str)
+{
+    vec strvec;
+    int rtn;
+    vec_init(&strvec, sizeof(char));
+
+    chr_to_str(chrs, &strvec);
+    vec_app(&strvec, "\0");
+
+    rtn = strcmp(vec_first(&strvec), str);
+
+    vec_kill(&strvec);
+
+    return rtn;
+}
+
 void chr_set_cols(chr *c, col_desc d)
 {
     c->fnt = col_update(c->fnt, d);
