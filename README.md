@@ -1,9 +1,9 @@
 # Edil
 
 Edil is my personal project of a text editor. Work started on
-Edil over a year ago, however that project eventually turned
-into a disaster. This is a second attempt, emphasising making
-everything simple and lightweight.
+Edil in 2015, however that project eventually turned info a
+disaster. This is a second attempt, emphasising making everything
+simple and lightweight.
 
 ## Motivation
 

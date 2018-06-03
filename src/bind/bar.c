@@ -22,11 +22,8 @@ BIND_FUNCT(bar_to_kcd,
     bar_cancel(&(w->basebar));
 )
 
-void bind_bar_init(void)
+void bind_bar_init(table *tab)
 {
-    table *tab = &bind_bar;
-    table_init(tab, sizeof(bind_info), sizeof(inp_key));
-
     BIND_TO(bar_mv_l,  inp_key_left,  Move cursor left);
     BIND_TO(bar_mv_r,  inp_key_right, Move cursor right);
     BIND_TO(bar_enter, inp_key_enter, Submit contents of bar);
@@ -36,11 +33,6 @@ void bind_bar_init(void)
     BIND_TO(bar_to_buf, inp_key_ctrl | 'A', Switch to buffer mode);
     BIND_TO(bar_to_buf, inp_key_ctrl | 'X', Switch to buffer mode);
     BIND_TO(bar_to_kcd, inp_key_ctrl | 'K', Switch to keycode mode);
-}
-
-void bind_bar_kill(void)
-{
-    table_kill(&bind_bar);
 }
 
 void bind_bar_ins(win *w, vec *text)

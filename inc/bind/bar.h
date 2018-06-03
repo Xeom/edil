@@ -6,8 +6,7 @@
 
 extern table bind_bar;
 
-void bind_bar_init(void);
-void bind_bar_kill(void);
+void bind_bar_init(table *tab);
 
 void bind_bar_ins(win *w, vec *text);
 
