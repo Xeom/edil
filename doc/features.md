@@ -25,10 +25,12 @@ of *Edil*.
 
 ## 0.0.4
 
-- [ ] Esc+Enter inserts newline before current line.
+- [ ] Block navigation commands
+- [x] Movement mode
+- [x] Esc+Enter inserts newline before current line.
 - [x] bar struct
 - [ ] New bind system
-- [ ] Jump to buffers when quitting if they are mod.
+- [x] Jump to buffers when quitting if they are mod.
 - [x] Closing buffers.
 - [x] file struct
 - [ ] "Are you sure?" messages.
