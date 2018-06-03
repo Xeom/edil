@@ -8,6 +8,6 @@ extern table bind_kcd;
 void bind_kcd_init(void);
 void bind_kcd_kill(void);
 
-void bind_kcd_key(inp_key k, win *w);
+void bind_kcd_key(win *w, inp_key k);
 
 #endif

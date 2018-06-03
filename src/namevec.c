@@ -17,6 +17,11 @@ void namevec_init(vec *v, namevec_item *items, size_t bytes)
     vec_sort(v, namevec_cmp);
 }
 
+void namevec_sort(vec *v)
+{
+    vec_sort(v, namevec_cmp);
+}
+
 static int namevec_cmp(const void *aptr, const void *bptr)
 {
     const namevec_item *a, *b;
