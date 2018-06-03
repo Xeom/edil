@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "file.h"
 #include "buf.h"
 #include "ring.h"
@@ -117,23 +119,48 @@ void buf_cmd_kill(vec *rtn, vec *args, win *w)
 void buf_cmd_quit(vec *rtn, vec *args, win *w)
 {
     size_t ind, len;
+    int forced;
 
-    if (vec_len(args) != 1)
+    if (vec_len(args) > 2)
     {
-        chr_from_str(rtn, "err: Command takes no arguments");
+        chr_from_str(rtn, "err: Command maximum one argument");
         return;
     }
 
-    len = vec_len(&ring_bufs);
-    for (ind = 0; ind < len; ++ind)
+    forced = 0;
+
+    if (vec_len(args) == 2)
     {
-        buf **b;
-        b = vec_get(&ring_bufs, ind);
-        if ((*b)->flags & buf_modified)
+        vec *arg;
+        chr *bang;
+        arg = vec_get(args, 1);
+
+        if (!vec_len(arg)) return;
+
+        bang = vec_first(arg);
+
+        if (vec_len(arg) != 1 || strcmp(bang->utf8, "!") != 0)
         {
-            chr_format(rtn, "err: Buf %ld modified", ind);
-            win_set_buf(w, *b);
+            chr_from_str(rtn, "err: quit can only take '!' as an argument");
             return;
+        }
+
+        forced = 1;
+    }
+
+    if (!forced)
+    {
+        len = vec_len(&ring_bufs);
+        for (ind = 0; ind < len; ++ind)
+        {
+            buf **b;
+            b = vec_get(&ring_bufs, ind);
+            if ((*b)->flags & buf_modified)
+            {
+                chr_format(rtn, "err: Buf %ld modified", ind);
+                win_set_buf(w, *b);
+                return;
+            }
         }
     }
 
