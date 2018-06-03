@@ -92,6 +92,8 @@ void bind_handle_key(inp_key key);
 bind_mode_type bind_mode_get(vec *chrname);
 bind_info *bind_info_get(vec *chrname);
 
+bind_mode_info *bind_info_curr(void);
+
 /* Unmap and remap bindings according to their names */
 int bind_remap(vec *chrmode, inp_key k, vec *chrbind);
 int bind_unmap(vec *chrmode, inp_key k);
@@ -99,7 +101,6 @@ int bind_unmap(vec *chrmode, inp_key k);
 /* Set up and kill the binding system */
 void bind_init(void);
 void bind_kill(void);
-
 
 void bind_print(FILE *stream);
 void bind_print_table(table *t, FILE *stream);

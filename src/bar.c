@@ -2,13 +2,15 @@
 
 #include "out.h"
 #include "bar.h"
+#include "bind.h"
 
 #define FMT_ARGS \
     pri.ln + 1, pri.cn + 1, \
     sec.ln + 1, sec.cn + 1, \
     w->cols,    w->rows,    \
     w->scrx,    w->scry,    \
-    buf_get_name(buf)
+    buf_get_name(buf),      \
+    bind_info_curr()->name
 
 #define ARG_PRI_LN "%1$ld"
 #define ARG_PRI_CN "%2$ld"
@@ -19,6 +21,7 @@
 #define ARG_SCRX   "%7$ld"
 #define ARG_SCRY   "%8$ld"
 #define ARG_NAME   "%9$s"
+#define ARG_MODE   "%10$s"
 
 chr bar_blank_chr = {
     .utf8 = "\xe2\x94\x80", .fnt = { .fg = col_black, .bg = col_black | col_bright }
@@ -36,7 +39,7 @@ col_desc bar_typed_col = {
     .inv = col_rev, .fg = col_null, .bg = col_null
 };
 
-char *bar_format_default = " " ARG_NAME " " ARG_PRI_LN "\xc2\xb7" ARG_PRI_CN " ";
+char *bar_format_default = " " ARG_NAME " " ARG_PRI_LN "\xc2\xb7" ARG_PRI_CN " " ARG_MODE " ";
 
 void bar_init(bar *b, win *w)
 {

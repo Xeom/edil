@@ -49,7 +49,7 @@ bind_mode_info bind_modes[] =
     [bind_mode_mov] = {
         "mov", bind_mode_mov,
         &bind_mov,
-        bind_mov_init, bind_mov_kill,
+        bind_mov_init,
         NULL, NULL
     }
 };
@@ -99,6 +99,12 @@ bind_info *bind_info_get(vec *chrname)
         return item->data.bind;
     else
         return NULL;
+}
+
+bind_mode_info *bind_info_curr(void)
+{
+    GET_CURR_INFO(rtn);
+    return rtn;
 }
 
 int bind_remap(vec *chrmode, inp_key k, vec *chrbind)
