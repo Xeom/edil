@@ -78,7 +78,9 @@ Mov mode
  | `Ctrl+X (458)`      | mode_cmd            | Open the command bar                          |
  | `Ctrl+Y (459)`      | cmd_copy            | Run copy command                              |
  | `Ctrl+Z (45a)`      | cmd_snap            | Run snap command                              |
+ | `a (061)`           | cur_skp_l           | Skip the cursor left quickly                  |
  | `Esc+a (261)`       | cmd_load            | Shortcut for load command                     |
+ | `d (064)`           | cur_skp_r           | Skip the cursor right quickly                 |
  | `e (065)`           | cur_faster          | Increase the skip speed                       |
  | `f (066)`           | cur_pgup            | Move the cursor to the top of the screen      |
  | `g (067)`           | cur_pgdn            | Move the cursor to the bottom of the screen   |
@@ -89,12 +91,18 @@ Mov mode
  | `k (06b)`           | cur_mv_r            | Move the cursor right                         |
  | `Esc+n (26e)`       | cmd_new             | Shortcut for new command                      |
  | `q (071)`           | cur_slower          | Decrease the skip speed                       |
+ | `s (073)`           | cur_skp_d           | Skip the cursor down quickly                  |
  | `Esc+s (273)`       | cmd_save            | Shortcut for save command                     |
  | `u (075)`           | cur_mv_u            | Move the cursor up                            |
+ | `w (077)`           | cur_skp_u           | Skip the cursor up quickly                    |
  | `y (079)`           | cur_home            | Move the cursor to the beginning of the line  |
+ | `up (101)`          | cur_skp_u           | Skip the cursor up quickly                    |
  | `Esc+up (301)`      | cur_mv_u            | Move the cursor up                            |
+ | `down (102)`        | cur_skp_d           | Skip the cursor down quickly                  |
  | `Esc+down (302)`    | cur_mv_d            | Move the cursor down                          |
+ | `right (103)`       | cur_skp_r           | Skip the cursor right quickly                 |
  | `Esc+right (303)`   | cur_mv_r            | Move the cursor right                         |
+ | `left (104)`        | cur_skp_l           | Skip the cursor left quickly                  |
  | `Esc+left (304)`    | cur_mv_l            | Move the cursor left                          |
  | `Shift+tab (10a)`   | cmd_decrindent      | Run decrindent command                        |
  | `tab (10d)`         | cmd_incrindent      | Run incrindent command                        |
