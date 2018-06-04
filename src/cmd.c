@@ -39,6 +39,7 @@ static namevec_item cmd_items_static[] =
     CMD_ITEM(goto,       nav_cmd_goto),
     CMD_ITEM(swap,       nav_cmd_swap),
     CMD_ITEM(snap,       nav_cmd_snap),
+    CMD_ITEM(lineify,    nav_cmd_lineify),
 
     CMD_ITEM(tabwidth,   indent_cmd_tabwidth),
     CMD_ITEM(lvlwidth,   indent_cmd_lvlwidth),

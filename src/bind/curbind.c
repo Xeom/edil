@@ -34,8 +34,6 @@ BIND_FUNCT(cur_end,  cur_end_win(w))
 BIND_FUNCT(cur_pgup, cur_pgup_win(w))
 BIND_FUNCT(cur_pgdn, cur_pgdn_win(w))
 
-BIND_FUNCT(cur_line, cur_lineify_win(w))
-
 BIND_FUNCT(cur_enter, cur_enter_win(w))
 BIND_FUNCT(cur_del,   cur_del_win(w))
 BIND_FUNCT(cur_back,
@@ -81,8 +79,6 @@ void bind_curbind_init(void)
     BIND_ADD(cur_end,  Move the cursor to the end of the line);
     BIND_ADD(cur_pgup, Move the cursor to the top of the screen);
     BIND_ADD(cur_pgdn, Move the cursor to the bottom of the screen);
-
-    BIND_ADD(cur_line, Select the current line with the region);
 
     BIND_ADD(cur_enter, Insert a newline at the current ursor);
     BIND_ADD(cur_enter_line, Insert a newline before the current line);

@@ -90,14 +90,12 @@ void nav_cmd_swap(vec *rtn, vec *args, win *w)
         chr_from_str(rtn, "err: This command takes no arguments");
         return;
     }
-    else
-    {
-        chr_from_str(rtn, "Cursors swapped");
-    }
 
     tmp    = w->pri;
     w->pri = w->sec;
     w->sec = tmp;
+
+    chr_from_str(rtn, "Cursors swapped");
 
     win_out_line(w, w->pri);
     win_out_line(w, w->sec);
@@ -120,14 +118,39 @@ void nav_cmd_snap(vec *rtn, vec *args, win *w)
         chr_from_str(rtn, "err: This command takes no arguments");
         return;
     }
-    else
-    {
-        chr_from_str(rtn, "Secondary cursor snapped");
-    }
 
     prev   = w->sec;
     w->sec = w->pri;
 
+    chr_from_str(rtn, "Secondary cursor snapped");
+
     win_out_line(w, w->pri);
     win_out_line(w, prev);
+}
+
+void nav_cmd_lineify(vec *rtn, vec *args, win *w)
+{
+    cur prevsec;
+    ssize_t len;
+
+    if (vec_len(args) != 1)
+    {
+        chr_from_str(rtn, "err: This command takes no arguments");
+        return;
+    }
+
+    prevsec = w->sec;
+
+    len = buf_line_len(w->b, w->pri);
+
+    w->pri.cn = 0;
+    w->sec.cn = len;
+    w->sec.ln = w->pri.ln;
+
+    win_out_line(w, w->pri);
+
+    chr_from_str(rtn, "Line selected");
+
+    if (prevsec.ln != w->sec.ln)
+        win_out_line(w, prevsec);
 }

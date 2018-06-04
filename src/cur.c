@@ -298,25 +298,6 @@ void cur_pgdn_win(win *w)
     win_out_after(w, (cur){0, 0});
 }
 
-void cur_lineify_win(win *w)
-{
-    cur prevsec;
-    ssize_t len;
-
-    prevsec = w->sec;
-
-    len = buf_line_len(w->b, w->pri);
-    w->pri.cn = len;
-
-    w->sec.cn = 0;
-    w->sec.ln = w->pri.ln;
-
-    win_out_line(w, w->sec);
-
-    if (prevsec.ln != w->sec.ln)
-        win_out_line(w, CUR_START(prevsec, w->pri));
-}
-
 static int cur_can_shift_line(win *w, ssize_t ln, int dir)
 {
     ssize_t cn1, cn2, len;

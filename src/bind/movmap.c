@@ -7,10 +7,10 @@
 
 void bind_movmap_init(void)
 {
-    BIND_MAP_UDLR(mov, cur_skp , 'w', 's', 'a', 'd');
-    BIND_MAP_UDLR(mov, cur_mv,   'u', 'j', 'h', 'k');
-    BIND_MAP_UDLR(mov, cur_skp , BIND_KEYS_UDLR(0));
-    BIND_MAP_UDLR(mov, cur_mv,   BIND_KEYS_UDLR(inp_key_esc));
+    BIND_MAP_UDLR(mov, cur_skp, 'w', 's', 'a', 'd');
+    BIND_MAP_UDLR(mov, cur_mv,  'u', 'j', 'h', 'k');
+    BIND_MAP_UDLR(mov, cur_skp, BIND_KEYS_UDLR(0));
+    BIND_MAP_UDLR(mov, cur_mv,  BIND_KEYS_UDLR(inp_key_esc));
 
     BIND_MAP(mov, cur_faster, 'e');
     BIND_MAP(mov, cur_slower, 'q');

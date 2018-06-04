@@ -30,6 +30,7 @@ SCUT(quit)
 
 RCUT(swap)
 RCUT(snap)
+RCUT(lineify)
 RCUT(next)
 RCUT(prev)
 RCUT(copy)
@@ -44,6 +45,7 @@ void bind_cmdbind_init(void)
     SCUT_ADD(save);
     SCUT_ADD(goto);
     SCUT_ADD(quit);
+    SCUT_ADD(lineify);
 
     RCUT_ADD(swap);
     RCUT_ADD(snap);

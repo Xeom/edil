@@ -41,6 +41,7 @@ of *Edil*.
 
 ## 0.0.5
 
+- [ ] Command bar scrollback
 - [ ] More efficient rendering of window bars.
 - [ ] "Are you sure?" messages.
 - [ ] Block navigation commands
