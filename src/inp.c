@@ -46,6 +46,7 @@ inp_keycode inp_keycodes_static[] =
     {inp_key_back, "", "backspace"},
     {inp_key_shiftback, "", "Shift+backspace"},
     {inp_key_enter, "", "enter"},
+    {' ',           "", "space"},
 
     {inp_key_up,    "[A", "up"},
     {inp_key_down,  "[B", "down"},
@@ -231,7 +232,7 @@ void inp_key_name(inp_key key, char *str, size_t len)
     if (name)
         snprintf(str, len, "%03x %s%s ", key, prefix, name);
     else
-        snprintf(str, len, "%03x %s%02x ", key, prefix, key & 0xff);
+        snprintf(str, len, "%03x %s0x%02x ", key, prefix, key & 0xff);
 }
 
 static void inp_listen_term(int sign)
