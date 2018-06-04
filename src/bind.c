@@ -192,6 +192,11 @@ void bind_init(void)
     bind_modebind_init();
     bind_barbind_init();
 
+    FOREACH_MODE(info,
+        table *tab = info->keytable;
+        table_init(tab, sizeof(bind_info), sizeof(inp_key));
+    )
+
     namevec_sort(&bind_all);
 
     bind_bufmap_init();
