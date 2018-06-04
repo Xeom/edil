@@ -1,17 +1,10 @@
-#include "cur.h"
 #include "bind.h"
-#include "ui.h"
 
-#include "bind/kcd.h"
+#include "bind/kcdmap.h"
 
-table bind_kcd;
-table bind_kcd_names;
-
-BIND_FUNCT(kcd_to_buf, bind_mode = bind_mode_buf)
-
-void bind_kcd_init(table *tab)
+void bind_kcdmap_init(void)
 {
-    BIND_TO(kcd_to_buf, inp_key_ctrl | 'A', Switch to buffer mode);
+    BIND_MAP(kcd, mode_buf, inp_key_ctrl | 'A');
 }
 
 void bind_kcd_key(win *w, inp_key k)

@@ -2,6 +2,7 @@
 # define BIND_KCD_H
 # include "win.h"
 # include "vec.h"
+# include "table.h"
 
 extern table bind_kcd;
 

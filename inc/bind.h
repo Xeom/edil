@@ -41,10 +41,6 @@ struct bind_mode_info_s
 
     table *keytable;              /* Mapping keypresses to bind_infos  */
 
-    /* These are function pointers that are expected to, when called, *
-     * add all the necessary bind_infos to keytable and bind_all.     */
-    void (*initf)(table *t);      /* Function called on edil init      */
-
     /* These two function pointers provide general handling of keys for *
      * when it is difficult to map every possible key.                  *
      * keyf also provides translation from inp_keys to unicode chrs.    *
@@ -77,7 +73,22 @@ extern vec bind_all;
                               .data.bind = &info }; \
         vec_app(&bind_all, &item); \
         if (k != inp_key_none) table_set(tab,  &k, &info); \
-    } \
+    }
+
+#define BIND_ADD(_name, _desc) {               \
+        static bind_info info = {              \
+            .fptr = bind_funct_ ## _name,      \
+            .name = #_name, .desc = #_desc     \
+        };                                     \
+        namevec_item item = {                  \
+            .name = #_name, .data.bind = &info \
+        };                                     \
+        vec_app(&bind_all, &item);             \
+    }
+
+#define BIND_MAP(_mode, _name, _key) { \
+        bind_remap_str(bind_mode_ ## _mode, _key, #_name); \
+    }
 
 /* This is called by the ui after a long string of characters. *
  * It tells the binding system that it needs to stop buffering *
@@ -91,12 +102,15 @@ void bind_handle_key(inp_key key);
 /* Get modes and bindings from their names */
 bind_mode_type bind_mode_get(vec *chrname);
 bind_info *bind_info_get(vec *chrname);
+bind_mode_type bind_mode_get_str(char *str);
+bind_info *bind_info_get_str(char *str);
 
 bind_mode_info *bind_info_curr(void);
 
 /* Unmap and remap bindings according to their names */
 int bind_remap(vec *chrmode, inp_key k, vec *chrbind);
 int bind_unmap(vec *chrmode, inp_key k);
+int bind_remap_str(bind_mode_type mode, inp_key k, char *str);
 
 /* Set up and kill the binding system */
 void bind_init(void);

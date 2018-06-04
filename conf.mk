@@ -1,6 +1,7 @@
 FILES=bar buf chr cmd col cur file indent inp namevec table out ring vec ui win bind \
       cmd/file cmd/nav cmd/indent cmd/buf cmd/region cmd/conf \
-      bind/buf bind/bar bind/kcd bind/mov
+      bind/curbind bind/cmdbind bind/modebind bind/barbind \
+      bind/barmap bind/bufmap bind/movmap bind/kcdmap
 
 SRCDIR=src/
 INCDIR=inc/

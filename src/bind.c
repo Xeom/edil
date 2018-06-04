@@ -6,10 +6,17 @@
 #include "ui.h"
 #include "chr.h"
 
-#include "bind/bar.h"
-#include "bind/buf.h"
+#include "bind/modebind.h"
+#include "bind/curbind.h"
+#include "bind/cmdbind.h"
+#include "bind/barbind.h"
+
+#include "bind/kcdmap.h"
+#include "bind/movmap.h"
+#include "bind/bufmap.h"
+#include "bind/barmap.h"
+
 #include "bind/kcd.h"
-#include "bind/mov.h"
 
 #include "bind.h"
 
@@ -23,33 +30,34 @@ static void bind_ins_flush(void);
 
 static vec bind_ins_buf;
 
+table bind_mov;
+table bind_buf;
+table bind_bar;
+table bind_kcd;
+
 bind_mode_info bind_modes[] =
 {
     [bind_mode_buf] = {
         "buf", bind_mode_buf,
         &bind_buf,
-        bind_buf_init,
         bind_buf_ins, NULL
     },
 
     [bind_mode_bar] = {
         "bar", bind_mode_bar,
         &bind_bar,
-        bind_bar_init,
         bind_bar_ins, NULL
     },
 
     [bind_mode_kcd] = {
         "kcd", bind_mode_kcd,
         &bind_kcd,
-        bind_kcd_init,
         NULL, bind_kcd_key
     },
 
     [bind_mode_mov] = {
         "mov", bind_mode_mov,
         &bind_mov,
-        bind_mov_init,
         NULL, NULL
     }
 };
@@ -71,20 +79,25 @@ bind_mode_info bind_modes[] =
 bind_mode_type bind_mode_get(vec *chrname)
 {
     vec str;
+    bind_mode_type rtn;
     vec_init(&str, sizeof(char));
 
     chr_to_str(chrname, &str);
     vec_app(&str, "\0");
 
-    FOREACH_MODE(info,
-        if (strcmp(info->name, vec_first(&str)) == 0)
-        {
-            vec_kill(&str);
-            return info->mode;
-        }
-    );
+    rtn = bind_mode_get_str(vec_first(&str));
 
     vec_kill(&str);
+
+    return rtn;
+}
+
+bind_mode_type bind_mode_get_str(char *str)
+{
+    FOREACH_MODE(info,
+        if (strcmp(info->name, str) == 0)
+            return info->mode;
+    );
 
     return bind_mode_none;
 }
@@ -94,6 +107,18 @@ bind_info *bind_info_get(vec *chrname)
     size_t n;
     namevec_item *item;
     item = namevec_get_chrs(&bind_all, chrname, &n);
+
+    if (n == 1)
+        return item->data.bind;
+    else
+        return NULL;
+}
+
+bind_info *bind_info_get_str(char *str)
+{
+    size_t n;
+    namevec_item *item;
+    item = namevec_get_str(&bind_all, str, &n);
 
     if (n == 1)
         return item->data.bind;
@@ -127,6 +152,21 @@ int bind_remap(vec *chrmode, inp_key k, vec *chrbind)
     return 0;
 }
 
+int bind_remap_str(bind_mode_type mode, inp_key k, char *str)
+{
+    bind_mode_info *modeinfo;
+    bind_info      *bindinfo;
+
+    modeinfo = &bind_modes[mode];
+    bindinfo = bind_info_get_str(str);
+
+    if (!bindinfo) return -1;
+
+    table_set(modeinfo->keytable, &k, bindinfo);
+
+    return 0;
+}
+
 int bind_unmap(vec *chrmode, inp_key k)
 {
     bind_mode_type  mode;
@@ -147,13 +187,17 @@ void bind_init(void)
 {
     vec_init(&bind_all, sizeof(namevec_item));
 
-    FOREACH_MODE(info,
-        table *tab = info->keytable;
-        table_init(tab, sizeof(bind_info), sizeof(inp_key));
-        (info->initf)(tab);
-    )
+    bind_curbind_init();
+    bind_cmdbind_init();
+    bind_modebind_init();
+    bind_barbind_init();
 
     namevec_sort(&bind_all);
+
+    bind_bufmap_init();
+    bind_movmap_init();
+    bind_barmap_init();
+    bind_kcdmap_init();
 
     vec_init(&bind_ins_buf, sizeof(chr));
 }
