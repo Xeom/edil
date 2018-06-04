@@ -43,18 +43,18 @@ clean_dep:
 
 $(OBJDIR)%.o: $(SRCDIR)%.c conf.mk
 	@mkdir -p $(@D)
-	@gcc -c $(FLAGS) $< -o $@ $(ERRPIPE)
+	@$(CC) -c $(FLAGS) $< -o $@ $(ERRPIPE)
 	@printf "Built $@\n"
 
 $(DEPDIR)%.d: $(SRCDIR)%.c $(HFILES) conf.mk
 	@mkdir -p $(@D)
 	@printf $(OBJDIR) > $@
-	@gcc -MM -MG -MT $(@:$(DEPDIR)%.d=%.o) $(FLAGS) $< >> $@
+	@$(CC) -MM -MG -MT $(@:$(DEPDIR)%.d=%.o) $(FLAGS) $< >> $@
 	@printf "Created $@\n"
 
 $(BINDIR)edil: $(OFILES) $(SRCDIR)edil.c
 	@mkdir -p $(@D)
-	@gcc $(FLAGS) $^ -o $@ $(ERRPIPE)
+	@$(CC) $(FLAGS) $^ -o $@ $(ERRPIPE)
 	@printf "Built $@\n"
 
 deps: $(DFILES)
