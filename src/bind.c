@@ -284,10 +284,10 @@ void bind_flush(void)
 
 #define BIND_PRINT_HEADER(info) "\n" \
     "%c%s mode\n" \
-    "--------\n " \
+    "--------\n" \
     "| Key                 " \
     "| Bind name           " \
-    "| Description                                   |\n " \
+    "| Description                                   |\n" \
     "| ------------------- " \
     "| ------------------- " \
     "| --------------------------------------------- |\n", \
@@ -323,7 +323,7 @@ void bind_print_table(table *t, FILE *stream)
         val = table_get(t, key);
         if (!val) return;
         inp_key_name(*key, buf, 64);
-        fprintf(stream, " | %-20s| %-20s| %-45s |\n", buf, val->name, val->desc);
+        fprintf(stream, "| %-20s| %-20s| %-45s |\n", buf, val->name, val->desc);
     }
 
     vec_kill(&keys);
