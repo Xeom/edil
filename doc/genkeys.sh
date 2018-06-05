@@ -8,4 +8,4 @@ echo "command \`edil --binds.\` The script [doc/genkeys.sh](/doc/genkeys.sh)"
 echo "has generated this file."
 echo
 
-bin/edil --binds | sed -r 's/^\| ([^ ]+) ([^ ]+)( *)    \| ([^ ]+)( *)  \|/| `\1` `\2`\3| `\4`\5|/'
+bin/edil --binds | sed -r 's/^\| ([^ ]+) ([^ ]+)( *)      \| ([^ ]+)( *)  \|/| `\1` - _\2_\3| `\4`\5|/'
