@@ -8,7 +8,7 @@ has generated this file.
 
 Buf mode
 --------
-| Key                 | `Bind` `name`       | `Description`                                 |
+| Key                 | Bind name           | Description                                   |
 | ------------------- | ------------------- | --------------------------------------------- |
 | `441` `Ctrl+A`      | `mode_mov`          | Switch to movement mode                       |
 | `443` `Ctrl+C`      | `cmd_swap`          | Run swap command                              |
@@ -47,13 +47,13 @@ Buf mode
 
 Kcd mode
 --------
-| Key                 | `Bind` `name`       | `Description`                                 |
+| Key                 | Bind name           | Description                                   |
 | ------------------- | ------------------- | --------------------------------------------- |
 | `441` `Ctrl+A`      | `mode_buf`          | Switch to buffer mode                         |
 
 Bar mode
 --------
-| Key                 | `Bind` `name`       | `Description`                                 |
+| Key                 | Bind name           | Description                                   |
 | ------------------- | ------------------- | --------------------------------------------- |
 | `441` `Ctrl+A`      | `mode_buf`          | Switch to buffer mode                         |
 | `44b` `Ctrl+K`      | `mode_kcd`          | Switch to keycode mode                        |
@@ -66,7 +66,7 @@ Bar mode
 
 Mov mode
 --------
-| Key                 | `Bind` `name`       | `Description`                                 |
+| Key                 | Bind name           | Description                                   |
 | ------------------- | ------------------- | --------------------------------------------- |
 | `020` `space`       | `mode_buf`          | Switch to buffer mode                         |
 | `03a` `:`           | `mode_cmd`          | Open the command bar                          |
