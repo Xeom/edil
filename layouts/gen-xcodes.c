@@ -30,6 +30,9 @@ int main(int argc, char **argv)
 
         code = XKeysymToKeycode(disp, c);
 
+        /* We're only bothering with shift+key. We can *
+         * worry about other things later, but this    *
+         * works for now.                              */
         upper = XkbKeycodeToKeysym(disp, code, 0, 1);
         lower = XkbKeycodeToKeysym(disp, code, 0, 0);
 
