@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <X11/Xlib.h>
 #include <X11/Xlib-xcb.h>
+#include <X11/XKBlib.h>
 #include <xcb/xcb.h>
 #include <xcb/xcb_event.h>
 
@@ -21,13 +22,23 @@ int main(int argc, char **argv)
 
     for (ind = 0; ind < sizeof(chrs) - 1; ++ind)
     {
-        char c;
+        char c, ccase;
         KeyCode code;
+        KeySym  upper, lower;
 
         c = chrs[ind];
 
         code = XKeysymToKeycode(disp, c);
-        printf("%c %d\n", c, code);
+
+        upper = XkbKeycodeToKeysym(disp, code, 0, 1);
+        lower = XkbKeycodeToKeysym(disp, code, 0, 0);
+
+        if (c == upper) ccase = 'u';
+        else if (c == lower) ccase = 'l';
+        else printf("I don't know what to do with '%c' (%d)", c, code);
+
+
+        printf("%c %d%c\n", c, code, ccase);
     }
 
     XCloseDisplay(disp);
