@@ -30,12 +30,18 @@ static inp_key inp_translate_key(inp_key key);
 static void    inp_load_keytranslate(void);
 static void    inp_load_keycodes(void);
 
+static void inp_listen_init(void);
+static void inp_listen_kill(void);
 
 void inp_nonblockify(int fd);
 
-pthread_t inp_listen_thread = 0;
 static int inp_fd_in;
 static int inp_fd_out;
+
+static pthread_cond_t  inp_listen_ready;
+static pthread_mutex_t inp_listen_ready_mtx;
+
+pthread_t inp_listen_thread = 0;
 
 vec inp_keycodes;
 table inp_keytranslate;
@@ -235,45 +241,6 @@ void inp_key_name(inp_key key, char *str, size_t len)
         snprintf(str, len, "%03x %s0x%02x ", key, prefix, key & 0xff);
 }
 
-static void inp_listen_term(int sign)
-{
-    pthread_exit(NULL);
-}
-
-static void *inp_listen(void *arg)
-{
-    struct sigaction act;
-
-    act.sa_handler = inp_listen_term;
-    sigemptyset(&act.sa_mask);
-    act.sa_flags = 0;
-
-    sigaction(SIGTERM, &act, NULL);
-
-    while (1)
-    {
-        int chr;
-        inp_key key;
-
-        chr = getchar();
-        key = inp_get_key(chr);
-
-        if (key == inp_key_none) continue;
-
-        if (write(inp_fd_in, &key, sizeof(inp_key)) != sizeof(inp_key))
-        {
-            printf(
-                "Could not write input key to pipe: [%d] '%s'\n",
-                errno, strerror(errno)
-            );
-
-            continue;
-        }
-    }
-
-    return NULL;
-}
-
 void inp_empty_pipe(void)
 {
     inp_key key;
@@ -349,8 +316,7 @@ void inp_init(void)
     inp_nonblockify(inp_fd_in);
     inp_nonblockify(inp_fd_out);
 
-    /* Create the input listener thread */
-    pthread_create(&inp_listen_thread, NULL, inp_listen, NULL);
+    inp_listen_init();
 }
 
 void inp_nonblockify(int fd)
@@ -384,9 +350,9 @@ void inp_nonblockify(int fd)
 
 void inp_kill(void)
 {
+    inp_listen_kill();
+
     vec_kill(&inp_keycodes);
-    pthread_kill(inp_listen_thread, SIGTERM);
-    pthread_join(inp_listen_thread, NULL);
 }
 
 void inp_wait(void)
@@ -420,4 +386,69 @@ int inp_key_cmp(const void *aptr, const void *bptr)
     if (a < b) return -1;
 
     else return 0;
+}
+
+/*
+ * INPUT THREAD
+ */
+
+static void inp_listen_term(int sign)
+{
+    pthread_exit(NULL);
+}
+
+static void *inp_listen(void *arg)
+{
+    struct sigaction act;
+
+    act.sa_handler = inp_listen_term;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = 0;
+    sigaction(SIGTERM, &act, NULL);
+
+    pthread_mutex_lock(&inp_listen_ready_mtx);
+    pthread_cond_signal(&inp_listen_ready);
+    pthread_mutex_unlock(&inp_listen_ready_mtx);
+
+    while (1)
+    {
+        int chr;
+        inp_key key;
+
+        chr = getchar();
+        key = inp_get_key(chr);
+
+        if (key == inp_key_none) continue;
+
+        if (write(inp_fd_in, &key, sizeof(inp_key)) != sizeof(inp_key))
+        {
+            printf(
+                "Could not write input key to pipe: [%d] '%s'\n",
+                errno, strerror(errno)
+            );
+
+            continue;
+        }
+    }
+
+    return NULL;
+}
+
+static void inp_listen_kill(void)
+{
+    pthread_kill(inp_listen_thread, SIGTERM);
+    pthread_join(inp_listen_thread, NULL);
+}
+
+static void inp_listen_init(void)
+{
+    /* Create the input listener thread */
+
+    pthread_cond_init(&inp_listen_ready, NULL);
+    pthread_mutex_init(&inp_listen_ready_mtx, NULL);
+
+    pthread_mutex_lock(&inp_listen_ready_mtx);
+    pthread_create(&inp_listen_thread, NULL, inp_listen, NULL);
+    pthread_cond_wait(&inp_listen_ready, &inp_listen_ready_mtx);
+    pthread_mutex_unlock(&inp_listen_ready_mtx);
 }

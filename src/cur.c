@@ -237,9 +237,9 @@ void cur_move_win(win *w, cur dir)
 
     if (c->cn > len)        *c = (cur){ .ln = c->ln + 1 };
     if (c->cn < 0 && c->ln) *c = (cur){ .ln = c->ln - 1, .cn = LONG_MAX };
-    cur_chk_bounds(c, w->b);
-    cur_chk_blank(c,  w->b, (cur){ .ln = -1 });
 
+    cur_chk_bounds(c, w->b);
+    cur_chk_blank(c,  w->b, dir);
 
     if (c->ln == prev.ln)
     {
