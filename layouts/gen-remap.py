@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import sys
+from subprocess import check_output
 
 ctrlable = "@ABCDEFGKLNOPQRSTUVWXYZ]^_"
 
@@ -15,10 +16,24 @@ def convert(code):
 
         if remap == None:
             err("Could not remap '{}'".format(c))
-            return None
+            return "Could not remap"
 
         else:
             return ord(remaps[c]) | mods
+
+namecache = dict();
+
+def getname(code):
+    if code in namecache:
+        return namecache[code]
+
+    cmd = "../bin/edil -kc {:x}".format(code)
+    output = check_output(cmd, shell=True).decode("utf-8")
+    name   = output.strip().split()[1]
+
+    namecache[code] = name
+
+    return name
 
 if len(sys.argv) != 3:
     err("gen-remap.py [from] [to]")
@@ -46,19 +61,30 @@ for line in sys.stdin.readlines():
     code = int(code, 16)
     conv = convert(code)
 
+    if (conv == code): continue
+
     if (conv == None): continue
 
-    c    = chr(conv & 0xff)
+    if (conv == "Could not remap"):
+        print("# !!! We could not automatically find the appropriate key\n"
+              "#     to map {0} to.\n"
+              "#     Originally, {0} was mapped to {1}\n".format(getname(code), bind))
+        continue
+
+    c = chr(conv & 0xff)
 
     if (conv & 0x400 and c not in ctrlable):
-        err("{} is getting mapped to a key involving Ctrl+{}".format(bind, c))
-        print("\n# The following is an invalid keybinding. Please remap this manually.")
-        print("# the original keybinding on qwerty was {:x}".format(code))
-        print("# unmap {} {:x}".format(mode, code))
-        print("# remap {} {:x} {}\n".format(mode, conv, bind))
+        err("{} is getting mapped to invalid key {}".format(bind, getname(code)))
+
+        print("# !!! The following is an invalid keybinding to '{0}'. \n"
+              "#     Please remap this manually. The original keybinding\n"
+              "#     was '{1}'\n"
+              "# unmap {2} {3:x}\n"
+              "# unmap {2} {4:x} {5}\n" \
+              .format(getname(conv), getname(code), mode, code, conv, bind))
 
     else:
-        print("unmap {} {:x}".format(mode, code))
-        print("remap {} {:x} {}".format(mode, conv, bind))
-
-exit(0)
+        print("# Remap '{0}' to '{1}'.\n"
+              "unmap {2} {3:x}\n"
+              "remap {2} {4:x} {5}\n" \
+              .format(getname(code), getname(conv), mode, code, conv, bind))
