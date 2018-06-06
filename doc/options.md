@@ -19,6 +19,12 @@ Command-Line Options
    and then loads the commands stored in the specified file. This
    done using the `loadconf` command.
 
+ * `--keycode`, `-kc` - This option takes one argument, a
+    hexadecimal number. The name of the corresponding key is then
+    printed to stdout and edil exits. This is the same as the hex
+    numbers printed in kcd mode, accessed by Ctrl+K, or the
+    inp_key enum within edil's code.
+
 Usage
 =====
 
