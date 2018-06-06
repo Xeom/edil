@@ -284,24 +284,20 @@ void bind_flush(void)
 
 #define BIND_PRINT_HEADER(info) "\n" \
     "%c%s mode\n" \
-    "--------\n" \
-    "| Key                 " \
-    "| Bind name           " \
-    "| Description                                   |\n" \
-    "| ------------------- " \
-    "| ------------------- " \
-    "| --------------------------------------------- |\n", \
+    "--------\n\n" \
+    "| Mode | Key            | Binding        | Description                                       |\n" \
+    "| ---- | -------------- | -------------- | ------------------------------------------------- |\n", \
     toupper(info->name[0]), info->name + 1
 
 void bind_print(FILE *stream)
 {
     FOREACH_MODE(info,
         fprintf(stream, BIND_PRINT_HEADER(info));
-        bind_print_table(info->keytable, stream);
+        bind_print_table(info, stream);
     )
 }
 
-void bind_print_table(table *t, FILE *stream)
+void bind_print_table(bind_mode_info *mode, FILE *stream)
 {
     vec  keys;
     bind_info *val = NULL;
@@ -310,7 +306,7 @@ void bind_print_table(table *t, FILE *stream)
 
     vec_init(&keys, sizeof(inp_key));
 
-    while ((val = table_next(t, val, (void *)&key)))
+    while ((val = table_next(mode->keytable, val, (void *)&key)))
         vec_app(&keys, key);
 
     vec_sort(&keys, inp_key_cmp);
@@ -320,10 +316,12 @@ void bind_print_table(table *t, FILE *stream)
     {
         char buf[64];
         key = vec_get(&keys, ind);
-        val = table_get(t, key);
+
+        val = table_get(mode->keytable, key);
         if (!val) return;
-        inp_key_name(*key, buf, 64);
-        fprintf(stream, "| %-20s| %-20s| %-45s |\n", buf, val->name, val->desc);
+
+        inp_key_name(*key, buf, sizeof(buf));
+        fprintf(stream, "  %-6s %-16s %-16s %s\n", mode->name, buf, val->name, val->desc);
     }
 
     vec_kill(&keys);
