@@ -38,9 +38,6 @@ void inp_nonblockify(int fd);
 static int inp_fd_in;
 static int inp_fd_out;
 
-static pthread_cond_t  inp_listen_ready;
-static pthread_mutex_t inp_listen_ready_mtx;
-
 pthread_t inp_listen_thread = 0;
 
 vec inp_keycodes;
@@ -392,24 +389,8 @@ int inp_key_cmp(const void *aptr, const void *bptr)
  * INPUT THREAD
  */
 
-static void inp_listen_term(int sign)
-{
-    pthread_exit(NULL);
-}
-
 static void *inp_listen(void *arg)
 {
-    struct sigaction act;
-
-    act.sa_handler = inp_listen_term;
-    sigemptyset(&act.sa_mask);
-    act.sa_flags = 0;
-    sigaction(SIGTERM, &act, NULL);
-
-    pthread_mutex_lock(&inp_listen_ready_mtx);
-    pthread_cond_signal(&inp_listen_ready);
-    pthread_mutex_unlock(&inp_listen_ready_mtx);
-
     while (1)
     {
         int chr;
@@ -436,7 +417,7 @@ static void *inp_listen(void *arg)
 
 static void inp_listen_kill(void)
 {
-    pthread_kill(inp_listen_thread, SIGTERM);
+    pthread_cancel(inp_listen_thread);
     pthread_join(inp_listen_thread, NULL);
 }
 
@@ -444,11 +425,5 @@ static void inp_listen_init(void)
 {
     /* Create the input listener thread */
 
-    pthread_cond_init(&inp_listen_ready, NULL);
-    pthread_mutex_init(&inp_listen_ready_mtx, NULL);
-
-    pthread_mutex_lock(&inp_listen_ready_mtx);
     pthread_create(&inp_listen_thread, NULL, inp_listen, NULL);
-    pthread_cond_wait(&inp_listen_ready, &inp_listen_ready_mtx);
-    pthread_mutex_unlock(&inp_listen_ready_mtx);
 }
