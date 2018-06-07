@@ -91,10 +91,10 @@ struct cmd_info_s
     chr_format(rtn, _fmt, __VA_ARGS__)
 
 #define CMD_ERR(_str) \
-    { CMD_RTN("err: " _str); return }
+    do { CMD_RTN("err: " _str); return; } while (0)
 
 #define CMD_ERR_FMT(_fmt, ...) \
-    { CMD_RTN_FMT("err: " _fmt, __VA_ARGS__); return }
+    do { CMD_RTN_FMT("err: " _fmt, __VA_ARGS__); return; } while (0)
 
 /* Check the number of arguments */
 #define CMD_MAX_ARGS(_num) \
