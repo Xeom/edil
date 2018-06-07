@@ -24,122 +24,168 @@
 static int file_switch_if_found(win *w, vec *fname, vec *rtn);
 static buf *file_find(file *f);
 
-void file_cmd_new(vec *rtn, vec *args, win *w)
-{
+CMD_FUNCT(load,
+    CMD_MAX_ARGS(1);
+
     buf *b;
-
-    if (file_switch_if_found(w, vec_get(args, 1), rtn))
-    {
-        return;
-    }
-
-    b = ring_new();
-    win_set_buf(w, b);
-
-    chr_format(rtn, "New buffer [%d]", ring_get_ind(b));
-
-    if (vec_len(args) != 1)
-    {
-        chr_from_str(rtn, ", ");
-        file_cmd_load(rtn, args, w);
-    }
-}
-
-void file_cmd_discard(vec *rtn, vec *args, win *w)
-{
-    if (vec_len(args) != 1)
-    {
-        chr_format(rtn, "err: Command takes no arguments");
-        return;
-    }
-
-    if (w->b->flags & buf_readonly)
-    {
-        chr_format(rtn, "err: Buffer read-only");
-    }
-    else
-    {
-        file_clr_win(w);
-        w->b->flags &= ~buf_modified;
-        chr_format(rtn, "Contents of buffer discarded");
-    }
-
-    win_out_after(w, (cur){0, 0});
-}
-
-void file_cmd_load(vec *rtn, vec *args, win *w)
-{
-    buf  *b;
     file *f;
 
     b = w->b;
     f = &(b->finfo);
 
-    if (file_switch_if_found(w, vec_get(args, 1), rtn))
-    {
+    if (CMD_NARGS && file_switch_if_found(w, vec_get(args, 1), rtn))
         return;
-    }
 
-    if (w->b->flags & buf_modified)
-    {
-        chr_format(rtn, "err: Buffer modified");
-        return;
-    }
+    if (b->flags & buf_modified) CMD_ERR("Buffer modified");
+    if (b->flags & buf_readonly) CMD_ERR("Buffer read-only");
+    if (b->flags & buf_nofile)   CMD_ERR("Buffer cannot be a file");
 
-    if (w->b->flags & buf_readonly)
+    if (CMD_NARGS)
     {
-        chr_format(rtn, "err: Buffer read-only");
-        return;
-    }
-
-    if (w->b->flags & buf_nofile)
-    {
-        chr_format(rtn, "err: Buffer cannot be a file");
-        return;
-    }
-
-    if (vec_len(args) == 2)
-    {
-        vec *path;
-        path = vec_get(args, 1);
+        CMD_ARG(1, path);
 
         if (file_assoc(f, path) == -1)
-        {
-            chr_format(
-                rtn,
-                "err Parsing path: [%d] %s",
+            CMD_ERR_FMT(
+                "Could not parse path - [%d] %s",
                 errno, strerror(errno)
             );
-            return;
-        }
     }
 
-    if (file_associated(f))
+    if (!file_associated(f))
+        CMD_ERR("No associated file");
+
+    if (file_load(f, b) == -1)
     {
-       if (file_load(f, b) == -1)
-       {
-            if (errno == ENOENT)
-            {
-                chr_format(rtn, "New file");
-                file_clr_win(w);
-            }
-            else
-                chr_format(
-                    rtn,
-                    "err Loading '%s': [%d] %s",
-                    file_name(f), errno, strerror(errno)
-                );
+        if (errno == ENOENT)
+        {
+            CMD_RTN("New file");
+            file_clr_win(w);
         }
         else
-        {
-            chr_format(rtn, "Loaded '%s'", file_name(f));
-        }
-
-        win_reset(w);
+            CMD_ERR_FMT(
+                "Could not load file - [%d] %s",
+                errno, strerror(errno)
+            );
     }
     else
-        chr_from_str(rtn, "err: No associated file");
-}
+        CMD_RTN_FMT("Loaded '%s'", file_name(f));
+
+    win_reset(w);
+)
+
+CMD_FUNCT(new,
+    CMD_MAX_ARGS(1);
+
+    buf *b;
+
+    if (CMD_NARGS && file_switch_if_found(w, vec_get(args, 1), rtn))
+        return;
+
+    b = ring_new();
+    win_set_buf(w, b);
+
+    CMD_RTN_FMT("New buffer (%d)", ring_get_ind(b));
+
+    if (CMD_NARGS)
+    {
+        CMD_RTN(", ");
+        cmd_funct_load(rtn, args, w);
+    }
+)
+
+CMD_FUNCT(discard,
+    CMD_MAX_ARGS(0);
+
+    if (w->b->flags & buf_readonly)
+        CMD_ERR("Buffer read-only");
+
+    file_clr_win(w);
+    w->b->flags &= ~buf_modified;
+    CMD_RTN("Contents of buffer discarded");
+
+    win_out_after(w, (cur){0, 0});
+)
+
+CMD_FUNCT(associate,
+    CMD_MAX_ARGS(1);
+
+    file *f;
+    f = &(w->b->finfo);
+
+    if (w->b->flags & buf_nofile) CMD_ERR("Buffer cannot be a file");
+
+    if (CMD_NARGS)
+    {
+        CMD_ARG(1, path);
+
+        if (file_assoc(f, path) == -1)
+            CMD_ERR_FMT(
+                "Could not parse path - [%d] %s",
+                errno, strerror(errno)
+            );
+    }
+
+    if (!file_associated(f))
+        CMD_ERR("No associated file");
+
+    CMD_RTN_FMT("file: '%s'", file_name(f));
+)
+
+CMD_FUNCT(save,
+    CMD_MAX_ARGS(0);
+
+    file *f;
+    buf  *b;
+
+    b = w->b;
+    f = &(b->finfo);
+
+    if (!file_associated(f))
+        CMD_ERR("No associated file");
+
+    if (file_save(f, b) == -1)
+        CMD_ERR_FMT(
+            "Could not write '%s': [%d] %s",
+            file_name(f), errno, strerror(errno)
+        );
+
+    CMD_RTN_FMT("Wrote '%s'", file_name(f));
+
+    w->b->flags &= ~buf_modified;
+)
+
+CMD_FUNCT(cd,
+    CMD_MAX_ARGS(1);
+    char cwd[PATH_MAX];
+
+    if (CMD_NARGS)
+    {
+        file f;
+        file_init(&f);
+
+        CMD_ARG(1, path);
+
+        if (file_assoc(&f, path) == -1)
+            CMD_RTN_FMT(
+                "err: Could not parse path - [%d] %s",
+                errno, strerror(errno)
+            );
+
+        if (chdir(file_name(&f)) == -1)
+            CMD_RTN_FMT(
+                "err: Could not change directory - [%d] %s",
+                errno, strerror(errno)
+            );
+
+        file_kill(&f);
+    }
+
+    if (getcwd(cwd, PATH_MAX) == NULL)
+        CMD_ERR_FMT("Could not get cwd - [%d] %s", errno, strerror(errno));
+
+    chr_format(rtn, "cwd: %s", cwd);
+)
+
 
 static int file_switch_if_found(win *w, vec *fname, vec *rtn)
 {
@@ -197,94 +243,6 @@ static buf *file_find(file *f)
 
     return NULL;
 }
-
-void file_cmd_assoc(vec *rtn, vec *args, win *w)
-{
-    file *f;
-    f = &(w->b->finfo);
-
-    if (w->b->flags & buf_nofile)
-    {
-        chr_format(rtn, "err: Buffer cannot be a file");
-        return;
-    }
-
-    if (vec_len(args) == 2)
-    {
-        vec *path;
-        path = vec_get(args, 1);
-
-        if (file_assoc(f, path) == -1)
-        {
-            chr_format(
-                rtn,
-                "err Parsing path: [%d] %s",
-                errno, strerror(errno)
-            );
-            return;
-        }
-    }
-
-    if (file_associated(f))
-        chr_format(rtn, "file: '%s'", file_name(f));
-    else
-        chr_format(rtn, "err: No associated file");
-}
-
-void file_cmd_save(vec *rtn, vec *args, win *w)
-{
-    file *f;
-    buf  *b;
-
-    b = w->b;
-    f = &(b->finfo);
-
-    if (!file_associated(f))
-    {
-        chr_format(rtn, "err: No associated file");
-        return;
-    }
-
-    if (file_save(f, b) == -1)
-        chr_format(
-            rtn,
-            "err Writing '%s': [%d] %s",
-            file_name(f), errno, strerror(errno)
-        );
-
-    else
-        chr_format(rtn, "Wrote '%s'", file_name(f));
-
-    w->b->flags &= ~buf_modified;
-}
-
-void file_cmd_chdir(vec *rtn, vec *args, win *w)
-{
-    char *cwd;
-    cwd = malloc(PATH_MAX);
-
-    if (vec_len(args) == 2)
-    {
-        file f;
-        file_init(&f);
-
-        if (file_assoc(&f, vec_get(args, 1)) == -1)
-            chr_format(rtn, "err: [%d] %s, ", errno, strerror(errno));
-
-        else if (chdir(file_name(&f)) == -1)
-            chr_format(rtn, "err: [%d] %s, ", errno, strerror(errno));
-
-        file_kill(&f);
-    }
-
-    if (getcwd(cwd, PATH_MAX) == NULL)
-        chr_format(rtn, "err: [%d] %s", errno, strerror(errno));
-    else
-        chr_format(rtn, "cwd: %s", cwd);
-
-    free(cwd);
-}
-
 void file_clr_win(win *w)
 {
     cur loc;
@@ -296,4 +254,14 @@ void file_clr_win(win *w)
 
     while ((loc.ln)--)
         buf_del_line(w->b, loc);
+}
+
+void cmd_file_init(void)
+{
+    CMD_ADD(new, Create a new buffer, "");
+    CMD_ADD(discard, Discard the contents of a buffer, "");
+    CMD_ADD(load, Load a file to a buffer, "");
+    CMD_ADD(associate, Associate a buffer with a file, "");
+    CMD_ADD(save, Save a buffer to a file, "");
+    CMD_ADD(cd, Change directory, "");
 }
