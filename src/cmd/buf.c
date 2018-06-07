@@ -66,7 +66,7 @@ CMD_FUNCT(kill,
 
     CMD_TMP_VEC(killbufs, buf *);
 
-    for (argind = 1; argind < CMD_NARGS; ++argind)
+    for (argind = 1; argind <= CMD_NARGS; ++argind)
     {
         if (CMD_ARG_IS(argind, "!"))
         {
@@ -79,23 +79,13 @@ CMD_FUNCT(kill,
             CMD_ARG_PARSE(argind, "%d", &ind);
             b = ring_get(ind);
 
-            if (!b)
-            {
-                CMD_RTN("err: index out of range");
-                return;
-            }
+            if (!b) CMD_ERR("index out of range");
 
             if (!force && (b->flags & buf_modified))
-            {
-                CMD_RTN_FMT("err: Buffer %d modified", ind);
-                return;
-            }
+                CMD_ERR_FMT("Buffer %d modified", ind);
 
             if (b->flags & buf_nokill)
-            {
-                CMD_RTN_FMT("err: Buffer %d cannot be killed", ind);
-                return;
-            }
+                CMD_ERR_FMT("Buffer %d cannot be killed", ind);
 
             vec_app(killbufs, &b);
         }
@@ -104,16 +94,10 @@ CMD_FUNCT(kill,
     if (vec_len(killbufs) == 0)
     {
         if (!force && (w->b->flags & buf_modified))
-        {
-            CMD_RTN_FMT("err: Current buffer modified", ind);
-            return;
-        }
+            CMD_ERR("Current buffer modified");
 
         if (w->b->flags & buf_nokill)
-        {
-            CMD_RTN_FMT("err: Current buffer cannot be killed", ind);
-            return;
-        }
+            CMD_ERR("Current buffer cannot be killed");
 
         vec_app(killbufs, &(w->b));
     }
@@ -122,17 +106,19 @@ CMD_FUNCT(kill,
         buf *b;
         b = *(buf **)bptr;
 
+        int ind;
+
+        ind = ring_get_ind(b);
         new = ring_del(b);
 
         if (new == b)
         {
-            CMD_RTN("err: Could not delete buffer");
             win_set_buf(w, b);
-            return;
+            CMD_ERR("Could not delete buffer");
         }
         else
         {
-            CMD_RTN_FMT("Deleted buffer %d, ", ring_get_ind(b));
+            CMD_RTN_FMT("Deleted buffer %d, ", ind);
         }
     );
 
@@ -143,27 +129,18 @@ CMD_FUNCT(kill,
 )
 
 CMD_FUNCT(quit,
-    int force = 0;
+    int force;
 
     CMD_MAX_ARGS(1);
 
-    if (vec_len(args) > 2)
-    {
-        chr_from_str(rtn, "err: Command maximum one argument");
-        return;
-    }
-
     force = 0;
 
-    if (vec_len(args) == 2)
+    if (CMD_NARGS)
     {
-        if (chr_cmp_str(vec_get(args, 1), "!") == 0)
+        if (CMD_ARG_IS(1, "!"))
             force = 1;
         else
-        {
-            chr_from_str(rtn, "err: quit can only take '!' as an argument");
-            return;
-        }
+            CMD_ERR("quit can only take '!' as an argument");
     }
 
     if (!force)
