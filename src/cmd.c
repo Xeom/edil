@@ -21,45 +21,6 @@ col_desc cmd_log_cmd_col    = { .fg = col_yellow, .bg = col_null };
 col_desc cmd_log_rtn_col    = { .fg = col_white | col_bright, .bg = col_null };
 col_desc cmd_log_prefix_col = { .fg = col_yellow | col_bright, .bg = col_null };
 
-#define CMD_ITEM(name, fname) { #name, .data.cmdfunct = fname }
-
-static namevec_item cmd_items_static[] =
-{
-    CMD_ITEM(new,        file_cmd_new),
-    CMD_ITEM(load,       file_cmd_load),
-    CMD_ITEM(save,       file_cmd_save),
-    CMD_ITEM(discard,    file_cmd_discard),
-    CMD_ITEM(associate,  file_cmd_assoc),
-    CMD_ITEM(cd,         file_cmd_chdir),
-
-    CMD_ITEM(cut,        region_cmd_cut),
-    CMD_ITEM(copy,       region_cmd_copy),
-    CMD_ITEM(paste,      region_cmd_paste),
-
-    CMD_ITEM(goto,       nav_cmd_goto),
-    CMD_ITEM(swap,       nav_cmd_swap),
-    CMD_ITEM(snap,       nav_cmd_snap),
-    CMD_ITEM(lineify,    nav_cmd_lineify),
-
-    CMD_ITEM(tabwidth,   indent_cmd_tabwidth),
-    CMD_ITEM(lvlwidth,   indent_cmd_lvlwidth),
-    CMD_ITEM(indentmode, indent_cmd_indentmode),
-    CMD_ITEM(incrindent, indent_cmd_incrindent),
-    CMD_ITEM(decrindent, indent_cmd_decrindent),
-    CMD_ITEM(autoindent, indent_cmd_autoindent),
-    CMD_ITEM(indent,     indent_cmd_indent),
-
-    CMD_ITEM(bufinfo,    buf_cmd_info),
-    CMD_ITEM(next,       buf_cmd_next),
-    CMD_ITEM(prev,       buf_cmd_prev),
-    CMD_ITEM(kill,       buf_cmd_kill),
-    CMD_ITEM(quit,       buf_cmd_quit),
-
-    CMD_ITEM(conffile,   conf_cmd_run_file),
-    CMD_ITEM(remap,      conf_cmd_remap),
-    CMD_ITEM(unmap,      conf_cmd_unmap)
-};
-
 /* Increment ind until whitespace isn't found, return this *
  * value.                                                  */
 static size_t cmd_eat_whitespace(vec *chrs, size_t ind);
@@ -69,7 +30,10 @@ static size_t cmd_parse_word(vec *str, vec *chrs, size_t ind);
 
 void cmd_init(void)
 {
-    namevec_init(&cmd_items, cmd_items_static, sizeof(cmd_items_static));
+    vec_init(&cmd_items, sizeof(namevec_item));
+    cmd_nav_init();
+    cmd_buf_init();
+    namevec_sort(&cmd_items);
 }
 
 void cmd_kill(void)

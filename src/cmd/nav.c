@@ -4,59 +4,18 @@
 
 #include "cmd/nav.h"
 
-/*cmd_info cmd_info_goto =
-{
-    .fptr = nav_cmd_goto,
-    .name = "goto",
-    .desc = "Go to a specific location in the buffer",
-    .notes = "After the command is run, it prints out the"
-             " cursor's new location, even if it is given"
-             " no arguments. If the specified new location"
-             " is not a valid location in the buffer, the"
-             " nearest valid location is used instead.",
-    .nargs = 2,
-    .args =
-    {
-        {
-            .optional = 1,
-            .name = "Line number",
-            .desc = "The number of the line to go to."
-                    " (starting from 1)"
-        },
-        {
-            .optional = 1,
-            .name = "Column number",
-            .desc = "The number of the column to go to."
-                    " (starting from 1)"
-        }
-    }
-};*/
+CMD_FUNCT(goto,
+    CMD_MAX_ARGS(2);
 
-void nav_cmd_goto(vec *rtn, vec *args, win *w)
-{
-    if (vec_len(args) > 3)
+    if (CMD_NARGS == 2)
     {
-        chr_format(rtn, "err: This command takes up to two arguments only");
-        return;
-    }
-
-    if (vec_len(args) == 3)
-    {
-        if (chr_scan(vec_get(args, 2), "%ld", &(w->pri.cn)) != 1)
-        {
-            chr_from_str(rtn, "err: Could not parse column number");
-            return;
-        }
+        CMD_ARG_PARSE(2, "%ld", &(w->pri.cn))
         w->pri.cn -= 1;
     }
 
-    if (vec_len(args) >= 2)
+    if (CMD_NARGS >= 1)
     {
-        if (chr_scan(vec_get(args, 1), "%ld", &(w->pri.ln)) != 1)
-        {
-            chr_from_str(rtn, "err: Could not parse line number");
-            return;
-        }
+        CMD_ARG_PARSE(1, "%ld", &(w->pri.ln))
         w->pri.ln -= 1;
     }
 
@@ -66,78 +25,46 @@ void nav_cmd_goto(vec *rtn, vec *args, win *w)
     win_out_after(w, (cur){0, 0});
     win_show_cur(w, w->pri);
 
-    chr_format(
-        rtn,
+    CMD_RTN_FMT(
         "Cursor at line %ld, col %ld.",
         w->pri.ln + 1, w->pri.cn + 1
     );
-}
+)
 
-cmd_info cmd_info_swap =
-{
-    .fptr = nav_cmd_swap,
-    .name = "swap",
-    .desc = "Swap the positions of the primary and secondary cursors",
-    .nargs = 0
-};
-
-void nav_cmd_swap(vec *rtn, vec *args, win *w)
-{
+CMD_FUNCT(swap,
     cur tmp;
 
-    if (vec_len(args) != 1)
-    {
-        chr_from_str(rtn, "err: This command takes no arguments");
-        return;
-    }
+    CMD_MAX_ARGS(0);
 
     tmp    = w->pri;
     w->pri = w->sec;
     w->sec = tmp;
 
-    chr_from_str(rtn, "Cursors swapped");
+    CMD_RTN("Cursors swapped");
 
     win_out_line(w, w->pri);
     win_out_line(w, w->sec);
-}
+)
 
-cmd_info cmd_info_snap =
-{
-    .fptr = nav_cmd_snap,
-    .name = "snap",
-    .desc = "Move the secondary cursor to the primary cursors",
-    .nargs = 0
-};
-
-void nav_cmd_snap(vec *rtn, vec *args, win *w)
-{
+CMD_FUNCT(snap,
     cur prev;
 
-    if (vec_len(args) != 1)
-    {
-        chr_from_str(rtn, "err: This command takes no arguments");
-        return;
-    }
+    CMD_MAX_ARGS(0);
 
     prev   = w->sec;
     w->sec = w->pri;
 
-    chr_from_str(rtn, "Secondary cursor snapped");
+    CMD_RTN("Secondary cursor snapped");
 
     win_out_line(w, w->pri);
     win_out_line(w, prev);
-}
+)
 
-void nav_cmd_lineify(vec *rtn, vec *args, win *w)
-{
+CMD_FUNCT(lineify,
     cur prevsec;
     ssize_t len;
 
-    if (vec_len(args) != 1)
-    {
-        chr_from_str(rtn, "err: This command takes no arguments");
-        return;
-    }
+    CMD_MAX_ARGS(0);
 
     prevsec = w->sec;
 
@@ -149,8 +76,39 @@ void nav_cmd_lineify(vec *rtn, vec *args, win *w)
 
     win_out_line(w, w->pri);
 
-    chr_from_str(rtn, "Line selected");
+    CMD_RTN("Line selected");
 
     if (prevsec.ln != w->sec.ln)
         win_out_line(w, prevsec);
+)
+
+void cmd_nav_init(void)
+{
+    CMD_ADD(goto,
+        Go to a specific line and column,
+        " * If given, the first argument specifies the line number to go to.\n"
+        " * If given, the second argument specifies the column number to go\n"
+        "   to.\n"
+        "Once the command is run, cursor's column and line number are\n"
+        "returned and printed. Both column and line numbers for this\n"
+        "command are indexed starting at one.\n"
+    )
+
+    CMD_ADD(snap,
+        Snap the secondary cursor,
+        "Move the secondary cursor to the position of the primary cursor.\n"
+    )
+
+    CMD_ADD(swap,
+        Swap the cursors,
+        "Move the primary cursor to the secondary cursor, and vice versa.\n"
+        "The primary and secondary cursors swap places.\n"
+    )
+
+    CMD_ADD(lineify,
+        Select the current line,
+        "Move the primary cursor to the beginning of the current line, and\n"
+        "the secondary cursor to the end. This places the whole line in the\n"
+        "region, and allows for it to easily be cut or copied etc.\n"
+    )
 }
