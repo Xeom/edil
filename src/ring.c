@@ -41,6 +41,17 @@ int ring_get_ind(buf *b)
     return -1;
 }
 
+buf *ring_get(int ind)
+{
+    buf **rtn;
+
+    rtn = vec_get(&ring_bufs, ind);
+
+    if (!rtn) return NULL;
+
+    return *rtn;
+}
+
 buf *ring_next(buf *b)
 {
     int ind;
