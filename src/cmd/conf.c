@@ -84,6 +84,8 @@ void conf_run_default_files(win *w)
         vec_app(&name, "\0");
 
         conf_run_file_name(vec_first(&name), w);
+
+        vec_kill(&name);
     }
 }
 
