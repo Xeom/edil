@@ -57,23 +57,10 @@ extern vec bind_all;
 /* These are definitions that are used to mount functions */
 
 /* This is used to define a new bindable action */
-#define BIND_FUNCT(name, code) \
-    static void bind_funct_ ## name (win *w, inp_key k); \
-    static void bind_funct_ ## name (win *w, inp_key k)  \
-    { code; }
-
-/* This define will set up a bindable action in an init function, *
- * and assumed that the appropriate keytable is named tab.        */
-#define BIND_TO(_name, key, _desc) { \
-        inp_key k = key; \
-        static bind_info info = { .fptr = bind_funct_ ## _name, \
-                           .name = #_name, \
-                           .desc = #_desc }; \
-        namevec_item item = { .name = #_name, \
-                              .data.bind = &info }; \
-        vec_app(&bind_all, &item); \
-        if (k != inp_key_none) table_set(tab,  &k, &info); \
-    }
+#define BIND_FUNCT(_name, _code) \
+    static void bind_funct_ ## _name (win *w, inp_key k); \
+    static void bind_funct_ ## _name (win *w, inp_key k)  \
+    { _code; }
 
 #define BIND_ADD(_name, _desc) {               \
         static bind_info info = {              \
