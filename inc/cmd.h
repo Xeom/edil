@@ -90,6 +90,12 @@ struct cmd_info_s
 #define CMD_RTN_FMT(_fmt, ...) \
     chr_format(rtn, _fmt, __VA_ARGS__)
 
+#define CMD_ERR(_str) \
+    { CMD_RTN("err: " _str); return }
+
+#define CMD_ERR_FMT(_fmt, ...) \
+    { CMD_RTN_FMT("err: " _fmt, __VA_ARGS__); return }
+
 /* Check the number of arguments */
 #define CMD_MAX_ARGS(_num) \
     if (vec_len(args) > _num + 1)                                  \
