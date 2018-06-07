@@ -33,6 +33,8 @@ void cmd_init(void)
     vec_init(&cmd_items, sizeof(namevec_item));
     cmd_nav_init();
     cmd_buf_init();
+    cmd_indent_init();
+    cmd_file_init();
     namevec_sort(&cmd_items);
 }
 

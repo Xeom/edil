@@ -2,6 +2,7 @@
 
 #include "chr.h"
 #include "indent.h"
+#include "cmd.h"
 
 #include "cmd/indent.h"
 
@@ -10,66 +11,54 @@
 
 static void indent_mode_arg(char *str, vec *rtn);
 
-void indent_cmd_lvlwidth(vec *rtn, vec *args, win *w)
-{
-    int val;
+CMD_FUNCT(lvlwidth,
+    CMD_MAX_ARGS(1);
 
-    if (vec_len(args) == 2)
+    if (CMD_NARGS)
     {
-        if (chr_scan(vec_get(args, 1), "%d", &val) != 1)
-            chr_from_str(rtn, "err: Not a valid width, ");
+        int val;
+        CMD_ARG_PARSE(1, "%d", &val);
 
-        else if (val > INDENT_MAX_TABWIDTH || val < 0)
-            chr_from_str(rtn, "err: Width out of range, ");
+        if (val > INDENT_MAX_TABWIDTH || val < 0)
+            CMD_RTN("err: Width out of range, ");
 
         else
             indent_lvl_width = val;
     }
 
-    chr_format(rtn, "lvlwidth: %d", indent_lvl_width);
-}
+    CMD_RTN_FMT("lvlwidth: %d", indent_lvl_width);
+)
 
-void indent_cmd_tabwidth(vec *rtn, vec *args, win *w)
-{
-    int val;
+CMD_FUNCT(tabwidth,
+    CMD_MAX_ARGS(1);
 
-    if (vec_len(args) == 2)
+    if (CMD_NARGS)
     {
-        if (chr_scan(vec_get(args, 1), "%d", &val) != 1)
-            chr_from_str(rtn, "err: Not a valid width, ");
+        int val;
+        CMD_ARG_PARSE(1, "%d", &val);
 
-        else if (val > INDENT_MAX_TABWIDTH || val < 0)
-            chr_from_str(rtn, "err: Width out of range, ");
+        if (val > INDENT_MAX_TABWIDTH || val < 0)
+            CMD_RTN("err: Width out of range, ");
 
         else
-            indent_set_tab_width(val);
+            indent_tab_width = val;
     }
 
-    chr_format(rtn, "tabwidth: %d", indent_tab_width);
-}
+    CMD_RTN_FMT("tabwidth: %d", indent_tab_width);
+)
 
-void indent_cmd_indentmode(vec *rtn, vec *args, win *w)
-{
-    size_t ind, len;
+CMD_FUNCT(indentmode,
+    size_t argind;
 
-    len = vec_len(args);
-    for (ind = 1; ind < len; ind++)
+    for (argind = 1; argind <= CMD_NARGS; ++argind)
     {
-        vec *arg, str;
+        if (argind > 1) CMD_RTN(", ");
 
-        if (ind != 1) chr_from_str(rtn, ", ");
+        CMD_ARG_STR(argind, arg);
 
-        arg = vec_get(args, ind);
-
-        vec_init(&str, sizeof(char));
-        chr_to_str(arg, &str);
-        vec_ins(&str, vec_len(&str), 1, NULL);
-
-        indent_mode_arg(vec_first(&str), rtn);
-
-        vec_kill(&str);
+        indent_mode_arg(vec_first(arg), rtn);
     }
-}
+)
 
 static void indent_mode_arg(char *str, vec *rtn)
 {
@@ -112,63 +101,142 @@ static void indent_mode_arg(char *str, vec *rtn)
     }
 }
 
-void indent_cmd_incrindent(vec *rtn, vec *args, win *w)
-{
+CMD_FUNCT(incrindent,
+    CMD_MAX_ARGS(0);
+
     ssize_t depth;
 
     w->pri = indent_incr_depth(w->b, w->pri);
     win_out_line(w, (cur){ .ln = w->pri.ln });
 
     depth = indent_get_depth(w->b, w->pri);
-    chr_format(rtn, "depth: %ld", depth);
-}
+    CMD_RTN_FMT("depth: %ld", depth);
+)
 
-void indent_cmd_decrindent(vec *rtn, vec *args, win *w)
-{
+CMD_FUNCT(decrindent,
+    CMD_MAX_ARGS(0);
+
     ssize_t depth;
 
     w->pri = indent_decr_depth(w->b, w->pri);
     win_out_line(w, (cur){ .ln = w->pri.ln });
 
     depth = indent_get_depth(w->b, w->pri);
-    chr_format(rtn, "depth: %ld", depth);
-}
+    CMD_RTN_FMT("depth: %ld", depth);
+)
 
-void indent_cmd_autoindent(vec *rtn, vec *args, win *w)
-{
+CMD_FUNCT(autoindent,
+    CMD_MAX_ARGS(0);
+
     ssize_t depth;
 
     w->pri = indent_auto_depth(w->b, w->pri);
     win_out_line(w, (cur){ .ln = w->pri.ln });
 
     depth = indent_get_depth(w->b, w->pri);
-    chr_format(rtn, "depth: %ld", depth);
-}
+    CMD_RTN_FMT("depth: %ld", depth);
+)
 
-void indent_cmd_indent(vec *rtn, vec *args, win *w)
-{
+CMD_FUNCT(indent,
+    CMD_MAX_ARGS(1);
+
     ssize_t depth;
 
-    if (vec_len(args) == 2)
+    if (CMD_NARGS)
     {
-        if (chr_scan(vec_get(args, 1), "%ld", &depth) != 1)
-            chr_from_str(rtn, "err: Not a valid depth, ");
+        CMD_ARG_PARSE(1, "%ld", &depth);
 
-        else if (depth > INDENT_MAX_SENSIBLE_DEPTH || depth < 0)
-            chr_from_str(rtn, "err: Depth out of range, ");
+        if (depth > INDENT_MAX_SENSIBLE_DEPTH || depth < 0)
+            CMD_RTN("err: Depth out of range");
 
         else
         {
-            indent_set_depth(w->b, w->pri, depth);
-            w->pri.cn = 0;
+            ssize_t origdepth;
+            cur pretend, rel[2];
+            cur *affect[2] = { &(w->pri), &(w->sec) };
 
-            if (w->sec.ln == w->pri.ln)
-                w->sec.cn = 0;
+            origdepth = indent_get_depth(w->b, w->pri);
+            pretend = (cur){ .ln = w->pri.ln, .cn = origdepth };
+
+            cur_get_rel_pos(pretend, w->b, affect, 2, rel);
+            indent_set_depth(w->b, w->pri, depth);
+
+            pretend.cn = depth;
+            cur_set_rel_pos(pretend, w->b, affect, 2, rel);
 
             win_out_line(w, (cur){ .ln = w->pri.ln });
         }
     }
 
     depth = indent_get_depth(w->b, w->pri);
-    chr_format(rtn, "depth: %ld", depth);
+    CMD_RTN_FMT("depth: %ld", depth);
+)
+
+void cmd_indent_init(void)
+{
+    CMD_ADD(lvlwidth,
+        Set the indent level width,
+        "The level width is the depth of an indent level, i.e. how far a\n"
+        "line is indented when the tab key is pressed. This is not\n"
+        "always the width of one tab.\n\n"
+
+        "The command takes a new width as a single argument, but even if\n"
+        "this is not given, the command prints out the current value.\n"
+    );
+
+    CMD_ADD(tabwidth,
+        Set the tab width,
+        "The tab width is the width that tabs are displayed as.\n\n"
+
+        "The command takes a new width as a single argument, but even if\n"
+        "this is not given, the command prints out the current value.\n"
+    );
+
+    CMD_ADD(indentmode,
+        Set indent modes,
+        "Various indent modes can be set:\n"
+        " * `spacify` - By default, indentation to a specific depth is\n"
+        "    achived using tabs as much as possible, and spaces as needed\n"
+        "    after the tabs. If spacify mode is enabled, then only spaces\n"
+        "    are used.\n"
+        " * `auto` - If this mode is active, when the enter key is pressed,\n"
+        "    the new line is automatically indented to the same indentation\n"
+        "    level as the previous line.\n"
+        " * `trim` - When the enter key is pressed, the trailing whitespace\n"
+        "    on the current line is trimmed.\n"
+        " * `skipblanks` - Blank lines are not considered when calculating\n"
+        "    the automatic indent, and so the automatic level is the same as\n"
+        "    the previous non-blank line. A blank line is one consisting only\n"
+        "    of whitespace.\n\n"
+
+        "To set a mode, give it as an argument, and to unset a mode, give it\n"
+        "as an argument prefixed with an '!'."
+    );
+
+    CMD_ADD(incrindent,
+        Indent a line,
+        "Increase the indentation of the current line to the next\n"
+        "indentation level as specified by lvlwidth.\n"
+    );
+
+    CMD_ADD(decrindent,
+        Undent a line,
+        "Decrease the indentation of the current line to the previous\n"
+        "indentation level as specified by lvlwidth.\n"
+    );
+
+    CMD_ADD(autoindent,
+        Automatically indent a line,
+        "Set the indent of the current line to the indentation of the\n"
+        "previous line.\n"
+    );
+
+    CMD_ADD(indent,
+        Set the indentation depth of a line,
+        "If a number is given as an argument, then indent the current line\n"
+        "such that it begins with that number of columns of whitespace.\n\n"
+
+        "Even if an argument is not given, the command returns the current\n"
+        "indentation depth of the current line.\n"
+    );
 }
