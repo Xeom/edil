@@ -113,7 +113,8 @@ void cmd_run(vec *args, vec *rtn, win *w)
     }
     else
     {
-        item->data.cmdfunct(rtn, args, w);
+        cmd_info *info = item->ptr;
+        info->fptr(args, rtn,  w);
     }
 
 }

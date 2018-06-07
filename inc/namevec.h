@@ -10,11 +10,7 @@ typedef struct namevec_item_s namevec_item;
 struct namevec_item_s
 {
     char *name;
-    union
-    {
-        void (*cmdfunct)(vec *rtn, vec *args, win *w);
-        bind_info *bind;
-    } data;
+    void *ptr;
 };
 
 void namevec_init(vec *v, namevec_item *items, size_t bytes);

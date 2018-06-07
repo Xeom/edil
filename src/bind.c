@@ -109,7 +109,7 @@ bind_info *bind_info_get(vec *chrname)
     item = namevec_get_chrs(&bind_all, chrname, &n);
 
     if (n == 1)
-        return item->data.bind;
+        return item->ptr;
     else
         return NULL;
 }
@@ -121,7 +121,7 @@ bind_info *bind_info_get_str(char *str)
     item = namevec_get_str(&bind_all, str, &n);
 
     if (n == 1)
-        return item->data.bind;
+        return item->ptr;
     else
         return NULL;
 }

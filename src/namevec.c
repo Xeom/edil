@@ -4,7 +4,6 @@
 
 #include "namevec.h"
 
-
 static int namevec_cmp(const void *aptr, const void *bptr);
 
 void namevec_init(vec *v, namevec_item *items, size_t bytes)

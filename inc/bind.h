@@ -81,7 +81,7 @@ extern vec bind_all;
             .name = #_name, .desc = #_desc     \
         };                                     \
         namevec_item item = {                  \
-            .name = #_name, .data.bind = &info \
+            .name = #_name, .ptr = &info       \
         };                                     \
         vec_app(&bind_all, &item);             \
     }
