@@ -12,9 +12,6 @@
 #define PRI_SEC \
     (cur *[]){ &(w->pri), &(w->sec) }, 2
 
-static void cur_set_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[]);
-static void cur_get_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[]);
-
 static int cur_can_shift_line(win *w, ssize_t ln, int dir);
 
 int cur_chk_bounds(cur *c, buf *b)
@@ -57,7 +54,7 @@ int cur_chk_blank(cur *c, buf *b, cur dir)
     return (memcpy(&prev, c, sizeof(cur)) == 0) ? 0 : -1;
 }
 
-static void cur_get_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[])
+void cur_get_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[])
 {
     int ind;
     for (ind = 0; ind < numaffect; ++ind)
@@ -70,7 +67,7 @@ static void cur_get_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel
     }
 }
 
-static void cur_set_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[])
+void cur_set_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[])
 {
     int ind;
     for (ind = 0; ind < numaffect; ++ind)
