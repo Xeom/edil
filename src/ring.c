@@ -122,9 +122,8 @@ buf *ring_del(buf *b)
     buf_kill(b);
     free(b);
 
-    if ((int)vec_len(&ring_bufs) == ind)
-        return *(buf **)vec_first(&ring_bufs);
-
+    if (ind == 0)
+        return vec_first(&ring_bufs);
     else
-        return *(buf **)vec_get(&ring_bufs, ind);
+        return *(buf **)vec_get(&ring_bufs, ind - 1);
 }
