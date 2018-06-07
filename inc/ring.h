@@ -6,6 +6,9 @@
 
 extern vec ring_bufs;
 
+#define RING_FOREACH(b, code) \
+    VEC_FOREACH(&ring_bufs, b, code)
+
 void ring_init(void);
 void ring_kill(void);
 
