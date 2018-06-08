@@ -6,13 +6,17 @@
 
 extern vec ring_bufs;
 
-#define RING_FOREACH(b, code) \
-    VEC_FOREACH(&ring_bufs, b, code)
+#define RING_FOREACH(_b, ...) \
+    VEC_FOREACH(&ring_bufs, _ ## _b, \
+        buf *_b = *(buf **) _ ## _b; \
+        do { __VA_ARGS__ } while (0); \
+    )
 
 void ring_init(void);
 void ring_kill(void);
 
 int ring_get_ind(buf *b);
+buf *ring_get(int ind);
 
 buf *ring_next(buf *b);
 buf *ring_prev(buf *b);

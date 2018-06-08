@@ -6,7 +6,6 @@
 
 extern int ui_alive;
 
-
 void ui_cmd_cb(win *w, vec *cmd);
 
 #endif

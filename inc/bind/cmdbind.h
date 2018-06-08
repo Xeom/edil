@@ -7,6 +7,8 @@
     BIND_MAP(mode, cmd_save, inp_key_esc | 's') \
     BIND_MAP(mode, cmd_goto, inp_key_esc | 'g') \
     \
+    BIND_MAP(mode, cmd_saveall, inp_key_esc | 'S') \
+    \
     BIND_MAP(mode, cmd_quit, inp_key_esc | inp_key_ctrl | 'K') \
     \
     BIND_MAP(mode, cmd_swap,    inp_key_ctrl | 'C') \

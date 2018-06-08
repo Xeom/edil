@@ -35,6 +35,9 @@ static inline ssize_t cur_ln(cur c)      { return c.ln; }
 # define CUR_START(a, b) ((CUR_GREATER(a, b)) ? (b) : (a))
 # define CUR_END(a, b)   ((CUR_GREATER(a, b)) ? (a) : (b))
 
+void cur_set_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[]);
+void cur_get_rel_pos(cur c, buf *b, cur *affect[], int numaffect, cur rel[]);
+
 int cur_chk_bounds(cur *c, buf *b);
 int cur_chk_blank(cur *c, buf *b, cur dir);
 

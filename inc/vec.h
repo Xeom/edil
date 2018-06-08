@@ -18,7 +18,7 @@ struct vec_s
 #define VEC_FOREACH(vec, i, code) \
     { \
         size_t _ind, _len; \
-        _len = vec_len(v); \
+        _len = vec_len(vec); \
         for (_ind = 0; _ind < _len; ++_ind) \
         { \
             void *i; \

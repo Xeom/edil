@@ -10,8 +10,6 @@ void conf_run_file_name(char *name, win *w);
 
 void conf_run_default_files(win *w);
 
-void conf_cmd_run_file(vec *rtn, vec *args, win *w);
-void conf_cmd_remap(vec *rtn, vec *args, win *w);
-void conf_cmd_unmap(vec *rtn, vec *args, win *w);
+void cmd_conf_init(void);
 
 #endif

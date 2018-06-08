@@ -5,10 +5,6 @@
 
 void file_clr_win(win *w);
 
-void file_cmd_new     (vec *rtn, vec *args, win *w);
-void file_cmd_load    (vec *rtn, vec *args, win *w);
-void file_cmd_save    (vec *rtn, vec *args, win *w);
-void file_cmd_assoc   (vec *rtn, vec *args, win *w);
-void file_cmd_discard (vec *rtn, vec *args, win *w);
-void file_cmd_chdir   (vec *rtn, vec *args, win *w);
+void cmd_file_init(void);
+
 #endif
