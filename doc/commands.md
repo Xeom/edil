@@ -60,10 +60,20 @@ Full documentation
  - Associate a buffer with a file
 
 If an argument is given, then that file is associated with the
-current buffer. Regardless of whether any argument is given, the
-file associated with the current buffer is returned. The contents
-of the buffer are not affected, so the associate command can be
-to copy a file, for example.
+current buffer. This means that the [save](#save-command), and
+[load](#load-command) will work for the associated file.
+
+The contents of the buffer are unaffected by this command, so it
+is, for example, possible to copy a file:
+```
+new "file1"
+associate "file2"
+save
+```
+This will copy file1 to file2.
+
+Regardless of whether any argument is given, the file associated
+with the current buffer is returned.
 
 ---
 #### Autoindent command 
@@ -81,14 +91,14 @@ that file is also returned, along with the buffer's
 index number.
 
 Prints flags associated with the buffer:
- * assoc - The buffer is associated with a pipe or file.
- * cr - The buffer uses '
+ * `assoc` - The buffer is associated with a pipe or file.
+ * `cr` - The buffer uses '
 ' style newlines.
- * pipe - The buffer is associated with a pipe.
- * ro - The buffer is read-only.
- * mod - The buffer has been modified.
- * nofile - No file can be associated with this buffer.
- * nokill - This buffer cannot be killed.
+ * `pipe` - The buffer is associated with a pipe.
+ * `ro` - The buffer is read-only.
+ * `mod` - The buffer has been modified.
+ * `nofile` - No file can be associated with this buffer.
+ * `nokill` - This buffer cannot be killed.
 
 ---
 #### Cd command 
@@ -101,6 +111,18 @@ current working directory.
 ---
 #### Conffile command 
  - Load a config file
+
+Configuration files are just lists of commands, one on each line,
+that are run by edil. The commands are run just as if they were
+typed after pressing `Ctrl+X`. Blank lines, and those starting
+with a `#` symbol are ignored.
+
+This command can be passed multiple paths as arguments, and will
+run the commands contained in each one. It requires at least one
+argument.
+
+Commands in `~/.edil`, `~/.edil.conf`, `~/.config/edil`, and
+`~/.config/edil.conf` are run by default when edil starts up.
 
 
 ---
@@ -129,8 +151,9 @@ indentation level as specified by lvlwidth.
  - Discard the contents of a buffer
 
 This command is useful when you don't want to save the contents of
-a buffer. It deletes the contents of the buffer and removes its
-modified flag.
+a buffer. It deletes the contents of the current buffer and removes
+its modified flag. The buffer can then be killed without edil
+complaining.
 
 ---
 #### Goto command 
@@ -181,6 +204,7 @@ Various indent modes can be set:
 
 To set a mode, give it as an argument, and to unset a mode, give it
 as an argument prefixed with an '!'.
+
 ---
 #### Kill command 
  - Kill the current buffer
@@ -188,7 +212,7 @@ as an argument prefixed with an '!'.
 By default, this command kills the current buffer. If other
 buffers are given as arguments however, it will kill them
 instead. Buffers are not killed if they are modified.
-If '!' is given as an argument, the buffers will be
+If `!` is given as an argument, the buffers will be
 force-killed, even if they are modified.
 
 ---
@@ -203,9 +227,18 @@ region, and allows for it to easily be cut or copied etc.
 #### Load command 
  - Load a file to a buffer
 
-(Re)load the file associated with the current buffer. If an
-argument is given, that file is associated with the buffer before
-it is loaded.
+This command will load the contents of an associated file to the
+current buffer, or reload them if they are already loaded.
+
+The command takes one argument optionally, which is the path of
+a file to associate with the buffer before loading, just as if the
+[associate](#associate-command) command had been run. i.e.
+`load file1` is equivialent to `associate file1` followed by
+`load`.
+
+If the file specified to the command does not exist, it is created,
+and if it is already open, the command simply switches to the
+buffer where it is open instead of opening it twice.
 
 ---
 #### Lvlwidth command 
@@ -222,10 +255,18 @@ this is not given, the command prints out the current value.
 #### New command 
  - Create a new buffer
 
-Create a new buffer and switch to it. If a filename is given as an
-argument, then this filename is associated with the buffer and
-loaded. If the file is already open, then the command simply
-switches to the buffer where it is open.
+Create a new buffer and switch to it. Optionally, open a new
+file in the new buffer.
+
+The argument is a filename, which is associated with the buffer
+and loaded to it, just as if the [load](#load-command) command
+had been run. i.e. `new file1` is equivialent to `new` followed
+by `load file1`.
+
+If the file does not exist, it is created, and if it is already
+open, the command simply switches to the buffer where it is open
+instead of creating a new one.
+
 
 ---
 #### Next command 
@@ -254,7 +295,7 @@ final buffer.
 #### Quit command 
  - Quit edil
 
-Exit edil, if no buffers are modified. If '!' is given as
+Exit edil, if no buffers are modified. If `!` is given as
 an argument, then edil will exit even if buffers are
 modified
 
@@ -262,6 +303,34 @@ modified
 #### Remap command 
  - Remap a key
 
+Remaps a key to a new binding for a specific mode. The
+[unmap](#unmap-command) removes one of these mappings. This command
+takes three arguments, the first is the the letter name of the mode
+being affected, e.g. `buf`, `bar`, or `mov`.
+
+The second is the key being rebound, as a hexadecimal keycode.
+These keycodes can be found by pressing `Ctrl+K` in edil and
+entering keycode mode. When in this mode, every keypress types
+the relevant key name and code as a hexadecimal number. Internally
+these values are stored in the `inp_key` enum, defined in
+the [inp header](/inc/inp.h).
+
+The third argument is the bind to remap. e.g. `cur_mv_l`,
+`cmd_goto`, or `mode_mov`. The bindings currently used can be
+viewed the [doc/keys.md](/doc/keys.md) file, or can be viewed by
+running the command `edil --binds`. They are the third column.
+
+Once a binding is remapped, pressing the key associated with it,
+while in the correct mode, will run the associated bind. For
+example:
+```
+remap mov 068 cur_mv_l
+remap mov 06a cur_mv_d
+remap mov 06b cur_mv_u
+remap mov 06c cur_mv_r
+```
+will remap the `h j k l` keys to move the cursor in movement mode,
+vim style!
 
 ---
 #### Save command 
@@ -270,12 +339,16 @@ modified
 Save the contents of the current buffer to the file associated
 with it.
 
+This command takes no arguments
+
 ---
 #### Saveall command 
  - Save all buffers
 
-Performs the equivialent of the same command to all buffers, where
-appropriate.
+Performs the equivialent of the [save](#save-command) command to allbuffers, where they are modified, and associated with a file.
+
+This command takes no arguments and returns the number of files
+that have been saved.
 
 ---
 #### Snap command 
@@ -303,10 +376,42 @@ this is not given, the command prints out the current value.
 #### Translate command 
  - Translate a keypress
 
+This command adds a pair of `inp_key`s to the `inp_keytranslate`
+table. When an input key is recieved by the input system, it is
+passed through this table, which for example, turns `Ctrl+I` to
+`inp_key_tab`. Making changes to this table can be useful if your
+terminal maps different keys to different codes.
+
+The first argument is the keycode being mapped from, and the second
+is the keycode being mapped to. Both are hexadecimal numbers.
+These keycodes can be found by pressing `Ctrl+K` in edil and
+entering keycode mode. When in this mode, every keypress types
+the relevant key name and code as a hexadecimal number. Internally
+these values are stored in the `inp_key` enum, defined in
+the [inp header](/inc/inp.h).
+
 
 ---
 #### Unmap command 
  - Unmap a key
 
+This command removes the binding from a key in a specific mode.
+It is the opposite of the [remap](#remap-command) command. It takes
+only two arguments. The first is the three letter name of the mode
+that a mapping is being removed from, e.g. `kcd`, or `buf`.
+
+The last argument is the key being unbound, as a hexadecimal
+keycode. These keycodes can be found by pressing `Ctrl+K` in edil
+and entering keycode mode. When in this mode, every keypress types
+the relevant key name and code as a hexadecimal number. Internally
+these values are stored in the `inp_key` enum, defined in
+the [inp header](/inc/inp.h).
+
+Unbinding a key causes nothing to happen when it is pressed while
+edil is in the relevant mode. For example,
+```
+unmap mov 64b
+```
+will unmap the shortcut of the `quit` command from `Ctrl+Esc+K`.
 
 ---

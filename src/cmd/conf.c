@@ -200,8 +200,90 @@ CMD_FUNCT(translate,
 
 void cmd_conf_init(void)
 {
-    CMD_ADD(conffile, Load a config file, "");
-    CMD_ADD(remap, Remap a key, "");
-    CMD_ADD(unmap, Unmap a key, "");
-    CMD_ADD(translate, Translate a keypress, "");
+    CMD_ADD(conffile,
+        Load a config file,
+        "Configuration files are just lists of commands, one on each line,\n"
+        "that are run by edil. The commands are run just as if they were\n"
+        "typed after pressing `Ctrl+X`. Blank lines, and those starting\n"
+        "with a `#` symbol are ignored.\n\n"
+
+        "This command can be passed multiple paths as arguments, and will\n"
+        "run the commands contained in each one. It requires at least one\n"
+        "argument.\n\n"
+
+        "Commands in `~/.edil`, `~/.edil.conf`, `~/.config/edil`, and\n"
+        "`~/.config/edil.conf` are run by default when edil starts up.\n\n"
+    );
+
+    CMD_ADD(remap,
+        Remap a key,
+        "Remaps a key to a new binding for a specific mode. The\n"
+        "[unmap](#unmap-command) removes one of these mappings. This command\n"
+        "takes three arguments, the first is the the letter name of the mode\n"
+        "being affected, e.g. `buf`, `bar`, or `mov`.\n\n"
+
+        "The second is the key being rebound, as a hexadecimal keycode.\n"
+        "These keycodes can be found by pressing `Ctrl+K` in edil and\n"
+        "entering keycode mode. When in this mode, every keypress types\n"
+        "the relevant key name and code as a hexadecimal number. Internally\n"
+        "these values are stored in the `inp_key` enum, defined in\n"
+        "the [inp header](/inc/inp.h).\n\n"
+
+        "The third argument is the bind to remap. e.g. `cur_mv_l`,\n"
+        "`cmd_goto`, or `mode_mov`. The bindings currently used can be\n"
+        "viewed the [doc/keys.md](/doc/keys.md) file, or can be viewed by\n"
+        "running the command `edil --binds`. They are the third column.\n\n"
+
+        "Once a binding is remapped, pressing the key associated with it,\n"
+        "while in the correct mode, will run the associated bind. For\n"
+        "example:\n"
+        "```\n"
+        "remap mov 068 cur_mv_l\n"
+        "remap mov 06a cur_mv_d\n"
+        "remap mov 06b cur_mv_u\n"
+        "remap mov 06c cur_mv_r\n"
+        "```\n"
+        "will remap the `h j k l` keys to move the cursor in movement mode,\n"
+        "vim style!\n"
+    );
+
+    CMD_ADD(unmap,
+        Unmap a key,
+        "This command removes the binding from a key in a specific mode.\n"
+        "It is the opposite of the [remap](#remap-command) command. It takes\n"
+        "only two arguments. The first is the three letter name of the mode\n"
+        "that a mapping is being removed from, e.g. `kcd`, or `buf`.\n\n"
+
+        "The last argument is the key being unbound, as a hexadecimal\n"
+        "keycode. These keycodes can be found by pressing `Ctrl+K` in edil\n"
+        "and entering keycode mode. When in this mode, every keypress types\n"
+        "the relevant key name and code as a hexadecimal number. Internally\n"
+        "these values are stored in the `inp_key` enum, defined in\n"
+        "the [inp header](/inc/inp.h).\n\n"
+
+        "Unbinding a key causes nothing to happen when it is pressed while\n"
+        "edil is in the relevant mode. For example,\n"
+        "```\n"
+        "unmap mov 64b\n"
+        "```\n"
+        "will unmap the shortcut of the `quit` command from `Ctrl+Esc+K`.\n"
+
+    );
+
+    CMD_ADD(translate,
+        Translate a keypress,
+        "This command adds a pair of `inp_key`s to the `inp_keytranslate`\n"
+        "table. When an input key is recieved by the input system, it is\n"
+        "passed through this table, which for example, turns `Ctrl+I` to\n"
+        "`inp_key_tab`. Making changes to this table can be useful if your\n"
+        "terminal maps different keys to different codes.\n\n"
+
+        "The first argument is the keycode being mapped from, and the second\n"
+        "is the keycode being mapped to. Both are hexadecimal numbers.\n"
+        "These keycodes can be found by pressing `Ctrl+K` in edil and\n"
+        "entering keycode mode. When in this mode, every keypress types\n"
+        "the relevant key name and code as a hexadecimal number. Internally\n"
+        "these values are stored in the `inp_key` enum, defined in\n"
+        "the [inp header](/inc/inp.h).\n\n"
+    );
 }

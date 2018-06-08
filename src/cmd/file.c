@@ -290,45 +290,76 @@ void cmd_file_init(void)
 {
     CMD_ADD(new,
         Create a new buffer,
-        "Create a new buffer and switch to it. If a filename is given as an\n"
-        "argument, then this filename is associated with the buffer and\n"
-        "loaded. If the file is already open, then the command simply\n"
-        "switches to the buffer where it is open.\n"
+        "Create a new buffer and switch to it. Optionally, open a new\n"
+        "file in the new buffer.\n\n"
+
+        "The argument is a filename, which is associated with the buffer\n"
+        "and loaded to it, just as if the [load](#load-command) command\n"
+        "had been run. i.e. `new file1` is equivialent to `new` followed\n"
+        "by `load file1`.\n\n"
+
+        "If the file does not exist, it is created, and if it is already\n"
+        "open, the command simply switches to the buffer where it is open\n"
+        "instead of creating a new one.\n\n"
     );
 
     CMD_ADD(discard,
         Discard the contents of a buffer,
         "This command is useful when you don't want to save the contents of\n"
-        "a buffer. It deletes the contents of the buffer and removes its\n"
-        "modified flag.\n"
+        "a buffer. It deletes the contents of the current buffer and removes\n"
+        "its modified flag. The buffer can then be killed without edil\n"
+        "complaining.\n"
     );
 
     CMD_ADD(load,
         Load a file to a buffer,
-        "(Re)load the file associated with the current buffer. If an\n"
-        "argument is given, that file is associated with the buffer before\n"
-        "it is loaded.\n"
+        "This command will load the contents of an associated file to the\n"
+        "current buffer, or reload them if they are already loaded.\n\n"
+
+        "The command takes one argument optionally, which is the path of\n"
+        "a file to associate with the buffer before loading, just as if the\n"
+        "[associate](#associate-command) command had been run. i.e.\n"
+        "`load file1` is equivialent to `associate file1` followed by\n"
+        "`load`.\n\n"
+
+        "If the file specified to the command does not exist, it is created,\n"
+        "and if it is already open, the command simply switches to the\n"
+        "buffer where it is open instead of opening it twice.\n"
     );
 
     CMD_ADD(associate,
         Associate a buffer with a file,
         "If an argument is given, then that file is associated with the\n"
-        "current buffer. Regardless of whether any argument is given, the\n"
-        "file associated with the current buffer is returned. The contents\n"
-        "of the buffer are not affected, so the associate command can be\n"
-        "to copy a file, for example.\n"
+        "current buffer. This means that the [save](#save-command), and\n"
+        "[load](#load-command) will work for the associated file.\n\n"
+
+        "The contents of the buffer are unaffected by this command, so it\n"
+        "is, for example, possible to copy a file:\n"
+        "```\n"
+        "new \"file1\"\n"
+        "associate \"file2\"\n"
+        "save\n"
+        "```\n"
+        "This will copy file1 to file2.\n\n"
+
+        "Regardless of whether any argument is given, the file associated\n"
+        "with the current buffer is returned.\n"
     );
 
     CMD_ADD(save,
         Save a buffer to a file,
         "Save the contents of the current buffer to the file associated\n"
-        "with it.\n"
+        "with it.\n\n"
+        "This command takes no arguments\n"
     );
 
     CMD_ADD(saveall,
         Save all buffers,
-        "Performs the equivialent of the same command to all buffers, where\n"
-        "appropriate.\n"
+        "Performs the equivialent of the [save](#save-command) command to all"
+        "buffers, where they are modified, and associated with a file.\n\n"
+
+        "This command takes no arguments and returns the number of files\n"
+        "that have been saved.\n"
     );
 
     CMD_ADD(cd,

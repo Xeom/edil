@@ -166,13 +166,13 @@ void cmd_buf_init(void)
         "index number.\n\n"
 
         "Prints flags associated with the buffer:\n"
-        " * assoc - The buffer is associated with a pipe or file.\n"
-        " * cr - The buffer uses '\r\n' style newlines.\n"
-        " * pipe - The buffer is associated with a pipe.\n"
-        " * ro - The buffer is read-only.\n"
-        " * mod - The buffer has been modified.\n"
-        " * nofile - No file can be associated with this buffer.\n"
-        " * nokill - This buffer cannot be killed.\n"
+        " * `assoc` - The buffer is associated with a pipe or file.\n"
+        " * `cr` - The buffer uses '\r\n' style newlines.\n"
+        " * `pipe` - The buffer is associated with a pipe.\n"
+        " * `ro` - The buffer is read-only.\n"
+        " * `mod` - The buffer has been modified.\n"
+        " * `nofile` - No file can be associated with this buffer.\n"
+        " * `nokill` - This buffer cannot be killed.\n"
     );
 
     CMD_ADD(next,
@@ -194,13 +194,13 @@ void cmd_buf_init(void)
         "By default, this command kills the current buffer. If other\n"
         "buffers are given as arguments however, it will kill them\n"
         "instead. Buffers are not killed if they are modified.\n"
-        "If '!' is given as an argument, the buffers will be\n"
+        "If `!` is given as an argument, the buffers will be\n"
         "force-killed, even if they are modified.\n"
     );
 
     CMD_ADD(quit,
         Quit edil,
-        "Exit edil, if no buffers are modified. If '!' is given as\n"
+        "Exit edil, if no buffers are modified. If `!` is given as\n"
         "an argument, then edil will exit even if buffers are\n"
         "modified\n"
     );

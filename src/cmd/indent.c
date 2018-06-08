@@ -210,7 +210,7 @@ void cmd_indent_init(void)
         "    of whitespace.\n\n"
 
         "To set a mode, give it as an argument, and to unset a mode, give it\n"
-        "as an argument prefixed with an '!'."
+        "as an argument prefixed with an '!'.\n"
     );
 
     CMD_ADD(incrindent,
