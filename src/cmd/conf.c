@@ -218,13 +218,14 @@ void cmd_conf_init(void)
     CMD_ADD(remap,
         Remap a key,
         "Remaps a key to a new binding for a specific mode. The\n"
-        "[unmap](#unmap-command) removes one of these mappings. This command\n"
-        "takes three arguments, the first is the the letter name of the mode\n"
-        "being affected, e.g. `buf`, `bar`, or `mov`.\n\n"
+        "[unmap](#unmap-command) command removes one of these mappings.\n"
+        "The `remap` command takes three arguments, the first is the three\n"
+        "letter name of the mode being affected, e.g. `buf`, `bar`, or\n"
+        "`mov`.\n\n"
 
-        "The second is the key being rebound, as a hexadecimal keycode.\n"
-        "These keycodes can be found by pressing `Ctrl+K` in edil and\n"
-        "entering keycode mode. When in this mode, every keypress types\n"
+        "The second argument is the key being rebound, as a hexadecimal\n"
+        "keycode. These keycodes can be found by pressing `Ctrl+K` in edil\n"
+        "and entering keycode mode. When in this mode, every keypress types\n"
         "the relevant key name and code as a hexadecimal number. Internally\n"
         "these values are stored in the `inp_key` enum, defined in\n"
         "the [inp header](/inc/inp.h).\n\n"
