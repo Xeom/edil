@@ -31,10 +31,13 @@ static size_t cmd_parse_word(vec *str, vec *chrs, size_t ind);
 void cmd_init(void)
 {
     vec_init(&cmd_items, sizeof(namevec_item));
+
     cmd_nav_init();
     cmd_buf_init();
     cmd_indent_init();
     cmd_file_init();
+    cmd_region_init();
+
     namevec_sort(&cmd_items);
 }
 
