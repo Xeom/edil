@@ -81,7 +81,7 @@ CMD_FUNCT(paste,
 CMD_FUNCT(cut,
     CMD_MAX_ARGS(0);
 
-    cmd_funct_copy(rtn, args, w);
+    cmd_funct_copy(args, rtn, w);
 
     if (region_clipboard != w->b)
     {
@@ -92,7 +92,22 @@ CMD_FUNCT(cut,
 
 void cmd_region_init(void)
 {
-    CMD_ADD(copy, Copy the current region, "");
-    CMD_ADD(paste, Paste a buffer, "");
-    CMD_ADD(cut, Cut the current region, "");
+    CMD_ADD(copy,
+        Copy the current region,
+        "Copy the current region between the primary and secondary cursors\n"
+        "the contents of the region is placed into the clipboard buffer,\n"
+        "which is created if it does not exist already.\n"
+    );
+
+    CMD_ADD(paste,
+        Paste a buffer,
+        "Insert the contents of another buffer at the location of the cursor\n"
+        "By default, the clipboard buffer is inserted, but if an argument is\n"
+        "given, it can specify a different buffer index."
+    );
+
+    CMD_ADD(cut,
+        Cut the current region,
+        "This command runs the copy command, and then deletes the region.\n"
+    );
 }

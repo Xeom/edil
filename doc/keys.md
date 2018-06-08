@@ -18,6 +18,7 @@ Buf mode
 | `44c` - _Ctrl+L_       | cmd_lineify    | Shortcut for lineify command                      |
 | `44e` - _Ctrl+N_       | cmd_next       | Run next command                                  |
 | `450` - _Ctrl+P_       | cmd_paste      | Run paste command                                 |
+| `253` - _Esc+S_        | cmd_saveall    | Shortcut for saveall command                      |
 | `456` - _Ctrl+V_       | cmd_prev       | Run prev command                                  |
 | `458` - _Ctrl+X_       | mode_cmd       | Open the command bar                              |
 | `459` - _Ctrl+Y_       | cmd_copy       | Run copy command                                  |
@@ -81,6 +82,7 @@ Mov mode
 | `44c` - _Ctrl+L_       | cmd_lineify    | Shortcut for lineify command                      |
 | `44e` - _Ctrl+N_       | cmd_next       | Run next command                                  |
 | `450` - _Ctrl+P_       | cmd_paste      | Run paste command                                 |
+| `253` - _Esc+S_        | cmd_saveall    | Shortcut for saveall command                      |
 | `456` - _Ctrl+V_       | cmd_prev       | Run prev command                                  |
 | `458` - _Ctrl+X_       | mode_cmd       | Open the command bar                              |
 | `459` - _Ctrl+Y_       | cmd_copy       | Run copy command                                  |
