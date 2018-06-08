@@ -1,6 +1,7 @@
 #if !defined(INP_H)
 # define INP_H
 # include <stddef.h>
+# include "table.h"
 
 typedef enum
 {
@@ -45,6 +46,8 @@ struct inp_keycode_s
     char *code;
     char *name;
 };
+
+extern table inp_keytranslate;
 
 inp_key inp_get_key(unsigned char c);
 

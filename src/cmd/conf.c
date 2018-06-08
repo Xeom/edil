@@ -122,6 +122,7 @@ void conf_cmd_remap(vec *rtn, vec *args, win *w)
 {
     vec *mode, *key, *bind;
     inp_key keyval;
+    char    keyname[64];
 
     if (vec_len(args) != 4)
     {
@@ -141,12 +142,19 @@ void conf_cmd_remap(vec *rtn, vec *args, win *w)
 
     if (bind_remap(mode, keyval, bind) == -1)
         chr_format(rtn, "err: Could not remap key");
+
+    inp_key_name(keyval, keyname, sizeof(keyname));
+
+    chr_from_str(rtn, "Bound '"); vec_cpy(rtn, bind);
+    chr_format(rtn, "' to (%s) for '", keyname);
+    vec_cpy(rtn, mode); chr_from_str(rtn, "' mode.");
 }
 
 void conf_cmd_unmap(vec *rtn, vec *args, win *w)
 {
     vec *mode, *key;
     inp_key keyval;
+    char    keyname[64];
 
     if (vec_len(args) != 3)
     {
@@ -166,4 +174,38 @@ void conf_cmd_unmap(vec *rtn, vec *args, win *w)
     if (bind_unmap(mode, keyval) == -1)
         chr_format(rtn, "err: could not unmap key");
 
+    inp_key_name(keyval, keyname, sizeof(keyname));
+
+    chr_format(rtn, "Unbound (%s) for '", keyname);
+    vec_cpy(rtn, mode); chr_from_str(rtn, "' mode.");
+}
+
+void conf_cmd_translate(vec *rtn, vec *args, win *w)
+{
+    vec *from, *to;
+    inp_key fromval, toval;
+    char    fromname[64], toname[64];
+
+    if (vec_len(args) != 3)
+    {
+        chr_format(rtn, "err: translate takes two agruments: from, to");
+        return;
+    }
+
+    from = vec_get(args, 1);
+    to   = vec_get(args, 2);
+
+    if (chr_scan(from, "%x", &fromval) != 1
+        || chr_scan(to, "%x", &toval) != 1)
+    {
+        chr_format(rtn, "err: keys need to be hex numbers");
+        return;
+    }
+
+    inp_key_name(fromval, fromname, sizeof(fromname));
+    inp_key_name(toval,   toname,   sizeof(toname));
+
+    table_set(&inp_keytranslate, &fromval, &toval);
+
+    chr_format(rtn, "Translating (%s) keys to (%s) keys", fromname, toname);
 }

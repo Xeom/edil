@@ -13,5 +13,6 @@ void conf_run_default_files(win *w);
 void conf_cmd_run_file(vec *rtn, vec *args, win *w);
 void conf_cmd_remap(vec *rtn, vec *args, win *w);
 void conf_cmd_unmap(vec *rtn, vec *args, win *w);
+void conf_cmd_translate(vec *rtn, vec *args, win *w);
 
 #endif
