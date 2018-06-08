@@ -22,36 +22,36 @@ in the `src/cmd` directory.
 
 List of commands
 ----------------
- * [associate](#associate-command) - _Associate a buffer with a file_
- * [autoindent](#autoindent-command) - _Automatically indent a line_
- * [bufinfo](#bufinfo-command) - _Display information about the current buffer_
- * [cd](#cd-command) - _Change directory_
- * [conffile](#conffile-command) - _Load a config file_
- * [copy](#copy-command) - _Copy the current region_
- * [cut](#cut-command) - _Cut the current region_
- * [decrindent](#decrindent-command) - _Undent a line_
- * [discard](#discard-command) - _Discard the contents of a buffer_
- * [goto](#goto-command) - _Go to a specific line and column_
- * [incrindent](#incrindent-command) - _Indent a line_
- * [indent](#indent-command) - _Set the indentation depth of a line_
- * [indentmode](#indentmode-command) - _Set indent modes_
- * [kill](#kill-command) - _Kill the current buffer_
- * [lineify](#lineify-command) - _Select the current line_
- * [load](#load-command) - _Load a file to a buffer_
- * [lvlwidth](#lvlwidth-command) - _Set the indent level width_
- * [new](#new-command) - _Create a new buffer_
- * [next](#next-command) - _Go to the next buffer_
- * [paste](#paste-command) - _Paste a buffer_
- * [prev](#prev-command) - _Go to the previous buffer_
- * [quit](#quit-command) - _Quit edil_
- * [remap](#remap-command) - _Remap a key_
- * [save](#save-command) - _Save a buffer to a file_
- * [saveall](#saveall-command) - _Save all buffers_
- * [snap](#snap-command) - _Snap the secondary cursor_
- * [swap](#swap-command) - _Swap the cursors_
- * [tabwidth](#tabwidth-command) - _Set the tab width_
- * [translate](#translate-command) - _Translate a keypress_
- * [unmap](#unmap-command) - _Unmap a key_
+ * [__associate__](#associate-command) - _Associate a buffer with a file_
+ * [__autoindent__](#autoindent-command) - _Automatically indent a line_
+ * [__bufinfo__](#bufinfo-command) - _Display information about the current buffer_
+ * [__cd__](#cd-command) - _Change directory_
+ * [__conffile__](#conffile-command) - _Load a config file_
+ * [__copy__](#copy-command) - _Copy the current region_
+ * [__cut__](#cut-command) - _Cut the current region_
+ * [__decrindent__](#decrindent-command) - _Undent a line_
+ * [__discard__](#discard-command) - _Discard the contents of a buffer_
+ * [__goto__](#goto-command) - _Go to a specific line and column_
+ * [__incrindent__](#incrindent-command) - _Indent a line_
+ * [__indent__](#indent-command) - _Set the indentation depth of a line_
+ * [__indentmode__](#indentmode-command) - _Set indent modes_
+ * [__kill__](#kill-command) - _Kill the current buffer_
+ * [__lineify__](#lineify-command) - _Select the current line_
+ * [__load__](#load-command) - _Load a file to a buffer_
+ * [__lvlwidth__](#lvlwidth-command) - _Set the indent level width_
+ * [__new__](#new-command) - _Create a new buffer_
+ * [__next__](#next-command) - _Go to the next buffer_
+ * [__paste__](#paste-command) - _Paste a buffer_
+ * [__prev__](#prev-command) - _Go to the previous buffer_
+ * [__quit__](#quit-command) - _Quit edil_
+ * [__remap__](#remap-command) - _Remap a key_
+ * [__save__](#save-command) - _Save a buffer to a file_
+ * [__saveall__](#saveall-command) - _Save all buffers_
+ * [__snap__](#snap-command) - _Snap the secondary cursor_
+ * [__swap__](#swap-command) - _Swap the cursors_
+ * [__tabwidth__](#tabwidth-command) - _Set the tab width_
+ * [__translate__](#translate-command) - _Translate a keypress_
+ * [__unmap__](#unmap-command) - _Unmap a key_
 
 Full documentation
 ------------------
@@ -304,13 +304,14 @@ modified
  - Remap a key
 
 Remaps a key to a new binding for a specific mode. The
-[unmap](#unmap-command) removes one of these mappings. This command
-takes three arguments, the first is the the letter name of the mode
-being affected, e.g. `buf`, `bar`, or `mov`.
+[unmap](#unmap-command) command removes one of these mappings.
+The `remap` command takes three arguments, the first is the three
+letter name of the mode being affected, e.g. `buf`, `bar`, or
+`mov`.
 
-The second is the key being rebound, as a hexadecimal keycode.
-These keycodes can be found by pressing `Ctrl+K` in edil and
-entering keycode mode. When in this mode, every keypress types
+The second argument is the key being rebound, as a hexadecimal
+keycode. These keycodes can be found by pressing `Ctrl+K` in edil
+and entering keycode mode. When in this mode, every keypress types
 the relevant key name and code as a hexadecimal number. Internally
 these values are stored in the `inp_key` enum, defined in
 the [inp header](/inc/inp.h).

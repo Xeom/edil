@@ -279,7 +279,7 @@ void cmd_print_all(FILE *stream)
 
 void cmd_print_pre(FILE *stream, cmd_info *info)
 {
-    fprintf(stream, " * [%s](#%s-command) - _%s_\n", info->name, info->name, info->desc);
+    fprintf(stream, " * [__%s__](#%s-command) - _%s_\n", info->name, info->name, info->desc);
 }
 
 void cmd_print_info(FILE *stream, cmd_info *info)
