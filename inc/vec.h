@@ -15,16 +15,16 @@ struct vec_s
     size_t width;
 };
 
-#define VEC_FOREACH(vec, i, code) \
-    { \
-        size_t _ind, _len; \
-        _len = vec_len(vec); \
+#define VEC_FOREACH(_vec, _type, _i, _code) \
+    {                                       \
+        size_t _ind, _len;                  \
+        _len = vec_len(_vec);               \
         for (_ind = 0; _ind < _len; ++_ind) \
-        { \
-            void *i; \
-            i = vec_get(vec, _ind); \
-            do { code } while (0); \
-        } \
+        {                                   \
+            _type _i;                       \
+            _i = vec_get(_vec, _ind);        \
+            do { _code } while (0);         \
+        }                                   \
     }
 
 void vec_init(vec *v, size_t width);

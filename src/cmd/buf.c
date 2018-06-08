@@ -102,12 +102,11 @@ CMD_FUNCT(kill,
         vec_app(killbufs, &(w->b));
     }
 
-    VEC_FOREACH(killbufs, bptr,
+    VEC_FOREACH(killbufs, buf **, bptr,
         buf *b;
-        b = *(buf **)bptr;
-
         int ind;
 
+        b   = *bptr;
         ind = ring_get_ind(b);
         new = ring_del(b);
 

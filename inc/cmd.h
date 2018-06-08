@@ -25,9 +25,8 @@ struct cmd_info_s
         vec _tmpvecs;                                                              \
         vec_init(&_tmpvecs, sizeof(vec *));                                        \
         _cmd_funct_ ## _name (args, rtn, w, &_tmpvecs);                            \
-        VEC_FOREACH(&_tmpvecs, vptr,                                               \
-            vec *v = *(vec **)vptr;                                                \
-            vec_kill(v);                                                           \
+        VEC_FOREACH(&_tmpvecs, vec **, vptr,                                       \
+            vec_kill(*vptr);                                                       \
         );                                                                         \
         vec_kill(&_tmpvecs);                                                       \
     }                                                                              \

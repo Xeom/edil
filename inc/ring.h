@@ -7,9 +7,9 @@
 extern vec ring_bufs;
 
 #define RING_FOREACH(_b, ...) \
-    VEC_FOREACH(&ring_bufs, _ ## _b, \
-        buf *_b = *(buf **) _ ## _b; \
-        do { __VA_ARGS__ } while (0); \
+    VEC_FOREACH(&ring_bufs, buf **, _ ## _b, \
+        buf *_b = * _ ## _b;                 \
+        do { __VA_ARGS__ } while (0);        \
     )
 
 void ring_init(void);
