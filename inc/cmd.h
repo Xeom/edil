@@ -41,7 +41,7 @@ struct cmd_info_s
             .fptr = cmd_funct_ ## _name, \
             .name = #_name,              \
             .desc = #_desc,              \
-            .full = #_full               \
+            .full = _full                \
         };                               \
         namevec_item item = {            \
             .name = #_name, .ptr = &info \
@@ -137,4 +137,8 @@ void cmd_run(vec *args, vec *rtn, win *w);
 void cmd_parse(vec *args, vec *chrs, size_t ind);
 
 void cmd_log(vec *chrs, int iscmd);
+
+void cmd_print_all(FILE *stream);
+void cmd_print_info(FILE *stream, cmd_info *info);
+
 #endif

@@ -25,6 +25,9 @@ Command-Line Options
     numbers printed in kcd mode, accessed by Ctrl+K, or the
     inp_key enum within edil's code.
 
+ * `--cmds`, `-cl` - Lists all edil commands in markdown format,
+   then exits.
+
 Usage
 =====
 

@@ -64,7 +64,9 @@ static char *help = "\n"
 "    --filecmd  -f    Specify a filename, that commands are\n"
 "                     then loaded from and run on startup.\n"
 "    --keycode  -kc   Specify a hexadecimal key value, and\n"
-"                     an appropriate pretty name is printed\n\n";
+"                     an appropriate pretty name is printed\n"
+"    --cmds     -cl   List all edil commands and print them\n"
+"                     out in a markdown format.\n\n";
 
 static char *version =
 "Edil v" STRIFY(VERSION) ", -- Compiled (" STRIFY(COMPILETIME) ")\n";
@@ -116,6 +118,13 @@ static int process_arg(int argc, char **argv, int *n)
         fflush(stdout);
         bind_kill();
         inp_kill();
+        return 0;
+    }
+    else if (argis(--cmds) || argis(-cl))
+    {
+        cmd_init();
+        cmd_print_all(stdout);
+        cmd_kill();
         return 0;
     }
     else if (argis(--filecmd) || argis(-f))

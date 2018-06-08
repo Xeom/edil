@@ -76,7 +76,7 @@ void cmd_run(vec *args, vec *rtn, win *w)
         {
             namevec_item *i;
             i = item + number;
-            chr_format(rtn, "%s, ", i->name);
+            chr_format(rtn, "%s%s", i->name, (number) ? ", " : "");
         }
 
         chr_from_str(rtn, ")");
@@ -234,4 +234,25 @@ void cmd_log(vec *chrs, int iscmd)
         buf_del_line(cmd_log_buf, (cur){0, 0});
         buf_del_line(cmd_log_buf, (cur){0, 0});
     }
+}
+
+void cmd_print_all(FILE *stream)
+{
+    fputs("Commands\n",   stream);
+    fputs("========\n\n", stream);
+
+    VEC_FOREACH(&cmd_items, namevec_item *, item,
+        cmd_print_info(stream, item->ptr);
+    );
+}
+
+void cmd_print_info(FILE *stream, cmd_info *info)
+{
+    int len;
+    char *underline = "--------------------------------";
+
+    len = strlen(info->name);
+    fprintf(stream, "%s command \n%.*s\n", info->name, len + 8, underline);
+    fprintf(stream, " - %s\n\n", info->desc);
+    fprintf(stream, "%s\n", info->full);
 }
