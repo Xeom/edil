@@ -54,18 +54,17 @@ CMD_FUNCT(load,
     if (!file_associated(f))
         CMD_ERR("No associated file");
 
-    if (file_load(f, b) == -1)
+    if (!file_exists(f))
     {
-        if (errno == ENOENT)
-        {
-            CMD_RTN("New file");
-            file_clr_win(w);
-        }
-        else
-            CMD_ERR_FMT(
-                "Could not load file - [%d] %s",
-                errno, strerror(errno)
-            );
+        CMD_RTN("New file");
+        file_clr_win(w);
+    }
+    else if (file_load(f, b) == -1)
+    {
+        CMD_ERR_FMT(
+            "Could not load file - [%d] %s",
+            errno, strerror(errno)
+        );
     }
     else
         CMD_RTN_FMT("Loaded '%s'", file_name(f));
@@ -89,7 +88,7 @@ CMD_FUNCT(new,
     if (CMD_NARGS)
     {
         CMD_RTN(", ");
-        cmd_funct_load(rtn, args, w);
+        cmd_funct_load(args, rtn, w);
     }
 )
 
