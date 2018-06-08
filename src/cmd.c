@@ -37,6 +37,7 @@ void cmd_init(void)
     cmd_indent_init();
     cmd_file_init();
     cmd_region_init();
+    cmd_conf_init();
 
     namevec_sort(&cmd_items);
 }
