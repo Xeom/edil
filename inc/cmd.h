@@ -23,9 +23,12 @@ struct cmd_info_s
     static void  cmd_funct_ ## _name (vec *args, vec *rtn, win *w)                 \
     {                                                                              \
         vec _tmpvecs;                                                              \
-        vec_init(&_tmpvecs, sizeof(vec));                                          \
+        vec_init(&_tmpvecs, sizeof(vec *));                                        \
         _cmd_funct_ ## _name (args, rtn, w, &_tmpvecs);                            \
-        VEC_FOREACH(&_tmpvecs, v, vec_kill(v););                                   \
+        VEC_FOREACH(&_tmpvecs, vptr,                                               \
+            vec *v = *(vec **)vptr;                                                \
+            vec_kill(v);                                                           \
+        );                                                                         \
         vec_kill(&_tmpvecs);                                                       \
     }                                                                              \
     static void _cmd_funct_ ## _name (vec *args, vec *rtn, win *w, vec *_tmpvecs)  \
@@ -49,8 +52,9 @@ struct cmd_info_s
 
 /* Create a vector that is automatically killed after the command */
 #define CMD_TMP_VEC(_name, _type) \
-    vec *_name = vec_app(_tmpvecs, NULL);  \
-    vec_init(_name, sizeof(_type));         \
+    vec *_name = malloc(sizeof(vec));         \
+    *(vec **)vec_app(_tmpvecs, NULL) = _name; \
+    vec_init(_name, sizeof(_type));
 
 /* Get arguments as chr vecs */
 #define CMD_ARG(_num, _name) \
@@ -108,7 +112,7 @@ struct cmd_info_s
     }
 
 #define CMD_MIN_ARGS(_num)                                   \
-    if (vec_len(args) < num + 1)                             \
+    if (vec_len(args) < _num + 1)                             \
     {                                                        \
         CMD_RTN_FMT(                                         \
             "err: This command takes %d argument%s minimum", \
