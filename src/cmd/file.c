@@ -130,6 +130,36 @@ CMD_FUNCT(associate,
     CMD_RTN_FMT("file: '%s'", file_name(f));
 )
 
+CMD_FUNCT(saveall,
+    CMD_MAX_ARGS(0);
+
+    int numsaved;
+    numsaved = 0;
+
+    RING_FOREACH(b,
+        file *f;
+        f = &(b->finfo);
+
+        if (!file_associated(f) || !(b->flags & buf_modified))
+            continue;
+
+        if (file_save(f, b) == -1)
+        {
+            win_set_buf(w, b);
+            CMD_ERR_FMT(
+                "Could not write '%s': [%d] %s",
+                file_name(f), errno, strerror(errno)
+            );
+        }
+
+        ++numsaved;
+
+        b->flags &= ~buf_modified;
+    )
+
+    CMD_RTN_FMT("Saved %d files", numsaved);
+)
+
 CMD_FUNCT(save,
     CMD_MAX_ARGS(0);
 
@@ -242,6 +272,7 @@ static buf *file_find(file *f)
 
     return NULL;
 }
+
 void file_clr_win(win *w)
 {
     cur loc;
@@ -292,6 +323,12 @@ void cmd_file_init(void)
         Save a buffer to a file,
         "Save the contents of the current buffer to the file associated\n"
         "with it.\n"
+    );
+
+    CMD_ADD(saveall,
+        Save all buffers,
+        "Performs the equivialent of the same command to all buffers, where\n"
+        "appropriate.\n"
     );
 
     CMD_ADD(cd,
