@@ -140,5 +140,5 @@ void cmd_log(vec *chrs, int iscmd);
 
 void cmd_print_all(FILE *stream);
 void cmd_print_info(FILE *stream, cmd_info *info);
-
+void cmd_print_pre(FILE *stream, cmd_info *info);
 #endif

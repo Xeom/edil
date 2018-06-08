@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <string.h>
 
 #include "vec.h"
@@ -241,18 +242,52 @@ void cmd_print_all(FILE *stream)
     fputs("Commands\n",   stream);
     fputs("========\n\n", stream);
 
+    fputs("To type a command in *Edil*, enter *command mode*, by pressing\n"
+          "`Ctrl-X`, then you can simply type a command and press enter to\n"
+          "run it.\n\n"
+
+          "Commands take arguments delimited by spaces after their name,\n"
+          "e.g. `load file1`, and for arguments with spaces inside them,\n"
+          "quotation marks can be used. e.g. `load \"file 1\"`.\n\n"
+
+          "Many commands are also bound to shortcut or run on certain key\n"
+          "combinations. A shortcut is where, when you press the key, edil\n"
+          "enters bar mode and the command is inserted into the bar ready to\n"
+          "be run. This allows you to specify arguments for the command, or\n"
+          "prevents accidentally running the command when you did not mean\n"
+          "to.\n\n"
+
+         "The implementation for this system is in the `src/cmd.c` file, and\n"
+         "files containing implementations of commands themselves are stored\n"
+         "in the `src/cmd` directory.\n\n"
+
+         "List of commands\n"
+         "----------------\n", stream);
+
+    VEC_FOREACH(&cmd_items, namevec_item *, item,
+        cmd_print_pre(stream, item->ptr);
+    );
+
+    fputs("\n"
+          "Full documentation\n"
+          "------------------\n\n", stream);
+
     VEC_FOREACH(&cmd_items, namevec_item *, item,
         cmd_print_info(stream, item->ptr);
     );
 }
 
+void cmd_print_pre(FILE *stream, cmd_info *info)
+{
+    fprintf(stream, " * [%s](#%s-command) - _%s_\n", info->name, info->name, info->desc);
+}
+
 void cmd_print_info(FILE *stream, cmd_info *info)
 {
-    int len;
-    char *underline = "--------------------------------";
+    char upper;
+    upper = toupper(info->name[0]);
 
-    len = strlen(info->name);
-    fprintf(stream, "%s command \n%.*s\n", info->name, len + 8, underline);
+    fprintf(stream, "#### %c%s command \n", upper, info->name + 1);
     fprintf(stream, " - %s\n\n", info->desc);
-    fprintf(stream, "%s\n", info->full);
+    fprintf(stream, "%s\n---\n", info->full);
 }
