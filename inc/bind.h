@@ -116,7 +116,8 @@ int bind_remap_str(bind_mode_type mode, inp_key k, char *str);
 void bind_init(void);
 void bind_kill(void);
 
+/* Print out the edil -b table */
 void bind_print(FILE *stream);
-void bind_print_table(table *t, FILE *stream);
+void bind_print_table(bind_mode_info *mode, FILE *stream);
 
 #endif

@@ -60,7 +60,11 @@ static char *help = "\n"
 "    --help     -h    Display this help message.\n"
 "    --version  -v    Show the current version of edil, and\n"
 "                     its compilation time\n"
-"    --binds    -b    Display edil's keybindings\n\n";
+"    --binds    -b    Display edil's keybindings\n"
+"    --filecmd  -f    Specify a filename, that commands are\n"
+"                     then loaded from and run on startup.\n"
+"    --keycode  -kc   Specify a hexadecimal key value, and\n"
+"                     an appropriate pretty name is printed\n\n";
 
 static char *version =
 "Edil v" STRIFY(VERSION) ", -- Compiled (" STRIFY(COMPILETIME) ")\n";
@@ -72,24 +76,24 @@ static void load_string(win *w, char *str);
 static void init_all(void);
 static void kill_all(void);
 static void loop(void);
-static void process_arg(int argc, char **argv, int *n);
+static int  process_arg(int argc, char **argv, int *n);
 
 static vec *new_startup_cmd(void);
 static void run_startup_cmd(void);
 
 #define argis(a) (strcmp(argv[*n], #a) == 0)
 
-static void process_arg(int argc, char **argv, int *n)
+static int process_arg(int argc, char **argv, int *n)
 {
     if (argis(--help) || argis(-h))
     {
         fputs(help, stdout);
-        exit(0);
+        return 0;
     }
     else if (argis(--version) || argis(-v))
     {
         fputs(version, stdout);
-        exit(0);
+        return 0;
     }
     else if (argis(--cmd) || argis(-c))
     {
@@ -97,8 +101,8 @@ static void process_arg(int argc, char **argv, int *n)
         *n += 1;
         if (*n >= argc)
         {
-            fputs(argerror('--cmd' needs an argument), stdout);
-            exit(0);
+            fputs(argerror('--cmd' needs an argument), stderr);
+            return 0;
         }
 
         cmd = new_startup_cmd();
@@ -112,7 +116,7 @@ static void process_arg(int argc, char **argv, int *n)
         fflush(stdout);
         bind_kill();
         inp_kill();
-        exit(0);
+        return 0;
     }
     else if (argis(--filecmd) || argis(-f))
     {
@@ -122,16 +126,45 @@ static void process_arg(int argc, char **argv, int *n)
         *n += 1;
         if (*n >= argc)
         {
-            fputs(argerror('--filecmd' needs an argument), stdout);
-            exit(0);
+            fputs(argerror('--filecmd' needs an argument), stderr);
+            return 0;
         }
 
         chr_format(cmd, "conffile \"%s\"", argv[*n]);
     }
+    else if (argis(--keycode) || argis(-kc))
+    {
+        char name[64];
+        unsigned int intkey;
+        inp_key key;
+
+        *n += 1;
+        if (*n >= argc)
+        {
+            fputs(argerror('--keycode' needs an argument), stderr);
+            return 0;
+        }
+
+        if (sscanf(argv[*n], "%x", &intkey) != 1)
+        {
+            fputs(argerror('--keycode' takes a hexadecimal number), stderr);
+            return 0;
+        }
+
+        key = intkey;
+
+        inp_init();
+        inp_key_name(key, name, sizeof(name));
+        inp_kill();
+
+        puts(name);
+
+        return 0;
+    }
     else if (strncmp(argv[*n], "-", 1) == 0)
     {
         fputs(argerror(Unknown argument), stdout);
-        exit(0);
+        return 0;
     }
     else
     {
@@ -141,6 +174,8 @@ static void process_arg(int argc, char **argv, int *n)
     }
 
     *n += 1;
+
+    return 1;
 }
 
 vec startup_cmd;
@@ -160,7 +195,6 @@ void run_startup_cmd(void)
 
         vec_kill(cmd);
     }
-
 
     vec_kill(&startup_cmd);
 }
@@ -264,7 +298,8 @@ int main(int argc, char **argv)
     vec_init(&startup_cmd, sizeof(vec));
 
     while (argind < argc)
-        process_arg(argc, argv, &argind);
+        if (process_arg(argc, argv, &argind) == 0)
+            return 0;
 
     init_all();
 
