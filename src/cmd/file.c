@@ -258,10 +258,47 @@ void file_clr_win(win *w)
 
 void cmd_file_init(void)
 {
-    CMD_ADD(new, Create a new buffer, "");
-    CMD_ADD(discard, Discard the contents of a buffer, "");
-    CMD_ADD(load, Load a file to a buffer, "");
-    CMD_ADD(associate, Associate a buffer with a file, "");
-    CMD_ADD(save, Save a buffer to a file, "");
-    CMD_ADD(cd, Change directory, "");
+    CMD_ADD(new,
+        Create a new buffer,
+        "Create a new buffer and switch to it. If a filename is given as an\n"
+        "argument, then this filename is associated with the buffer and\n"
+        "loaded. If the file is already open, then the command simply\n"
+        "switches to the buffer where it is open.\n"
+    );
+
+    CMD_ADD(discard,
+        Discard the contents of a buffer,
+        "This command is useful when you don't want to save the contents of\n"
+        "a buffer. It deletes the contents of the buffer and removes its\n"
+        "modified flag.\n"
+    );
+
+    CMD_ADD(load,
+        Load a file to a buffer,
+        "(Re)load the file associated with the current buffer. If an\n"
+        "argument is given, that file is associated with the buffer before\n"
+        "it is loaded.\n"
+    );
+
+    CMD_ADD(associate,
+        Associate a buffer with a file,
+        "If an argument is given, then that file is associated with the\n"
+        "current buffer. Regardless of whether any argument is given, the\n"
+        "file associated with the current buffer is returned. The contents\n"
+        "of the buffer are not affected, so the associate command can be\n"
+        "to copy a file, for example.\n"
+    );
+
+    CMD_ADD(save,
+        Save a buffer to a file,
+        "Save the contents of the current buffer to the file associated\n"
+        "with it.\n"
+    );
+
+    CMD_ADD(cd,
+        Change directory,
+        "Change edil's current working directory to one specified as an\n"
+        "argument. Even if no argument is given, the command returns the\n"
+        "current working directory.\n"
+    );
 }
