@@ -233,9 +233,9 @@ void inp_key_name(inp_key key, char *str, size_t len)
     }
 
     if (name)
-        snprintf(str, len, "%03x %s%s ", key, prefix, name);
+        snprintf(str, len, "%03x %s%s", key, prefix, name);
     else
-        snprintf(str, len, "%03x %s0x%02x ", key, prefix, key & 0xff);
+        snprintf(str, len, "%03x %s0x%02x", key, prefix, key & 0xff);
 }
 
 void inp_empty_pipe(void)
