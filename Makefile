@@ -59,6 +59,10 @@ $(BINDIR)edil: $(OFILES) $(SRCDIR)edil.c
 
 deps: $(DFILES)
 
+docs: bin/edil
+	make -C doc all
+	make -C layouts all
+
 all: deps $(BINDIR)edil
 	@if [ -s errs.txt ]; then cat errs.txt | less -R; rm errs.txt; fi
 
