@@ -17,4 +17,4 @@ replace="printf \"$align\" $args"
 matchhead='^\| \S+ \|'
 replacehead='|        '
 
-bin/edil --binds | sed -re "s/$matchhead/$replacehead/"  | sed -re "s/$match/$replace/e"
+../bin/edil --binds | sed -re "s/$matchhead/$replacehead/"  | sed -re "s/$match/$replace/e"

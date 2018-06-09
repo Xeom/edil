@@ -295,7 +295,7 @@ void cmd_file_init(void)
 
         "The argument is a filename, which is associated with the buffer\n"
         "and loaded to it, just as if the [load](#load-command) command\n"
-        "had been run. i.e. `new file1` is equivialent to `new` followed\n"
+        "had been run. i.e. `new file1` is equivalent to `new` followed\n"
         "by `load file1`.\n\n"
 
         "If the file does not exist, it is created, and if it is already\n"
@@ -319,7 +319,7 @@ void cmd_file_init(void)
         "The command takes one argument optionally, which is the path of\n"
         "a file to associate with the buffer before loading, just as if the\n"
         "[associate](#associate-command) command had been run. i.e.\n"
-        "`load file1` is equivialent to `associate file1` followed by\n"
+        "`load file1` is equivalent to `associate file1` followed by\n"
         "`load`.\n\n"
 
         "If the file specified to the command does not exist, it is created,\n"
@@ -355,7 +355,7 @@ void cmd_file_init(void)
 
     CMD_ADD(saveall,
         Save all buffers,
-        "Performs the equivialent of the [save](#save-command) command to all"
+        "Performs the equivalent of the [save](#save-command) command to all\n"
         "buffers, where they are modified, and associated with a file.\n\n"
 
         "This command takes no arguments and returns the number of files\n"
@@ -364,7 +364,7 @@ void cmd_file_init(void)
 
     CMD_ADD(cd,
         Change directory,
-        "Change edil's current working directory to one specified as an\n"
+        "Change Edil's current working directory to one specified as an\n"
         "argument. Even if no argument is given, the command returns the\n"
         "current working directory.\n"
     );

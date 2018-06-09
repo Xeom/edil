@@ -199,9 +199,9 @@ void cmd_buf_init(void)
     );
 
     CMD_ADD(quit,
-        Quit edil,
-        "Exit edil, if no buffers are modified. If `!` is given as\n"
-        "an argument, then edil will exit even if buffers are\n"
+        Quit Edil,
+        "Exit Edil, if no buffers are modified. If `!` is given as\n"
+        "an argument, then Edil will exit even if buffers are\n"
         "modified\n"
     );
 }

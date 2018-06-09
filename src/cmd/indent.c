@@ -196,7 +196,7 @@ void cmd_indent_init(void)
         Set indent modes,
         "Various indent modes can be set:\n"
         " * `spacify` - By default, indentation to a specific depth is\n"
-        "    achived using tabs as much as possible, and spaces as needed\n"
+        "    achieved using tabs as much as possible, and spaces as needed\n"
         "    after the tabs. If spacify mode is enabled, then only spaces\n"
         "    are used.\n"
         " * `auto` - If this mode is active, when the enter key is pressed,\n"
@@ -220,7 +220,7 @@ void cmd_indent_init(void)
     );
 
     CMD_ADD(decrindent,
-        Undent a line,
+        Un-indent a line,
         "Decrease the indentation of the current line to the previous\n"
         "indentation level as specified by lvlwidth.\n"
     );

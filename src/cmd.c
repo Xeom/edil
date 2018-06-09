@@ -251,7 +251,7 @@ void cmd_print_all(FILE *stream)
           "quotation marks can be used. e.g. `load \"file 1\"`.\n\n"
 
           "Many commands are also bound to shortcut or run on certain key\n"
-          "combinations. A shortcut is where, when you press the key, edil\n"
+          "combinations. A shortcut is where, when you press the key, Edil\n"
           "enters bar mode and the command is inserted into the bar ready to\n"
           "be run. This allows you to specify arguments for the command, or\n"
           "prevents accidentally running the command when you did not mean\n"

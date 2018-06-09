@@ -10,7 +10,7 @@ e.g. `load file1`, and for arguments with spaces inside them,
 quotation marks can be used. e.g. `load "file 1"`.
 
 Many commands are also bound to shortcut or run on certain key
-combinations. A shortcut is where, when you press the key, edil
+combinations. A shortcut is where, when you press the key, Edil
 enters bar mode and the command is inserted into the bar ready to
 be run. This allows you to specify arguments for the command, or
 prevents accidentally running the command when you did not mean
@@ -29,7 +29,7 @@ List of commands
  * [__conffile__](#conffile-command) - _Load a config file_
  * [__copy__](#copy-command) - _Copy the current region_
  * [__cut__](#cut-command) - _Cut the current region_
- * [__decrindent__](#decrindent-command) - _Undent a line_
+ * [__decrindent__](#decrindent-command) - _Un-indent a line_
  * [__discard__](#discard-command) - _Discard the contents of a buffer_
  * [__goto__](#goto-command) - _Go to a specific line and column_
  * [__incrindent__](#incrindent-command) - _Indent a line_
@@ -43,7 +43,7 @@ List of commands
  * [__next__](#next-command) - _Go to the next buffer_
  * [__paste__](#paste-command) - _Paste a buffer_
  * [__prev__](#prev-command) - _Go to the previous buffer_
- * [__quit__](#quit-command) - _Quit edil_
+ * [__quit__](#quit-command) - _Quit Edil_
  * [__remap__](#remap-command) - _Remap a key_
  * [__save__](#save-command) - _Save a buffer to a file_
  * [__saveall__](#saveall-command) - _Save all buffers_
@@ -104,7 +104,7 @@ Prints flags associated with the buffer:
 #### Cd command 
  - Change directory
 
-Change edil's current working directory to one specified as an
+Change Edil's current working directory to one specified as an
 argument. Even if no argument is given, the command returns the
 current working directory.
 
@@ -113,7 +113,7 @@ current working directory.
  - Load a config file
 
 Configuration files are just lists of commands, one on each line,
-that are run by edil. The commands are run just as if they were
+that are run by Edil. The commands are run just as if they were
 typed after pressing `Ctrl+X`. Blank lines, and those starting
 with a `#` symbol are ignored.
 
@@ -122,7 +122,7 @@ run the commands contained in each one. It requires at least one
 argument.
 
 Commands in `~/.edil`, `~/.edil.conf`, `~/.config/edil`, and
-`~/.config/edil.conf` are run by default when edil starts up.
+`~/.config/edil.conf` are run by default when Edil starts up.
 
 
 ---
@@ -141,7 +141,7 @@ This command runs the copy command, and then deletes the region.
 
 ---
 #### Decrindent command 
- - Undent a line
+ - Un-indent a line
 
 Decrease the indentation of the current line to the previous
 indentation level as specified by lvlwidth.
@@ -189,7 +189,7 @@ indentation depth of the current line.
 
 Various indent modes can be set:
  * `spacify` - By default, indentation to a specific depth is
-    achived using tabs as much as possible, and spaces as needed
+    achieved using tabs as much as possible, and spaces as needed
     after the tabs. If spacify mode is enabled, then only spaces
     are used.
  * `auto` - If this mode is active, when the enter key is pressed,
@@ -233,7 +233,7 @@ current buffer, or reload them if they are already loaded.
 The command takes one argument optionally, which is the path of
 a file to associate with the buffer before loading, just as if the
 [associate](#associate-command) command had been run. i.e.
-`load file1` is equivialent to `associate file1` followed by
+`load file1` is equivalent to `associate file1` followed by
 `load`.
 
 If the file specified to the command does not exist, it is created,
@@ -260,7 +260,7 @@ file in the new buffer.
 
 The argument is a filename, which is associated with the buffer
 and loaded to it, just as if the [load](#load-command) command
-had been run. i.e. `new file1` is equivialent to `new` followed
+had been run. i.e. `new file1` is equivalent to `new` followed
 by `load file1`.
 
 If the file does not exist, it is created, and if it is already
@@ -293,10 +293,10 @@ final buffer.
 
 ---
 #### Quit command 
- - Quit edil
+ - Quit Edil
 
-Exit edil, if no buffers are modified. If `!` is given as
-an argument, then edil will exit even if buffers are
+Exit Edil, if no buffers are modified. If `!` is given as
+an argument, then Edil will exit even if buffers are
 modified
 
 ---
@@ -346,7 +346,8 @@ This command takes no arguments
 #### Saveall command 
  - Save all buffers
 
-Performs the equivialent of the [save](#save-command) command to allbuffers, where they are modified, and associated with a file.
+Performs the equivalent of the [save](#save-command) command to all
+buffers, where they are modified, and associated with a file.
 
 This command takes no arguments and returns the number of files
 that have been saved.
@@ -378,7 +379,7 @@ this is not given, the command prints out the current value.
  - Translate a keypress
 
 This command adds a pair of `inp_key`s to the `inp_keytranslate`
-table. When an input key is recieved by the input system, it is
+table. When an input key is received by the input system, it is
 passed through this table, which for example, turns `Ctrl+I` to
 `inp_key_tab`. Making changes to this table can be useful if your
 terminal maps different keys to different codes.

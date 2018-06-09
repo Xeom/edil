@@ -203,7 +203,7 @@ void cmd_conf_init(void)
     CMD_ADD(conffile,
         Load a config file,
         "Configuration files are just lists of commands, one on each line,\n"
-        "that are run by edil. The commands are run just as if they were\n"
+        "that are run by Edil. The commands are run just as if they were\n"
         "typed after pressing `Ctrl+X`. Blank lines, and those starting\n"
         "with a `#` symbol are ignored.\n\n"
 
@@ -212,7 +212,7 @@ void cmd_conf_init(void)
         "argument.\n\n"
 
         "Commands in `~/.edil`, `~/.edil.conf`, `~/.config/edil`, and\n"
-        "`~/.config/edil.conf` are run by default when edil starts up.\n\n"
+        "`~/.config/edil.conf` are run by default when Edil starts up.\n\n"
     );
 
     CMD_ADD(remap,
@@ -274,7 +274,7 @@ void cmd_conf_init(void)
     CMD_ADD(translate,
         Translate a keypress,
         "This command adds a pair of `inp_key`s to the `inp_keytranslate`\n"
-        "table. When an input key is recieved by the input system, it is\n"
+        "table. When an input key is received by the input system, it is\n"
         "passed through this table, which for example, turns `Ctrl+I` to\n"
         "`inp_key_tab`. Making changes to this table can be useful if your\n"
         "terminal maps different keys to different codes.\n\n"
