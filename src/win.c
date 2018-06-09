@@ -174,7 +174,7 @@ void win_out_line(win *w, cur c)
 {
     int      needsfree = 0;
     vec     *line;
-    ssize_t   outlen;
+    ssize_t   outlen, maxlen;
 
     if (win_out_goto(w, &c) == 0) return;
 
@@ -197,8 +197,10 @@ void win_out_line(win *w, cur c)
     }
 
     outlen = (ssize_t)vec_len(line) - c.cn;
-    if (outlen < 0)       outlen = 0;
-    if (outlen > w->cols - c.cn) outlen = w->cols - c.cn;
+    maxlen = win_max_cn(w) + 1      - c.cn;
+
+    if (maxlen < outlen) outlen = maxlen;
+    if (outlen < 0)      outlen = 0;
 
     out_chrs(vec_get(line, c.cn), outlen, c.cn, stdout);
 
