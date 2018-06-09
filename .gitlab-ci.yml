@@ -1,0 +1,22 @@
+image: gcc
+
+stages:
+  - build
+
+build:
+  stage: build
+
+  before_script:
+    - apt update && apt -y install make autoconf
+
+  script:
+    - make all
+
+  artifacts:
+    paths:
+      - bin/edil
+
+  cache:
+    paths:
+      - "*.o"
+      - "*.d"
