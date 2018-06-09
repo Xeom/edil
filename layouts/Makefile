@@ -17,6 +17,15 @@ conf/%.edil.conf: keys/$(DEFAULT).keys keys/%.keys ../bin/edil
 	@mkdir -p conf
 	@../bin/edil --binds | ./gen-remap.py $< $(word 2,$^) > $@
 
-all: $(CONFILES)
+all: $(CONFILES) $(KEYFILES)
+
+clean:
+	@rm gen-xcodes
+	@echo Removed gen-xcodes
+	@rm -f $(CONFILES)
+	@echo Removed config files
+	@rm -f $(KEYFILES)
+	@echo Removed keys files
 
 .DEFAULT_GOAL=all
+.PHONEY=clean all

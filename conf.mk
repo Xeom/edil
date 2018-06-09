@@ -9,6 +9,8 @@ OBJDIR=obj/
 BINDIR=bin/
 DEPDIR=dep/
 
+INSTDIR=/usr/local/bin/
+
 VERSION=0.0.3
 
 WARNINGS=all no-unused-parameter no-switch extra missing-prototypes
@@ -17,4 +19,4 @@ STD=c11
 
 DEFINES=
 
-DEBUG=
+DEBUG=yes
