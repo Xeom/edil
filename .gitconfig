@@ -1,0 +1,6 @@
+# Honestly, it'd be dumb not to put this,
+# so since I can I will. Just run:
+#    git config --local include.path ../.gitconfig
+#
+[core]
+    editor = edil
