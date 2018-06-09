@@ -198,7 +198,7 @@ void win_out_line(win *w, cur c)
 
     outlen = (ssize_t)vec_len(line) - c.cn;
     if (outlen < 0)       outlen = 0;
-    if (outlen > w->cols) outlen = w->cols;
+    if (outlen > w->cols - c.cn) outlen = w->cols - c.cn;
 
     out_chrs(vec_get(line, c.cn), outlen, c.cn, stdout);
 
