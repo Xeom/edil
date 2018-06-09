@@ -28,17 +28,31 @@ file, and so you don't want to override it by loading the contents of the file
 to it. Once a file is associated with a buffer, its contents can be loaded by
 running the load command with no argument.
 
-Edil includes shortcuts to the load and new commands. In order to quickly
+Edil includes shortcuts to the load and new commmands. In order to quickly
 run the load command, press `Esc+a`, and to quickly run the new command, press
 `Esc+n`.
 
-All these methods of opening files achieve the same thing. In fact, running
-`edil filename` is equivalent to the command `edil -c "new filename"`, which
-is equivalent to running Edil and then running the command `new filename`.
-This command is equivalent to running the commands `new`, to create a new
+All these methods of opening files achive the same thing. In fact, running
+`edil filename` is equivient to the command `edil -c "new filename"`, which
+is equivilent to running Edil and then running the command `new filename`.
+This command is equivilent to running the commands `new`, to create a new
 buffer, and then `load filename` to load the file into it. This is also
-equivalent to running the commands `new`, `associate filename`, and then
+equivilent to running the commands `new`, `associate filename`, and then
 `load`.
+
+Buffers
+-------
+
+You can have many buffers open at once in Edil, each associated with different
+files. Some buffers such as the command log and clipboard have special purposes.
+You can switch between the buffers by running the
+[next](/doc/commands.md#next-command) and
+[prev commands](/doc/commands#prev-command), which can be easily accessed with
+the shortcuts `Ctrl+N` and `Ctrl+V` respectively.
+
+If you no longer want to edit a buffer, you can close it using the
+[kill](/doc/commands#kill-command) command. You can force-kill a buffer that
+was modified with the command `kill !`.
 
 Editing Files
 -------------
