@@ -127,7 +127,7 @@ void bar_get_content(bar *b, vec *cont)
         else
             c += 1;
 
-        if (*(c + 1) == '\0')
+        if (*c == '\0')
             chr_from_mem(cont, str,  c - str);
 
         while (colind < vec_len(cont))
