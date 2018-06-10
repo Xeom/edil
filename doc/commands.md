@@ -24,6 +24,7 @@ List of commands
 ----------------
  * [__associate__](#associate-command) - _Associate a buffer with a file_
  * [__autoindent__](#autoindent-command) - _Automatically indent a line_
+ * [__basebar__](#basebar-command) - _Set the window base-bar string_
  * [__bufinfo__](#bufinfo-command) - _Display information about the current buffer_
  * [__cd__](#cd-command) - _Change directory_
  * [__conffile__](#conffile-command) - _Load a config file_
@@ -81,6 +82,64 @@ with the current buffer is returned.
 
 Set the indent of the current line to the indentation of the
 previous line.
+
+---
+#### Basebar command 
+ - Set the window base-bar string
+
+Sets the string displayed in the window bar. This by default shows
+the name of the current buffer, the current cursor position and
+the current mode. Escape sequences prefixed with '%' are used here
+to set the content of the bar:
+
+| Sequence | Produces |
+| -------- | -------- |
+| %L, %C | The line and column of the primary cursor.|
+| %l, %c | The line and column of the secondary cursor.|
+| %w, %h | The width and height of the window.|
+| %x, %y | The x and y position of the window.|
+| %b     | The number of lines in the current buffer.|
+| %p     | The percentage of lines in the current buffer below the topof the page. |
+| %n     | The name of the current buffer.|
+| %m     | The name of the current mode.|
+| %f     | The full filename of the current file.|
+| %X     | Blank, this is useful for terminating colours.|
+| %%     | A literal percentage sign.|
+
+Colours can also be specified, in the format `%fg,bg,attrs`. The
+background and attributes are optional however, making `%fg` and
+`%fg,bg` valid sequences. All three options are specified by numbers
+that correspond to the enums defined in [inc/col.h](/inc/col.h).
+
+For the background and foreground, the following are the the colour
+codes:
+
+| Code | Colour |
+| ---- | ------ |
+| 0    | Black  |
+| 1    | Red    |
+| 2    | Green  |
+| 3    | Yellow |
+| 4    | Blue   |
+| 5    | Magenta|
+| 6    | Cyan   |
+| 7    | White  |
+| 16   | None   |
+
+Adding 8 to one of the first 8 colour codes will produce a brighter
+version of that colour. For example, Black (0) plus 8 produces
+grey.
+
+For the attributes, the following values may be summed:
+
+| Code | Effect     |
+| ---- | ------     |
+| 1    | Bold       |
+| 2    | Underlined |
+| 4    | Inverted   |
+| 8    | Blinking   |
+The default basebar is ' **%n** **%8**│**%0**
+**%L**·**%C** **%8**│**%0** **%m**'.
 
 ---
 #### Bufinfo command 

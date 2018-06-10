@@ -135,7 +135,7 @@ void out_chrs(chr *chrs, size_t n, size_t off, FILE *f)
             prevcol = c->fnt;
         }
         else if (!chr_is_blank(c))
-        {       
+        {
             currcol = c->fnt;
             if (memcmp(&currcol, &prevcol, sizeof(col)) != 0)
                 col_print(currcol, f);
