@@ -1,3 +1,5 @@
+#include "chr.h"
+
 #include "col.h"
 
 col col_default = { .fg = col_none, .bg = col_none, .attr = 0 };
@@ -25,6 +27,45 @@ int col_parse(col *c, char **str)
     *str += len[matched - 1];
 
     return 0;
+}
+
+void col_parse_string(col c, vec *chrs, char *str)
+{
+    char *seg;
+    size_t colind;
+    col prev;
+
+    prev   = c;
+    colind = vec_len(chrs);
+    seg    = str;
+
+    while (*str)
+    {
+        if (*str == '%')
+        {
+            chr_from_mem(chrs, seg, str++ - seg);
+            col_parse(&c, &(str));
+            seg = str;
+        }
+        else
+            ++str;
+
+        if (*(str) == '\0')
+        {
+            chr_from_mem(chrs, seg, str - seg);
+
+        }
+
+        while (colind < vec_len(chrs))
+        {
+            chr *ch;
+            ch = vec_get(chrs, colind);
+            ch->fnt = prev;
+            colind += 1;
+        }
+
+        prev = c;
+    }
 }
 
 col col_update(col c, col_desc d)
