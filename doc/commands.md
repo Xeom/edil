@@ -121,8 +121,9 @@ This command can be passed multiple paths as arguments, and will
 run the commands contained in each one. It requires at least one
 argument.
 
-Commands in `~/.edil`, `~/.edil.conf`, `~/.config/edil`, and
-`~/.config/edil.conf` are run by default when Edil starts up.
+Commands in `~/.edil`, `~/.edil.conf`, `~/.edil.remap`,
+`~/.config/edil`, `~/.config/edil.conf`, and `~/config/edil.remap`
+are run by default when Edil starts up.
 
 
 ---

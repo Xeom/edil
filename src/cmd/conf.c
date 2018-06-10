@@ -16,8 +16,10 @@ static char *conf_default_files[] =
 {
     ".edil.conf",
     ".edil",
+    ".edil.remap",
     ".config/edil",
-    ".config/edil.conf"
+    ".config/edil.conf",
+    ".config/edil.remap"
 };
 
 void conf_run_file(file *f, win *w)
@@ -211,8 +213,9 @@ void cmd_conf_init(void)
         "run the commands contained in each one. It requires at least one\n"
         "argument.\n\n"
 
-        "Commands in `~/.edil`, `~/.edil.conf`, `~/.config/edil`, and\n"
-        "`~/.config/edil.conf` are run by default when Edil starts up.\n\n"
+        "Commands in `~/.edil`, `~/.edil.conf`, `~/.edil.remap`,\n"
+        "`~/.config/edil`, `~/.config/edil.conf`, and `~/config/edil.remap`\n"
+        "are run by default when Edil starts up.\n\n"
     );
 
     CMD_ADD(remap,
