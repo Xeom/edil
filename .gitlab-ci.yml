@@ -1,18 +1,12 @@
 image: gcc
 
 stages:
-  - setup
   - build-dbg
   - build
 
-setup:
-  stage: setup
-  script:
-    - apt-get update  -qq
-    - apt-get install -qq -y make
-
 build-dbg:
   stage: build-dbg
+
   script:
     - make all -B DEBUG=yes
 
@@ -23,6 +17,7 @@ build-dbg:
 
 build:
   stage: build
+
   script:
     - make all -B DEBUG=no
 
