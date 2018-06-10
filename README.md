@@ -5,6 +5,8 @@ Edil in 2015, however that project eventually turned info a
 disaster. This is a second attempt, emphasising making everything
 simple and lightweight.
 
+![EDIL](/doc/img/title.png)
+
 ## Motivation
 
 As a programmer, I spend a lot of my time using text editors.
