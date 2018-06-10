@@ -135,7 +135,6 @@ CMD_FUNCT(conffile,
         file_kill(&f);
     }
 )
-#include <stdio.h>
 
 CMD_FUNCT(remap,
     CMD_MIN_ARGS(3);
@@ -198,6 +197,23 @@ CMD_FUNCT(translate,
     inp_key_name(toval,   toname,   sizeof(toname));
 
     CMD_RTN_FMT("Translating (%s) keys to (%s) keys", fromname, toname);
+)
+
+CMD_FUNCT(basebar,
+    bar *base;
+
+    CMD_MIN_ARGS(0);
+    CMD_MAX_ARGS(1);
+
+    base = &(w->basebar);
+
+    if (CMD_NARGS)
+    {
+        CMD_ARG_STR(1, fmt);
+        bar_set_format(base, vec_first(fmt));
+    }
+
+    CMD_RTN_FMT("Basebar format: '%s'", base->format);
 )
 
 void cmd_conf_init(void)
@@ -289,5 +305,64 @@ void cmd_conf_init(void)
         "the relevant key name and code as a hexadecimal number. Internally\n"
         "these values are stored in the `inp_key` enum, defined in\n"
         "the [inp header](/inc/inp.h).\n\n"
+    );
+
+    CMD_ADD(basebar,
+        Set the window base-bar string,
+        "Sets the string displayed in the window bar. This by default shows\n"
+        "the name of the current buffer, the current cursor position and\n"
+        "the current mode. Escape sequences prefixed with '%' are used here\n"
+        "to set the content of the bar:\n\n"
+
+        "| Sequence | Produces |\n"
+        "| -------- | -------- |\n"
+        "| %L, %C | The line and column of the primary cursor.|\n"
+        "| %l, %c | The line and column of the secondary cursor.|\n"
+        "| %w, %h | The width and height of the window.|\n"
+        "| %x, %y | The x and y position of the window.|\n"
+        "| %b     | The number of lines in the current buffer.|\n"
+        "| %p     | The percentage of lines in the current buffer below the top"
+        "of the page. |\n"
+        "| %n     | The name of the current buffer.|\n"
+        "| %m     | The name of the current mode.|\n"
+        "| %f     | The full filename of the current file.|\n"
+        "| %X     | Blank, this is useful for terminating colours.|\n"
+        "| %%     | A literal percentage sign.|\n\n"
+
+        "Colours can also be specified, in the format `%fg,bg,attrs`. The\n"
+        "background and attributes are optional however, making `%fg` and\n"
+        "`%fg,bg` valid sequences. All three options are specified by numbers\n"
+        "that correspond to the enums defined in [inc/col.h](/inc/col.h).\n\n"
+
+        "For the background and foreground, the following are the the colour\n"
+        "codes:\n\n"
+
+        "| Code | Colour |\n"
+        "| ---- | ------ |\n"
+        "| 0    | Black  |\n"
+        "| 1    | Red    |\n"
+        "| 2    | Green  |\n"
+        "| 3    | Yellow |\n"
+        "| 4    | Blue   |\n"
+        "| 5    | Magenta|\n"
+        "| 6    | Cyan   |\n"
+        "| 7    | White  |\n"
+        "| 16   | None   |\n\n"
+
+        "Adding 8 to one of the first 8 colour codes will produce a brighter\n"
+        "version of that colour. For example, Black (0) plus 8 produces\n"
+        "grey.\n\n"
+
+        "For the attributes, the following values may be summed:\n\n"
+
+        "| Code | Effect     |\n"
+        "| ---- | ------     |\n"
+        "| 1    | Bold       |\n"
+        "| 2    | Underlined |\n"
+        "| 4    | Inverted   |\n"
+        "| 8    | Blinking   |\n\n"
+
+        "The default basebar is ' **%n** **%8**\xe2\x94\x82**%0**\n"
+        "**%L**\xc2\xb7**%C** **%8**\xe2\x94\x82**%0** **%m**'.\n"
     );
 }
