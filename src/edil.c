@@ -29,19 +29,36 @@
 # define COMPILETIME never
 #endif
 
-static char *welcome = "\n"
-"          Welcome, to           .\n"
-"       _____   ___      __   __\n"
-"      / ___/  / _ \\    / /  / /\n"
-"     / /_    / / | |  / /  / /\n"
-"    / __/   / / / /  / /  / /\n"
-"   / /__   / /_/ /  / /  / /_\n"
-"  /____/  /_____/  /_/  /____/\n"
-"                      v" STRIFY(VERSION) "\n\n"
-
-"     My text editor,\n"
-"          by Francis Wharf\n\n"
-"    - Copyright 2017\n";
+static char *welcome[] =
+{
+    "",
+    "%1    ________________________________",
+    "%1   / %11_______ %10_______   %12___ %13___      %1\\",
+    "%1  / %11/\\   ___\\%10\\   _  '-.%12\\  \\%13\\  \\      %1\\",
+    "%1 |  %11\\ \\  \\____%10\\  \\ '.  \\%12\\  \\%13\\  \\      %1\\",
+    "%1  \\  %11\\ \\   ___\\%10\\  \\  \\  \\%12\\  \\%13\\  \\      %1\\",
+    "%1   \\  %11\\ \\  \\____%10\\  '_'  |%12 \\  \\%13\\  \\____  %1\\",
+    "%1    \\  %11\\ \\______\\%10\\_____/%12 \\ \\__\\%13\\______\\  %1|",
+    "%1     \\  %11\\/______/%10/____/%12   \\/__/%13/______/ %1/",
+    "%1      \\________________________________/",
+    "%8      v" STRIFY(VERSION),
+    "",
+    "             My Editor,",
+    "                 By %15Francis Wharf",
+    "",
+    "             %8- Copyright 2018",
+    "",
+    " For help, please consult the %15README.md%16 file",
+    " included in the repository. The %15docs/%16 directory",
+    " in the repository includes various documentation",
+    " on commands, keybindings etc.",
+    "",
+    " The file %15docs/editing.md%16 in particular provides",
+    " a quick guide to starting using %3E%2d%4i%5l%16 as an editor",
+    "",
+    " Press %15Ctrl%16+%15Esc%16+%15K%16 and then %15enter%16 to exit, or press",
+    " %15Ctrl%16+%15X%16, type %3'%11quit !%3'%16 and press %15enter%16."
+};
 
 static char *help = "\n"
 "Edil - My text editor. v" STRIFY(VERSION) "\n\n"
@@ -74,7 +91,7 @@ static char *version =
 #define argerror(error) #error ".\n" \
     "Try 'edil --help' for usage information.\n"
 
-static void load_string(win *w, char *str);
+static void load_lines(win *w, int n, char **str);
 static void init_all(void);
 static void kill_all(void);
 static void loop(void);
@@ -235,24 +252,33 @@ static void kill_all(void)
     ring_kill();
 }
 
-static void load_string(win *w, char *str)
+static void load_lines(win *w, int n, char **str)
 {
-    int fds[2];
-    file f;
+    vec chrs;
+    int ind;
+
+    vec_init(&chrs, sizeof(chr));
 
     file_clr_win(w);
+    win_reset(w);
 
-    if (pipe(fds) != 0)
-        return;
+    w->pri = (cur){0, 0};
 
-    if (write(fds[1], str, strlen(str)) != (int)strlen(str))
-        return;
+    for (ind = 0; ind < n; ++ind)
+    {
+        vec_clr(&chrs);
 
-    close(fds[1]);
+        col_parse_string(
+            (col){ .fg = col_none, .bg = col_none },
+            &chrs,
+            str[ind]
+        );
 
-    file_init_pipe(&f, fdopen(fds[0], "r"));
-    file_load(&f, w->b);
-    file_close(&f);
+        cur_ins_win(w, &chrs);
+        cur_enter_win(w);
+    }
+
+    vec_kill(&chrs);
 }
 
 static void loop(void)
@@ -275,27 +301,6 @@ static void loop(void)
     }
 }
 
-static void colour_edil(buf *b)
-{
-    size_t ln;
-
-    col_desc textfnt = { .fg = col_red | col_bright, .bg = col_null };
-    col_desc linefnt = { .fg = col_red, .bg = col_null, .set = col_under };
-    col_desc copyfnt = { .fg = col_black | col_bright, .bg = col_null };
-
-
-    for (ln = 2; ln < 8; ln++)
-    {
-        cur loc = { .ln = ln };
-        buf_setcol(b, loc, buf_line_len(b, loc), textfnt);
-    }
-
-    buf_setcol(b, (cur){ .cn = 8, .ln = 1 }, 25, linefnt);
-    buf_setcol(b, (cur){ .cn = 1, .ln = 8 }, 27, linefnt);
-
-    buf_setcol(b, (cur){ .ln = 13 }, 20, copyfnt);
-}
-
 int main(int argc, char **argv)
 {
     buf *b;
@@ -314,19 +319,17 @@ int main(int argc, char **argv)
 
     b = ring_new();
     buf_set_name(b, "'welcome'");
-    b->flags |= buf_readonly | buf_nofile | buf_nokill;
 
     win_init(&w, b);
 
     win_cur = &w;
 
-    load_string(&w, welcome);
-    colour_edil(b);
     w.cols = out_cols;
     w.rows = out_rows - 1;
 
-    w.pri = (cur){0, 14};
-    w.sec = (cur){0, 14};
+    load_lines(&w, sizeof(welcome)/sizeof(char *), welcome);
+    b->flags |= buf_readonly | buf_nofile | buf_nokill;
+    b->flags &= ~buf_modified;
 
     run_startup_cmd();
 
