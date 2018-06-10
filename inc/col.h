@@ -53,4 +53,6 @@ col col_update(col c, col_desc d);
 
 void col_print(col c, FILE *f);
 
+int col_parse(col *c, char **str);
+
 #endif

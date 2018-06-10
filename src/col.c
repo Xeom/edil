@@ -2,6 +2,31 @@
 
 col col_default = { .fg = col_none, .bg = col_none, .attr = 0 };
 
+int col_parse(col *c, char **str)
+{
+    int matched, len[3];
+    unsigned int fg, bg;
+    unsigned int attrs;
+
+    matched = sscanf(
+        *str,
+        "%u%n,%u%n,%u%n",
+        &fg, &len[0], &bg, &len[1], &attrs, &len[2]
+    );
+
+    switch (matched)
+    {
+    case 0: return -1;
+    case 3: c->attr = attrs;
+    case 2: c->bg   = bg;
+    case 1: c->fg   = fg;
+    }
+
+    *str += len[matched - 1];
+
+    return 0;
+}
+
 col col_update(col c, col_desc d)
 {
     c.attr &= ~(d.del);
