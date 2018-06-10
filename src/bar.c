@@ -4,24 +4,7 @@
 #include "bar.h"
 #include "bind.h"
 
-#define FMT_ARGS \
-    pri.ln + 1, pri.cn + 1, \
-    sec.ln + 1, sec.cn + 1, \
-    w->cols,    w->rows,    \
-    w->scrx,    w->scry,    \
-    buf_get_name(buf),      \
-    bind_info_curr()->name
-
-#define ARG_PRI_LN "%1$ld"
-#define ARG_PRI_CN "%2$ld"
-#define ARG_SEC_LN "%3$ld"
-#define ARG_SEC_CN "%4$ld"
-#define ARG_COLS   "%5$ld"
-#define ARG_ROWS   "%6$ld"
-#define ARG_SCRX   "%7$ld"
-#define ARG_SCRY   "%8$ld"
-#define ARG_NAME   "%9$s"
-#define ARG_MODE   "%10$s"
+static void bar_append_format(bar *b, vec *cont, char n);
 
 chr bar_blank_chr = {
     .utf8 = "\xe2\x94\x80", .fnt = { .fg = col_black, .bg = col_black | col_bright }
@@ -39,7 +22,7 @@ col_desc bar_typed_col = {
     .inv = col_rev, .fg = col_null, .bg = col_null
 };
 
-char *bar_format_default = " " ARG_NAME " " ARG_PRI_LN "\xc2\xb7" ARG_PRI_CN " " ARG_MODE " ";
+char *bar_format_default = " %n %L\xc2\xb7%C %p%% %m ";
 
 void bar_init(bar *b, win *w)
 {
@@ -71,19 +54,69 @@ void bar_set_format(bar *b, char *fmt)
     strcpy(b->format, fmt);
 }
 
-void bar_get_content(bar *b, vec *cont)
+static void bar_append_format(bar *b, vec *cont, char n)
 {
-    cur pri, sec;
-    buf *buf;
     win *w;
+    buf *bf;
+    cur pri, sec;
 
-    w   = b->w;
-    buf = w->b;
+    w  = b->w;
+    bf = w->b;
 
     pri = w->pri;
     sec = w->sec;
 
-    chr_format(cont, b->format, FMT_ARGS);
+    int percent;
+
+    switch (n)
+    {
+    case 'L': chr_format(cont, "%ld", pri.ln);  break;
+    case 'C': chr_format(cont, "%ld", pri.cn);  break;
+    case 'l': chr_format(cont, "%ld", sec.ln);  break;
+    case 'c': chr_format(cont, "%ld", sec.cn);  break;
+    case 'w': chr_format(cont, "%ld", w->cols); break;
+    case 'r': chr_format(cont, "%ld", w->rows); break;
+    case 'x': chr_format(cont, "%ld", w->scrx); break;
+    case 'y': chr_format(cont, "%ld", w->scry); break;
+
+    case 'b': chr_format(cont, "%ld", buf_len(bf)); break;
+    case 'p':
+        percent = (100 *(w->scry + w->rows)) / (buf_len(bf));
+        if (percent > 100) percent = 100;
+        chr_format(cont, "%d", percent);
+        break;
+
+    case 'n': chr_format(cont, "%s",  buf_get_name(bf));        break;
+    case 'm': chr_format(cont, "%s",  bind_info_curr()->name);  break;
+    case 'f': chr_format(cont, "%s",  file_name(&(bf->finfo))); break;
+
+    case '%': chr_from_str(cont, "%");             break;
+    }
+}
+
+void bar_get_content(bar *b, vec *cont)
+{
+    char *c, *str;
+    int escaped = 0;
+    str = c = b->format;
+    for (; *c; ++c)
+    {
+        if (escaped)
+        {
+            bar_append_format(b, cont, *c);
+            str = c + 1;
+            escaped = 0;
+        }
+        else if (*c == '%')
+        {
+            chr_from_mem(cont, str, c - str);
+            escaped = 1;
+        }
+        else if (*(c + 1) == '\0')
+        {
+            chr_from_mem(cont, str, 1 + c - str);
+        }
+    }
 }
 
 void bar_ins(bar *b, vec *chrs)

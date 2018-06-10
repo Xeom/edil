@@ -61,7 +61,7 @@ CMD_FUNCT(prev,
 CMD_FUNCT(kill,
     int force, ind;
     size_t argind;
-    buf *new;
+    buf *new = NULL;
     force = 0;
 
     CMD_TMP_VEC(killbufs, buf *);
