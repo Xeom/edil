@@ -1,22 +1,32 @@
 image: gcc
 
 stages:
+  - setup
+  - build-dbg
   - build
 
-build:
-  stage: build
-
-  before_script:
-    - apt update && apt -y install make autoconf
-
+setup:
+  stage: setup
   script:
-    - make all
+    - apt-get update  -qq
+    - apt-get install -qq -y make
+
+build-dbg:
+  stage: build-dbg
+  script:
+    - make all -B DEBUG=yes
 
   artifacts:
+    name: "edil-dbg"
     paths:
       - bin/edil
 
-  cache:
+build:
+  stage: build
+  script:
+    - make all -B DEBUG=no
+
+  artifacts:
+    name: "edil"
     paths:
-      - "*.o"
-      - "*.d"
+      - bin/edil

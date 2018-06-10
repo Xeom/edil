@@ -18,5 +18,3 @@ WARNINGS=all no-unused-parameter no-switch extra missing-prototypes
 STD=c11
 
 DEFINES=
-
-DEBUG=yes
