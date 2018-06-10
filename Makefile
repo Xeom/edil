@@ -8,6 +8,7 @@ ifeq ($(DEBUG), yes)
   FLAGS+=-g
   VERSION:=$(VERSION)-debug
 else
+  WARNINGS+=error
   FLAGS+=-O3
 endif
 
