@@ -7,7 +7,7 @@ SRCDIR=src/
 INCDIR=inc/
 OBJDIR=obj/
 BINDIR=bin/
-DEPDIR=dep/
+DEPFILE=deps.d
 
 INSTDIR=/usr/local/bin/
 
