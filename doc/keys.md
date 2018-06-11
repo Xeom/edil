@@ -62,6 +62,8 @@ Bar mode
 | `441` - _Ctrl+A_       | mode_buf       | Switch to buffer mode                             |
 | `44b` - _Ctrl+K_       | mode_kcd       | Switch to keycode mode                            |
 | `458` - _Ctrl+X_       | mode_buf       | Switch to buffer mode                             |
+| `101` - _up_           | bar_mv_u       | Scroll back one place                             |
+| `102` - _down_         | bar_mv_d       | Scroll forward one place                          |
 | `103` - _right_        | bar_mv_r       | Move bar cursor right                             |
 | `104` - _left_         | bar_mv_l       | Move bar cursor left                              |
 | `10e` - _del_          | bar_del        | Delete forwards in bar                            |

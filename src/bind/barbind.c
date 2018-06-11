@@ -5,6 +5,9 @@
 BIND_FUNCT(bar_mv_l, bar_move(&(w->basebar), -1))
 BIND_FUNCT(bar_mv_r, bar_move(&(w->basebar),  1))
 
+BIND_FUNCT(bar_mv_d, bar_scrollback(&(w->basebar), 1))
+BIND_FUNCT(bar_mv_u, bar_scrollback(&(w->basebar), -1))
+
 BIND_FUNCT(bar_enter,
     bar_run(&(w->basebar));
     bind_mode = bind_mode_buf
@@ -17,6 +20,8 @@ void bind_barbind_init(void)
 {
     BIND_ADD(bar_mv_l, Move bar cursor left);
     BIND_ADD(bar_mv_r, Move bar cursor right);
+    BIND_ADD(bar_mv_u, Scroll back one place);
+    BIND_ADD(bar_mv_d, Scroll forward one place);
 
     BIND_ADD(bar_enter, Submit contents of bar);
     BIND_ADD(bar_back,  Delete backwards in bar);

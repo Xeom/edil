@@ -3,10 +3,10 @@
 
 #include "bind/barmap.h"
 
+
 void bind_barmap_init()
 {
-    BIND_MAP(bar, bar_mv_l, inp_key_left);
-    BIND_MAP(bar, bar_mv_r, inp_key_right);
+    BIND_MAP_UDLR(bar, bar_mv, BIND_KEYS_UDLR(0));
 
     BIND_MAP(bar, bar_enter, inp_key_enter);
     BIND_MAP(bar, bar_back,  inp_key_back);
