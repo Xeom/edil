@@ -13,7 +13,7 @@ INSTDIR=/usr/local/bin/
 
 VERSION=0.1.0
 
-WARNINGS=all no-unused-parameter no-switch extra missing-prototypes no-implicit-fallthrough
+WARNINGS=all no-unused-parameter no-switch extra missing-prototypes
 
 STD=c11
 
