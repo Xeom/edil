@@ -101,9 +101,16 @@ void *circvec_push(circvec *cv)
 
 void *circvec_get(circvec *cv, ssize_t ind)
 {
-    size_t len;
+    size_t len, used;
     vec *v;
     v = &(cv->v);
+
+    used = circvec_get_used(cv);
+    if (ind >= (ssize_t)used)
+        return NULL;
+
+    if (ind < -(ssize_t)used)
+        return NULL;
 
     if (ind >= 0)
         ind += cv->del;
