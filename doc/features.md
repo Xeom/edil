@@ -37,7 +37,7 @@ for me to use.
 - [x] Efficient updates to the screen for buffers.
 - [x] Commands and modes using both cursors.
 
-0.0.4
+0.1.0
 -----
 
 This version is focussed on making the editor usable for me, and for
@@ -66,15 +66,23 @@ It's by far the biggest update so far, but is the most important.
 - [x] Added a file.c, with functions for managing files easily.
 - [x] Command log buffer.
 
-0.0.5
+0.2.0
 -----
 
-- [ ] Checking file modification times.
 - [ ] Command bar scrollback.
-- [ ] More efficient rendering of window bars.
-- [ ] "Are you sure?" messages.
-- [ ] Block navigation commands.
 - [ ] Long cursor mode.
+- [ ] Checking file modification times.
+
+0.3.0
+-----
+
+- [ ] Block navigation commands.
+- [ ] "Are you sure?" messages.
+
+0.4.0
+-----
+
+- [ ] More efficient rendering of window bars.
 - [ ] Support for multiple windows.
 
 1.0.0
