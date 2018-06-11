@@ -138,6 +138,7 @@ For the attributes, the following values may be summed:
 | 2    | Underlined |
 | 4    | Inverted   |
 | 8    | Blinking   |
+
 The default basebar is ' **%n** **%8**│**%0**
 **%L**·**%C** **%8**│**%0** **%m**'.
 

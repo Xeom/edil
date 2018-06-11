@@ -4,6 +4,7 @@
 #include "bar.h"
 #include "bind.h"
 
+
 static int bar_append_format(bar *b, vec *cont, char **str);
 
 chr bar_blank_chr = {
@@ -32,7 +33,8 @@ void bar_init(bar *b, win *w)
     b->w   = w;
     b->cb  = NULL;
 
-    vec_init(&(b->typed),  sizeof(chr));
+    circvec_init(&(b->scrollback), sizeof(vec), 5);
+    bar_scrollback_new(b);
     vec_init(&(b->prompt), sizeof(chr));
 
     b->format = NULL;
@@ -41,11 +43,13 @@ void bar_init(bar *b, win *w)
 
 void bar_kill(bar *b)
 {
-    vec_kill(&(b->typed));
+    vec_kill(b->typed);
     vec_kill(&(b->prompt));
 
     free(b->format);
 }
+
+/* Functions for generating the bar information */
 
 void bar_set_format(bar *b, char *fmt)
 {
@@ -142,9 +146,11 @@ void bar_get_content(bar *b, vec *cont)
     }
 }
 
+/* Functions for the bar cursor */
+
 void bar_ins(bar *b, vec *chrs)
 {
-    vec_ins(&(b->typed), b->ind, vec_len(chrs), vec_first(chrs));
+    vec_ins(b->typed, b->ind, vec_len(chrs), vec_first(chrs));
     b->ind += vec_len(chrs);
 
     bar_out(b);
@@ -162,7 +168,7 @@ void bar_back(bar *b)
 void bar_del(bar *b)
 {
     vec *typ;
-    typ = &(b->typed);
+    typ = b->typed;
 
     if (b->ind >= (int)vec_len(typ))
         return;
@@ -176,7 +182,7 @@ void bar_del(bar *b)
 void bar_move(bar *b, int n)
 {
     int len;
-    len = vec_len(&(b->typed));
+    len = vec_len(b->typed);
 
     b->ind += n;
 
@@ -188,22 +194,80 @@ void bar_move(bar *b, int n)
 
 void bar_run(bar *b)
 {
+    bar_scrollback_new(b);
+
     if (b->cb)
-        b->cb(b->w, &(b->typed));
+        b->cb(b->w, b->typed);
 
     bar_cancel(b);
 }
 
 void bar_cancel(bar *b)
 {
+    bar_scrollback_reset(b);
+
+    vec_clr(b->typed);
     vec_clr(&(b->prompt));
-    vec_clr(&(b->typed));
 
     b->ind = 0;
     b->cb  = NULL;
 
     bar_out(b);
 }
+
+void bar_scrollback(bar *b, int dir)
+{
+    circvec *scr;
+    int used;
+
+    scr = &(b->scrollback);
+
+    b->scrind += dir;
+    used = circvec_get_used(scr);
+
+    if (b->scrind < 0)     b->scrind = 0;
+    if (b->scrind >= used) b->scrind = used - 1;
+
+    b->typed = circvec_get(scr, b->scrind);
+}
+
+void bar_scrollback_new(bar *b)
+{
+    circvec *scr;
+    vec *v;
+
+    scr = &(b->scrollback);
+
+    v = circvec_get(scr, -1);
+
+    if (v && v != b->typed)
+        vec_cpy(v, b->typed);
+
+    if (v && vec_len(v) == 0)
+        return;
+
+    if (circvec_full(scr))
+    {
+        v = circvec_push(scr);
+        vec_clr(v);
+    }
+    else
+    {
+        v = circvec_push(scr);
+        vec_init(v, sizeof(chr));
+    }
+}
+
+void bar_scrollback_reset(bar *b)
+{
+    circvec *scr;
+    scr = &(b->scrollback);
+
+    b->scrind = circvec_get_used(scr) - 1;
+    b->typed  = circvec_get(scr, b->scrind);
+}
+
+/* Create a bar */
 
 void bar_query(bar *b, vec *prompt, void (*cb)(win *w, vec *chrs))
 {
@@ -214,6 +278,8 @@ void bar_query(bar *b, vec *prompt, void (*cb)(win *w, vec *chrs))
 
     bar_out(b);
 }
+
+/* Render the bar */
 
 void bar_out(bar *b)
 {
@@ -226,7 +292,7 @@ void bar_out(bar *b)
 
     w = b->w;
 
-    typedlen = vec_len(&(b->typed));
+    typedlen = vec_len(b->typed);
 
     bar_get_content(b, &chrs);
     ind = vec_len(&chrs);
@@ -237,7 +303,7 @@ void bar_out(bar *b)
     for (; ind < len; ind++)
         chr_set_cols(vec_get(&chrs, ind), bar_prompt_col);
 
-    vec_cpy(&chrs, &(b->typed));
+    vec_cpy(&chrs, b->typed);
     if (typedlen && (int)typedlen != b->ind)
         vec_app(&chrs, &CHR(" "));
 

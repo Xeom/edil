@@ -77,6 +77,19 @@ extern vec bind_all;
         bind_remap_str(bind_mode_ ## _mode, _key, #_name); \
     }
 
+#define _BIND_MAP_UDLR(mode, bind, u, d, l, r) \
+    BIND_MAP(mode, bind ## _u, u); \
+    BIND_MAP(mode, bind ## _d, d); \
+    BIND_MAP(mode, bind ## _l, l); \
+    BIND_MAP(mode, bind ## _r, r);
+
+#define BIND_MAP_UDLR(mode, bind, ...) \
+    _BIND_MAP_UDLR(mode, bind, __VA_ARGS__)
+
+#define BIND_KEYS_UDLR(arg) \
+    inp_key_up   | (arg), inp_key_down  | (arg), \
+    inp_key_left | (arg), inp_key_right | (arg)
+
 /* This is called by the ui after a long string of characters. *
  * It tells the binding system that it needs to stop buffering *
  * actions and do everything.                                  */
