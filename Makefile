@@ -9,7 +9,7 @@ ifeq ($(DEBUG), yes)
   VERSION:=$(VERSION)-debug
 else
   WARNINGS+=error
-  FLAGS+=-O3
+  FLAGS+=-O2
 endif
 
 DFLAGS=$(addprefix -D, $(DEFINES)) \
