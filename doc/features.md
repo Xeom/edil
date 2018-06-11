@@ -37,7 +37,7 @@ for me to use.
 - [x] Efficient updates to the screen for buffers.
 - [x] Commands and modes using both cursors.
 
-0.1.0
+0.1.0 (Complete)
 -----
 
 This version is focussed on making the editor usable for me, and for
