@@ -1,6 +1,6 @@
 #if !defined(BAR_H)
 # define BAR_H
-# include "vec.h"
+# include "circvec.h"
 
 typedef struct bar_s bar;
 
@@ -11,9 +11,10 @@ typedef struct win_s win;
 struct bar_s
 {
     char *format;
-    vec   typed;
+    vec  *typed;
+    circvec scrollback;
     vec   prompt;
-    int   ind;
+    int   ind, scrind;
     win  *w;
     void (*cb)(win *w, vec *chrs);
 };
@@ -43,5 +44,11 @@ void bar_cancel(bar *b);
 void bar_query(bar *b, vec *prompt, void (*cb)(win *w, vec *chrs));
 
 void bar_out(bar *b);
+
+void bar_scrollback(bar *b, int dir);
+
+void bar_scrollback_new(bar *b);
+
+void bar_scrollback_reset(bar *b);
 
 #endif
