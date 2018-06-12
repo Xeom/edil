@@ -11,7 +11,7 @@ DEPFILE=deps.d
 
 INSTDIR=/usr/local/bin/
 
-VERSION=0.1.0
+VERSION=0.1.1
 
 WARNINGS=all no-unused-parameter no-switch extra missing-prototypes
 

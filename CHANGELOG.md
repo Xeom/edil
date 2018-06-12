@@ -62,7 +62,10 @@ Upcoming
 
  - [x] Only one dep file is generated.
  - [x] This changelog.
- 
+ - [x] Added save command run binding to Ctrl+S.
+       (perhaps this means in a later version we remove Esc+s,
+       or make Esc+s saveall instead of Esc+S)
+
 0.2.0
 -----
 
