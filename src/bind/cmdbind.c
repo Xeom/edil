@@ -14,13 +14,13 @@ static void bind_cmd_shortcut(char *str, win *w);
     BIND_FUNCT(cmd_ ## _cmd, bind_cmd_shortcut(#_cmd " ", w))
 
 #define RCUT(_cmd) \
-    BIND_FUNCT(cmd_ ## _cmd, bind_cmd_shortcut_run(#_cmd, w))
+    BIND_FUNCT(cmd_r_ ## _cmd, bind_cmd_shortcut_run(#_cmd, w))
 
 #define SCUT_ADD(_cmd) \
     BIND_ADD(cmd_ ## _cmd, Shortcut for _cmd command)
 
 #define RCUT_ADD(_cmd) \
-    BIND_ADD(cmd_ ## _cmd, Run _cmd command)
+    BIND_ADD(cmd_r_ ## _cmd, Run _cmd command)
 
 SCUT(new)
 SCUT(load)
@@ -31,11 +31,12 @@ SCUT(saveall)
 
 RCUT(swap)
 RCUT(snap)
-RCUT(lineify)
+RCUT(save)
 RCUT(next)
 RCUT(prev)
 RCUT(copy)
 RCUT(paste)
+RCUT(lineify)
 RCUT(incrindent)
 RCUT(decrindent)
 
@@ -46,15 +47,16 @@ void bind_cmdbind_init(void)
     SCUT_ADD(save);
     SCUT_ADD(goto);
     SCUT_ADD(quit);
-    SCUT_ADD(lineify);
     SCUT_ADD(saveall);
 
     RCUT_ADD(swap);
     RCUT_ADD(snap);
+    RCUT_ADD(save);
     RCUT_ADD(next);
     RCUT_ADD(prev);
     RCUT_ADD(copy);
     RCUT_ADD(paste);
+    RCUT_ADD(lineify);
     RCUT_ADD(incrindent);
     RCUT_ADD(decrindent);
 }
