@@ -187,7 +187,6 @@ void cur_del_win(win *w)
         win_out_after(w, w->pri);
     else
         win_out_line(w, w->pri);
-
 }
 
 void cur_enter_win(win *w)
@@ -461,7 +460,7 @@ void cur_ins_long_win(win *w, vec *text)
 
         cur_ins(c, b, text, PRI_SEC);
 
-        win_out_line(w, c);
+        win_out_line(w, (cur){ .cn = c.cn - 1, .ln = c.ln });
     }
 }
 
