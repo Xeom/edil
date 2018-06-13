@@ -70,7 +70,7 @@ Upcoming
 -----
 
  - [x] Command bar scrollback.
- - [ ] Long cursor mode.
+ - [x] Long cursor mode.
  - [ ] Checking file modification times.
 
 0.3.0
