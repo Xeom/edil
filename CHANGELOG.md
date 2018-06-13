@@ -72,6 +72,9 @@ Upcoming
  - [x] Command bar scrollback.
  - [x] Long cursor mode.
  - [ ] Checking file modification times.
+ - [x] Rebound many keys. kcd mode to Ctrl+^, buf mode to Ctrl+E,
+       lineify to Ctrl+S, mov mode to Esc+m, save_r to Esc+s,
+       saveall_r to Esc+S
 
 0.3.0
 -----
