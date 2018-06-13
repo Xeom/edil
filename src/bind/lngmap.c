@@ -26,9 +26,10 @@ void bind_lngmap_init(void)
     BIND_MAP(lng, cur_ins_tab_long, inp_key_esc | inp_key_tab);
 
     BIND_MAP(lng, mode_cmd, inp_key_ctrl | 'X');
-    BIND_MAP(lng, mode_kcd, inp_key_ctrl | 'K');
-    BIND_MAP(lng, mode_buf, inp_key_ctrl | 'A');
-    BIND_MAP(lng, mode_buf, inp_key_ctrl | '@');
+    BIND_MAP(lng, mode_kcd, inp_key_ctrl | '^');
+    BIND_MAP(lng, mode_buf, inp_key_ctrl | 'E');
+    BIND_MAP(lng, mode_buf, inp_key_ctrl | 'L');
+    BIND_MAP(lng, mode_mov, inp_key_esc  | 'm');
 
     BIND_CMD_MAP_ALL(lng);
 

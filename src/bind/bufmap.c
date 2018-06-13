@@ -24,9 +24,10 @@ void bind_bufmap_init(void)
     BIND_MAP(buf, cur_ins_tab, inp_key_esc | inp_key_tab);
 
     BIND_MAP(buf, mode_cmd, inp_key_ctrl | 'X');
-    BIND_MAP(buf, mode_kcd, inp_key_ctrl | 'K');
-    BIND_MAP(buf, mode_mov, inp_key_ctrl | 'A');
-    BIND_MAP(buf, mode_lng, inp_key_ctrl | '@');
+    BIND_MAP(buf, mode_kcd, inp_key_ctrl | '^');
+    BIND_MAP(buf, mode_mov, inp_key_ctrl | 'E');
+    BIND_MAP(buf, mode_mov, inp_key_esc  | 'm');
+    BIND_MAP(buf, mode_lng, inp_key_ctrl | 'L');
 
     BIND_CMD_MAP_ALL(buf);
 }
