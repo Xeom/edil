@@ -119,8 +119,8 @@ void *circvec_get(circvec *cv, ssize_t ind)
 
     len = vec_len(v);
 
-    if (ind > (ssize_t)len) ind -= len;
-    if (ind < 0)            ind += len;
+    if (ind >= (ssize_t)len) ind -= len;
+    if (ind <  0)            ind += len;
 
     return vec_get(v, ind);
 }
