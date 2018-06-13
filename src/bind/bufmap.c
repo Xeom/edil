@@ -15,8 +15,6 @@ void bind_bufmap_init(void)
     BIND_MAP(buf, cur_pgup, inp_key_pgup);
     BIND_MAP(buf, cur_pgdn, inp_key_pgdn);
 
-    BIND_MAP(buf, cur_line, inp_key_ctrl | 'L');
-
     BIND_MAP(buf, cur_enter, inp_key_enter);
     BIND_MAP(buf, cur_enter_line, inp_key_esc | inp_key_enter);
 
