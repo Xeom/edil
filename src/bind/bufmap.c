@@ -28,6 +28,7 @@ void bind_bufmap_init(void)
     BIND_MAP(buf, mode_cmd, inp_key_ctrl | 'X');
     BIND_MAP(buf, mode_kcd, inp_key_ctrl | 'K');
     BIND_MAP(buf, mode_mov, inp_key_ctrl | 'A');
+    BIND_MAP(buf, mode_lng, inp_key_ctrl | '@');
 
     BIND_CMD_MAP_ALL(buf);
 }

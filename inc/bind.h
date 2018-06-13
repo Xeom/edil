@@ -10,6 +10,7 @@ typedef enum
     bind_mode_kcd,
     bind_mode_bar,
     bind_mode_mov,
+    bind_mode_lng,
     bind_mode_none
 } bind_mode_type;
 
@@ -110,6 +111,8 @@ bind_mode_info *bind_info_curr(void);
 /* Unmap and remap bindings according to their names */
 int bind_remap(vec *chrmode, inp_key k, vec *chrbind);
 int bind_unmap(vec *chrmode, inp_key k);
+
+int bind_unmap_str(bind_mode_type mode, inp_key k);
 int bind_remap_str(bind_mode_type mode, inp_key k, char *str);
 
 /* Set up and kill the binding system */
