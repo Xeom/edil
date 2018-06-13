@@ -22,7 +22,6 @@ FLAGS+=$(WFLAGS) --std=$(STD) -pedantic -pthread -I$(INCDIR) -fPIC -fdiagnostics
 HFILES=$(addprefix $(INCDIR), $(addsuffix .h, $(FILES)))
 CFILES=$(addprefix $(SRCDIR), $(addsuffix .c, $(FILES)))
 OFILES=$(addprefix $(OBJDIR), $(addsuffix .o, $(FILES)))
-DFILES=$(addprefix $(DEPDIR), $(addsuffix .d, $(FILES)))
 
 ifeq ($(DEBUG), yes)
   ERRPIPE=2>&1 | tee -a errs.txt || (less -R errs.txt && /bin/false)
@@ -30,11 +29,13 @@ else
   ERRPIPE=
 endif
 
-$(DEPDIR)%.d: $(SRCDIR)%.c $(HFILES) conf.mk
-	@mkdir -p $(@D)
-	@printf $(OBJDIR) > $@
-	@$(CC) -MM -MG -MT $(@:$(DEPDIR)%.d=%.o) $(FLAGS) $< >> $@
-	@printf "Created $@\n"
+DEPMATCH=^\S+\.o: $(SRCDIR)(\S+)\.c
+DEPREPL=$(OBJDIR)\1\.o: $(SRCDIR)\1\.c
+DEPCMD=sed -re "s/$(subst /,\\/,$(DEPMATCH))/$(subst /,\\/,$(DEPREPL))/"
+
+$(DEPFILE): $(CFILES) $(HFILES)
+	@$(CC) -MM $(FLAGS) $^ | $(DEPCMD) > $@
+	@printf "Built dependencies\n"
 
 $(OBJDIR)%.o: $(SRCDIR)%.c conf.mk
 	@mkdir -p $(@D)
@@ -80,7 +81,7 @@ docs: all
 	@make -C doc all
 	@make -C layouts all
 
-deps: $(DFILES)
+deps: $(DEPFILE)
 clean: clean_err clean_bin clean_obj clean_dep
 
 .PHONEY=deps all clean_err clean_bin clean_obj clean_dep clean install uninstall
@@ -91,6 +92,6 @@ $(shell rm -f errs.txt)
 ifeq (,$(findstring clean,$(MAKECMDGOALS)))
   ifeq (,$(findstring deps,$(MAKECMDGOALS)))
     $(info Including depenendencies ...)
-    include $(DFILES)
+    include $(DEPFILE)
   endif
 endif
