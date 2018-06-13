@@ -23,6 +23,8 @@ void bind_movmap_init(void)
     BIND_MAP(mov, mode_cmd, inp_key_ctrl | 'X');
     BIND_MAP(mov, mode_kcd, inp_key_ctrl | 'K');
     BIND_MAP(mov, mode_buf, inp_key_ctrl | 'A');
+    BIND_MAP(mov, mode_lng, inp_key_ctrl | '@');
+
     BIND_MAP(mov, mode_cmd, ':');
     BIND_MAP(mov, mode_buf, ' ');
 

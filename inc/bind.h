@@ -10,6 +10,7 @@ typedef enum
     bind_mode_kcd,
     bind_mode_bar,
     bind_mode_mov,
+    bind_mode_lng,
     bind_mode_none
 } bind_mode_type;
 

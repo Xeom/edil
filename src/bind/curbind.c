@@ -43,6 +43,26 @@ BIND_FUNCT(cur_back,
         cur_del_win(w);
     }
 )
+
+BIND_FUNCT(cur_ins_tab_long,
+    vec tabvec;
+    vec_init(&tabvec, sizeof(chr));
+    vec_app(&tabvec, &CHR("\t"));
+
+    cur_ins_long_win(w, &tabvec);
+
+    vec_kill(&tabvec);
+)
+
+BIND_FUNCT(cur_del_long, cur_del_long_win(w))
+BIND_FUNCT(cur_back_long,
+    if (w->pri.cn != 0)
+    {
+        cur_move_win(w, (cur){ .cn = -1 });
+        cur_del_long_win(w);
+    }
+)
+
 BIND_FUNCT(cur_enter_line, cur_enter_line_win(w))
 
 BIND_FUNCT(cur_ins_tab,
@@ -79,6 +99,10 @@ void bind_curbind_init(void)
     BIND_ADD(cur_end,  Move the cursor to the end of the line);
     BIND_ADD(cur_pgup, Move the cursor to the top of the screen);
     BIND_ADD(cur_pgdn, Move the cursor to the bottom of the screen);
+
+    BIND_ADD(cur_ins_tab_long, Insert tabs along the long cursor);
+    BIND_ADD(cur_del_long,     Delete forwards with the long cursor);
+    BIND_ADD(cur_back_long,    Delete backwards with the long cursor);
 
     BIND_ADD(cur_enter, Insert a newline at the current ursor);
     BIND_ADD(cur_enter_line, Insert a newline before the current line);
