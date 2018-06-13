@@ -170,11 +170,17 @@ int bind_remap_str(bind_mode_type mode, inp_key k, char *str)
 int bind_unmap(vec *chrmode, inp_key k)
 {
     bind_mode_type  mode;
-    bind_mode_info *modeinfo;
 
     mode = bind_mode_get(chrmode);
 
     if (mode == bind_mode_none) return -1;
+
+    return bind_unmap_str(mode, k);
+}
+
+int bind_unmap_str(bind_mode_type mode, inp_key k)
+{
+    bind_mode_info *modeinfo;
 
     modeinfo = &bind_modes[mode];
 
