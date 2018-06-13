@@ -32,6 +32,7 @@ SCUT(saveall)
 RCUT(swap)
 RCUT(snap)
 RCUT(save)
+RCUT(saveall)
 RCUT(next)
 RCUT(prev)
 RCUT(copy)
@@ -57,6 +58,7 @@ void bind_cmdbind_init(void)
     RCUT_ADD(copy);
     RCUT_ADD(paste);
     RCUT_ADD(lineify);
+    RCUT_ADD(saveall);
     RCUT_ADD(incrindent);
     RCUT_ADD(decrindent);
 }
