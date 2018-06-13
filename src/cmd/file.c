@@ -131,16 +131,28 @@ CMD_FUNCT(associate,
 )
 
 CMD_FUNCT(saveall,
-    CMD_MAX_ARGS(0);
+    CMD_MAX_ARGS(1);
 
-    int numsaved;
+    int numsaved, force;
     numsaved = 0;
+    force    = 0;
+
+    if (CMD_NARGS == 1)
+    {
+        if (CMD_ARG_IS(1, "!"))
+            force = 1;
+        else
+            CMD_ERR("saveall only takes '!' as an argument.");
+    }
 
     RING_FOREACH(b,
         file *f;
         f = &(b->finfo);
 
-        if (!file_associated(f) || !(b->flags & buf_modified))
+        if (!file_associated(f))
+            continue;
+
+        if (!(b->flags & buf_modified) && !force)
             continue;
 
         if (file_save(f, b) == -1)
@@ -165,7 +177,6 @@ CMD_FUNCT(save,
 
     file *f;
     buf  *b;
-
     b = w->b;
     f = &(b->finfo);
 

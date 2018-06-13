@@ -75,6 +75,7 @@ Upcoming
  - [x] Rebound many keys. kcd mode to Ctrl+^, buf mode to Ctrl+E,
        lineify to Ctrl+S, mov mode to Esc+m, save_r to Esc+s,
        saveall_r to Esc+S
+ - [ ] Tab completion for commands.
 
 0.3.0
 -----

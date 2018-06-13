@@ -19,7 +19,7 @@
     BIND_MAP(mode, cmd_r_paste, inp_key_ctrl | 'P') \
     \
     BIND_MAP(mode, cmd_r_save,    inp_key_esc | 's') \
-    BIND_MAP(mode, cmd_r_saveall, inp_key_esc | 'S') \
+    BIND_MAP(mode, cmd_saveall, inp_key_esc | 'S') \
     \
     BIND_MAP(mode, cmd_r_incrindent, inp_key_tab) \
     BIND_MAP(mode, cmd_r_decrindent, inp_key_shifttab)

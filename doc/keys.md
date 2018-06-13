@@ -17,6 +17,7 @@ Buf mode
 | `44c` - _Ctrl+L_       | mode_lng       | Switch to long-cursor mode                        |
 | `44e` - _Ctrl+N_       | cmd_r_next     | Run next command                                  |
 | `450` - _Ctrl+P_       | cmd_r_paste    | Run paste command                                 |
+| `253` - _Esc+S_        | cmd_saveall    | Shortcut for saveall command                      |
 | `453` - _Ctrl+S_       | cmd_r_lineify  | Run lineify command                               |
 | `456` - _Ctrl+V_       | cmd_r_prev     | Run prev command                                  |
 | `458` - _Ctrl+X_       | mode_cmd       | Open the command bar                              |
@@ -84,6 +85,7 @@ Mov mode
 | `44c` - _Ctrl+L_       | mode_lng       | Switch to long-cursor mode                        |
 | `44e` - _Ctrl+N_       | cmd_r_next     | Run next command                                  |
 | `450` - _Ctrl+P_       | cmd_r_paste    | Run paste command                                 |
+| `253` - _Esc+S_        | cmd_saveall    | Shortcut for saveall command                      |
 | `453` - _Ctrl+S_       | cmd_r_lineify  | Run lineify command                               |
 | `456` - _Ctrl+V_       | cmd_r_prev     | Run prev command                                  |
 | `458` - _Ctrl+X_       | mode_cmd       | Open the command bar                              |
@@ -132,6 +134,7 @@ Lng mode
 | `44c` - _Ctrl+L_       | mode_buf       | Switch to buffer mode                             |
 | `44e` - _Ctrl+N_       | cmd_r_next     | Run next command                                  |
 | `450` - _Ctrl+P_       | cmd_r_paste    | Run paste command                                 |
+| `253` - _Esc+S_        | cmd_saveall    | Shortcut for saveall command                      |
 | `453` - _Ctrl+S_       | cmd_r_lineify  | Run lineify command                               |
 | `456` - _Ctrl+V_       | cmd_r_prev     | Run prev command                                  |
 | `458` - _Ctrl+X_       | mode_cmd       | Open the command bar                              |
