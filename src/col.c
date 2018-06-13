@@ -20,7 +20,9 @@ int col_parse(col *c, char **str)
     {
     case 0: return -1;
     case 3: c->attr = attrs;
+        /* Falls through */
     case 2: c->bg   = bg;
+        /* Falls through */
     case 1: c->fg   = fg;
     }
 

@@ -12,17 +12,18 @@ Buf mode
 |         Key            | Binding        | Description                                       |
 |         -------------- | -------------- | ------------------------------------------------- |
 | `441` - _Ctrl+A_       | mode_mov       | Switch to movement mode                           |
-| `443` - _Ctrl+C_       | cmd_swap       | Run swap command                                  |
+| `443` - _Ctrl+C_       | cmd_r_swap     | Run swap command                                  |
 | `44b` - _Ctrl+K_       | mode_kcd       | Switch to keycode mode                            |
 | `64b` - _Ctrl+Esc+K_   | cmd_quit       | Shortcut for quit command                         |
-| `44c` - _Ctrl+L_       | cmd_lineify    | Shortcut for lineify command                      |
-| `44e` - _Ctrl+N_       | cmd_next       | Run next command                                  |
-| `450` - _Ctrl+P_       | cmd_paste      | Run paste command                                 |
+| `44c` - _Ctrl+L_       | cmd_r_lineify  | Run lineify command                               |
+| `44e` - _Ctrl+N_       | cmd_r_next     | Run next command                                  |
+| `450` - _Ctrl+P_       | cmd_r_paste    | Run paste command                                 |
 | `253` - _Esc+S_        | cmd_saveall    | Shortcut for saveall command                      |
-| `456` - _Ctrl+V_       | cmd_prev       | Run prev command                                  |
+| `453` - _Ctrl+S_       | cmd_r_save     | Run save command                                  |
+| `456` - _Ctrl+V_       | cmd_r_prev     | Run prev command                                  |
 | `458` - _Ctrl+X_       | mode_cmd       | Open the command bar                              |
-| `459` - _Ctrl+Y_       | cmd_copy       | Run copy command                                  |
-| `45a` - _Ctrl+Z_       | cmd_snap       | Run snap command                                  |
+| `459` - _Ctrl+Y_       | cmd_r_copy     | Run copy command                                  |
+| `45a` - _Ctrl+Z_       | cmd_r_snap     | Run snap command                                  |
 | `261` - _Esc+a_        | cmd_load       | Shortcut for load command                         |
 | `267` - _Esc+g_        | cmd_goto       | Shortcut for goto command                         |
 | `26e` - _Esc+n_        | cmd_new        | Shortcut for new command                          |
@@ -39,8 +40,8 @@ Buf mode
 | `106` - _end_          | cur_end        | Move the cursor to the end of the line            |
 | `107` - _pgup_         | cur_pgup       | Move the cursor to the top of the screen          |
 | `108` - _pgdn_         | cur_pgdn       | Move the cursor to the bottom of the screen       |
-| `10a` - _Shift+tab_    | cmd_decrindent | Run decrindent command                            |
-| `10d` - _tab_          | cmd_incrindent | Run incrindent command                            |
+| `10a` - _Shift+tab_    | cmd_r_decrindent| Run decrindent command                            |
+| `10d` - _tab_          | cmd_r_incrindent| Run incrindent command                            |
 | `30d` - _Esc+tab_      | cur_ins_tab    | Insert a tab at the cursor position               |
 | `10e` - _del_          | cur_del        | Delete forwards at the cursor position            |
 | `10f` - _backspace_    | cur_back       | Delete backwards at the cursor position           |
@@ -76,17 +77,18 @@ Mov mode
 | `020` - _space_        | mode_buf       | Switch to buffer mode                             |
 | `03a` - _:_            | mode_cmd       | Open the command bar                              |
 | `441` - _Ctrl+A_       | mode_buf       | Switch to buffer mode                             |
-| `443` - _Ctrl+C_       | cmd_swap       | Run swap command                                  |
+| `443` - _Ctrl+C_       | cmd_r_swap     | Run swap command                                  |
 | `44b` - _Ctrl+K_       | mode_kcd       | Switch to keycode mode                            |
 | `64b` - _Ctrl+Esc+K_   | cmd_quit       | Shortcut for quit command                         |
-| `44c` - _Ctrl+L_       | cmd_lineify    | Shortcut for lineify command                      |
-| `44e` - _Ctrl+N_       | cmd_next       | Run next command                                  |
-| `450` - _Ctrl+P_       | cmd_paste      | Run paste command                                 |
+| `44c` - _Ctrl+L_       | cmd_r_lineify  | Run lineify command                               |
+| `44e` - _Ctrl+N_       | cmd_r_next     | Run next command                                  |
+| `450` - _Ctrl+P_       | cmd_r_paste    | Run paste command                                 |
 | `253` - _Esc+S_        | cmd_saveall    | Shortcut for saveall command                      |
-| `456` - _Ctrl+V_       | cmd_prev       | Run prev command                                  |
+| `453` - _Ctrl+S_       | cmd_r_save     | Run save command                                  |
+| `456` - _Ctrl+V_       | cmd_r_prev     | Run prev command                                  |
 | `458` - _Ctrl+X_       | mode_cmd       | Open the command bar                              |
-| `459` - _Ctrl+Y_       | cmd_copy       | Run copy command                                  |
-| `45a` - _Ctrl+Z_       | cmd_snap       | Run snap command                                  |
+| `459` - _Ctrl+Y_       | cmd_r_copy     | Run copy command                                  |
+| `45a` - _Ctrl+Z_       | cmd_r_snap     | Run snap command                                  |
 | `061` - _a_            | cur_skp_l      | Skip the cursor left quickly                      |
 | `261` - _Esc+a_        | cmd_load       | Shortcut for load command                         |
 | `064` - _d_            | cur_skp_r      | Skip the cursor right quickly                     |
@@ -113,5 +115,5 @@ Mov mode
 | `303` - _Esc+right_    | cur_mv_r       | Move the cursor right                             |
 | `104` - _left_         | cur_skp_l      | Skip the cursor left quickly                      |
 | `304` - _Esc+left_     | cur_mv_l       | Move the cursor left                              |
-| `10a` - _Shift+tab_    | cmd_decrindent | Run decrindent command                            |
-| `10d` - _tab_          | cmd_incrindent | Run incrindent command                            |
+| `10a` - _Shift+tab_    | cmd_r_decrindent| Run decrindent command                            |
+| `10d` - _tab_          | cmd_r_incrindent| Run incrindent command                            |

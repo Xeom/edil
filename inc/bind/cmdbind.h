@@ -11,18 +11,19 @@
     \
     BIND_MAP(mode, cmd_quit, inp_key_esc | inp_key_ctrl | 'K') \
     \
-    BIND_MAP(mode, cmd_swap,    inp_key_ctrl | 'C') \
-    BIND_MAP(mode, cmd_snap,    inp_key_ctrl | 'Z') \
-    BIND_MAP(mode, cmd_lineify, inp_key_ctrl | 'L') \
+    BIND_MAP(mode, cmd_r_swap,    inp_key_ctrl | 'C') \
+    BIND_MAP(mode, cmd_r_snap,    inp_key_ctrl | 'Z') \
+    BIND_MAP(mode, cmd_r_lineify, inp_key_ctrl | 'L') \
     \
-    BIND_MAP(mode, cmd_next, inp_key_ctrl | 'N') \
-    BIND_MAP(mode, cmd_prev, inp_key_ctrl | 'V') \
+    BIND_MAP(mode, cmd_r_next, inp_key_ctrl | 'N') \
+    BIND_MAP(mode, cmd_r_prev, inp_key_ctrl | 'V') \
     \
-    BIND_MAP(mode, cmd_copy,  inp_key_ctrl | 'Y') \
-    BIND_MAP(mode, cmd_paste, inp_key_ctrl | 'P') \
+    BIND_MAP(mode, cmd_r_copy,  inp_key_ctrl | 'Y') \
+    BIND_MAP(mode, cmd_r_paste, inp_key_ctrl | 'P') \
+    BIND_MAP(mode, cmd_r_save,  inp_key_ctrl | 'S') \
     \
-    BIND_MAP(mode, cmd_incrindent, inp_key_tab) \
-    BIND_MAP(mode, cmd_decrindent, inp_key_shifttab)
+    BIND_MAP(mode, cmd_r_incrindent, inp_key_tab) \
+    BIND_MAP(mode, cmd_r_decrindent, inp_key_shifttab)
 
 void bind_cmdbind_init(void);
 
