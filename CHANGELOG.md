@@ -54,17 +54,17 @@ It's by far the biggest update so far, but is the most important.
  - Jump to buffers whhen quitting if they are modified.
  - Command log buffers.
 
-Upcoming
-========
-
 0.1.1
 -----
 
- - [x] Only one dep file is generated.
- - [x] This changelog.
- - [x] Added save command run binding to Ctrl+S.
-       (perhaps this means in a later version we remove Esc+s,
-       or make Esc+s saveall instead of Esc+S)
+ - Only one dep file is generated.
+ - This changelog.
+ - Added save command run binding to Ctrl+S.
+   (perhaps this means in a later version we remove Esc+s,
+    or make Esc+s saveall instead of Esc+S)
+
+Upcoming
+========
 
 0.2.0
 -----
@@ -72,6 +72,9 @@ Upcoming
  - [x] Command bar scrollback.
  - [x] Long cursor mode.
  - [ ] Checking file modification times.
+ - [x] Rebound many keys. kcd mode to Ctrl+^, buf mode to Ctrl+E,
+       lineify to Ctrl+S, mov mode to Esc+m, save_r to Esc+s,
+       saveall_r to Esc+S
 
 0.3.0
 -----
