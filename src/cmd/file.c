@@ -21,8 +21,34 @@
 
 #include "cmd/file.h"
 
+int cmd_file_auto_eofnl = 0;
+
 static int file_switch_if_found(win *w, vec *fname, vec *rtn);
 static buf *file_find(file *f);
+
+CMD_FUNCT(eofnl,
+    CMD_MAX_ARGS(1);
+
+    buf *b;
+    file *f;
+
+    b = w->b;
+    f = &(b->finfo);
+
+    if (CMD_NARGS)
+    {
+        if      (CMD_ARG_IS(1, "all"))  cmd_file_auto_eofnl = 1;
+        else if (CMD_ARG_IS(1, "!all")) cmd_file_auto_eofnl = 0;
+        else if (CMD_ARG_IS(1, "1"))    f->flags |=  file_eofnl;
+        else if (CMD_ARG_IS(1, "0"))    f->flags &= ~file_eofnl;
+    }
+
+    CMD_RTN_FMT(
+        "file: %d, all: %d",
+        (f->flags & file_eofnl) != 0,
+        cmd_file_auto_eofnl
+    );
+)
 
 CMD_FUNCT(load,
     CMD_MAX_ARGS(1);
@@ -51,6 +77,7 @@ CMD_FUNCT(load,
             );
     }
 
+
     if (!file_associated(f))
         CMD_ERR("No associated file");
 
@@ -68,6 +95,8 @@ CMD_FUNCT(load,
     }
     else
         CMD_RTN_FMT("Loaded '%s'", file_name(f));
+
+    if (cmd_file_auto_eofnl) f->flags |= file_eofnl;
 
     win_reset(w);
 )
@@ -299,6 +328,9 @@ void file_clr_win(win *w)
 
 void cmd_file_init(void)
 {
+    CMD_ADD(eofnl,
+        , "");
+
     CMD_ADD(new,
         Create a new buffer,
         "Create a new buffer and switch to it. Optionally, open a new\n"
