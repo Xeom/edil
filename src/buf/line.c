@@ -43,9 +43,16 @@ void line_cpy(line *l, vec *to)
 
 chr *line_chr(line *l, cur c)
 {
-    if (!l) return;
+    if (!l) return NULL;
 
     return vec_get(&(l->chrs), c->cn);
+}
+
+vec *line_vec(line *l)
+{
+    if (!l) return NULL;
+
+    return &(l->chrs);
 }
 
 ssize_t line_len(line *l);
@@ -57,19 +64,7 @@ ssize_t line_len(line *l);
 
 void line_ins(line *l, cur c, vec *chrs)
 {
-    size_t len, num;
-
-    if (!l) return;
-
-    len = vec_len(&(l->chrs));
-    num = vec_len(chrs);
-
-    if (c.cn > len) c.cn = len;
-
-    if (num)
-        vec_ins(&(l->chrs), c.cn, num, vec_first(chrs));
-
-    indent_add_blanks_line(&(l->chrs), 0);
+    line_ins_mem(l, c, vec_len(chrs), vec_first(chrs));
 }
 
 void line_ins_str(line *l, cur c, char *str)
@@ -81,6 +76,21 @@ void line_ins_str(line *l, cur c, char *str)
     line_ins(l, c, &chrs);
 
     vec_kill(&chrs);
+}
+
+void line_ins_mem(line *l, cur c, size_t n, chr *mem)
+{
+    size_t len, num;
+
+    if (!l) return;
+
+    len = vec_len(&(l->chrs));
+    if (c.cn > len) c.cn = len;
+
+    if (n)
+        vec_ins(&(l->chrs), c.cn, n, mem);
+
+    indent_add_blanks_line(&(l->chrs), 0);
 }
 
 void line_del(line *l, cur c, size_t n)
@@ -97,4 +107,3 @@ void line_del(line *l, cur c, size_t n)
     vec_del(&(l->chrs), c.cn, n);
     indent_add_blanks_line(&(l->chrs), 0);
 }
-
