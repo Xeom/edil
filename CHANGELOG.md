@@ -76,6 +76,7 @@ Upcoming
        lineify to Ctrl+S, mov mode to Esc+m, save_r to Esc+s,
        saveall_r to Esc+S
  - [ ] Tab completion for commands.
+ - [x] Added saveall ! option
 
 0.3.0
 -----
