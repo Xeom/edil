@@ -18,15 +18,18 @@ CMD_FUNCT(bufinfo,
     b = w->b;
     f = &(b->finfo);
 
-    CMD_RTN_FMT("%d [%s] ", ring_get_ind(b), file_name(f));
+    if (file_associated(f))      CMD_RTN(" assoc");
+    if (f->flags & file_cr)      CMD_RTN(" cr");
+    if (f->flags & file_pipe)    CMD_RTN(" pipe");
+    if (f->flags & file_eofnl)   CMD_RTN(" eofnl");
+    if (b->flags & buf_readonly) CMD_RTN(" ro");
+    if (b->flags & buf_modified) CMD_RTN(" mod");
+    if (b->flags & buf_nofile)   CMD_RTN(" nofile");
+    if (b->flags & buf_nokill)   CMD_RTN(" nokill");
 
-    if (file_associated(f))      CMD_RTN("assoc ");
-    if (f->flags & file_cr)      CMD_RTN("cr ");
-    if (f->flags & file_pipe)    CMD_RTN("pipe ");
-    if (b->flags & buf_readonly) CMD_RTN("ro ");
-    if (b->flags & buf_modified) CMD_RTN("mod ");
-    if (b->flags & buf_nofile)   CMD_RTN("nofile ");
-    if (b->flags & buf_nokill)   CMD_RTN("nokill ");
+    CMD_RTN_FMT(" %d [%s] [%s]", ring_get_ind(b), buf_get_name(b), file_name(f));
+
+    if (vec_len(rtn)) vec_del(rtn, 0, 1);
 
 )
 
@@ -163,7 +166,7 @@ void cmd_buf_init(void)
         Display information about the current buffer,
         "If a file is associated with the buffer, the path of\n"
         "that file is also returned, along with the buffer's\n"
-        "index number.\n\n"
+        "index number and the buffer's name.\n\n"
 
         "Prints flags associated with the buffer:\n"
         " * `assoc` - The buffer is associated with a pipe or file.\n"
