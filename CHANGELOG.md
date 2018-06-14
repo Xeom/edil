@@ -77,6 +77,7 @@ Upcoming
        saveall_r to Esc+S
  - [ ] Tab completion for commands.
  - [x] Added saveall ! option
+ - [x] Added eofnl command.
 
 0.3.0
 -----
