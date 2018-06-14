@@ -1,8 +1,4 @@
-struct line_s
-{
-    pthread_mutex_t lock;
-    vec chrs;
-};
+#include "buf/line.h"
 
 void line_init(line *l)
 {

@@ -1,10 +1,4 @@
-typedef struct text_s text;
-
-struct text_s
-{
-    pthread_mutex_t lock;
-    vec lines;
-};
+#include "buf/text.h"
 
 void text_init(text *t)
 {

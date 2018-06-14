@@ -1,11 +1,4 @@
-struct buf_s
-{
-    text t;
-    file finfo;
-    vec  name;
-    cur  prihint;
-    buf_flags flags;
-};
+#include "buf/buf.h"
 
 void buf_init(buf *b)
 {
@@ -37,6 +30,18 @@ void buf_ins(buf *b, cur loc, vec *chrs)
     if (!l) return;
 
     line_ins(l, loc, chrs);
+
+    line_unlock(l);
+}
+
+void buf_ins_str(buf *b, cur loc, char *str)
+{
+    line *l;
+
+    l = text_get_line(&(b->t), loc);
+    if (!l) return;
+
+    line_ins_str(l, loc, n, str);
 
     line_unlock(l);
 }
