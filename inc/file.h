@@ -5,8 +5,9 @@
 
 typedef enum
 {
-    file_cr   = 0x01,
-    file_pipe = 0x02,
+    file_cr    = 0x01,
+    file_pipe  = 0x02,
+    file_eofnl = 0x04
 } file_flags;
 
 typedef struct file_s file;

@@ -62,7 +62,6 @@ char *file_base(file *f)
     return vec_first(&(f->basename));
 }
 
-
 int file_assoc(file *f, vec *chrname)
 {
     if (f->flags & file_pipe)
@@ -238,6 +237,8 @@ int file_load_line(file *f, buf *b)
 int file_save(file *f, buf *b)
 {
     ssize_t numlines;
+    char *newline;
+    int extranl;
     cur loc = {0, 0};
 
     numlines = buf_len(b);
@@ -250,27 +251,29 @@ int file_save(file *f, buf *b)
             return -1;
         }
     }
+
+    if (f->flags & file_cr)
+        newline = "\r\n";
+    else
+        newline = "\n";
+
     if (file_open(f, "w") == -1)
         return -1;
 
+    extranl = (f->flags & file_eofnl) && (buf_last_cur(b).cn != 0);
+
     while (loc.ln < numlines)
     {
-        if (loc.ln > 0)
-        {
-            char *newline;
-            if (f->flags & file_cr)
-                newline = "\r\n";
-            else
-                newline = "\n";
-
-            if (fputs(newline, f->fptr) == EOF)
-                return -1;
-        }
-
         if (file_save_line(f, b, loc) == -1)
             return -1;
 
         if (ferror(f->fptr)) return -1;
+
+        if (loc.ln < numlines - 1 || extranl)
+        {
+            if (fputs(newline, f->fptr) == EOF)
+                return -1;
+        }
 
         loc.ln += 1;
     }
