@@ -13,11 +13,10 @@ INSTDIR=/usr/local/bin/
 
 VERSION=0.2.0
 
-WARNINGS=all no-unused-parameter no-switch extra missing-prototypes
+WARNINGS=all extra no-unused-parameter no-switch missing-prototypes
 
 STD=c11
 
 DEFINES=
 
 CC=clang
-

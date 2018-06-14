@@ -126,6 +126,7 @@ static inp_key inp_get_escaped_key(unsigned char chr)
 
         curr = vec_get(&inp_keycodes, search_ind);
         if (curr) cmp = strcmp(code, curr->code);
+        else      return inp_key_none;
 
         if (cmp == 0) {rtn = curr->key;             break;}
         if (!curr)    {rtn = inp_key_esc | code[0]; break;}
