@@ -264,7 +264,7 @@ int file_save(file *f, buf *b)
     if (file_open(f, "w") == -1)
         return -1;
 
-    extranl = (f->flags & file_eofnl) && (buf_last_cur(b).cn != 0);
+    extranl = (f->flags & file_eofnl) && (buf_last(b).cn != 0);
 
     while (loc.ln < numlines)
     {

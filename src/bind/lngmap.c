@@ -1,8 +1,9 @@
-#include "bind.h"
+#include "cur.h"
 
 #include "bind/curbind.h"
 #include "bind/cmdbind.h"
 
+#include "bind.h"
 #include "bind/lngmap.h"
 
 void bind_lngmap_init(void)

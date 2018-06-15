@@ -329,7 +329,7 @@ void file_clr_win(win *w)
 void cmd_file_init(void)
 {
     CMD_ADD(eofnl,
-        , "");
+        Always end files in newlines, "");
 
     CMD_ADD(new,
         Create a new buffer,

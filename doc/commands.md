@@ -32,6 +32,7 @@ List of commands
  * [__cut__](#cut-command) - _Cut the current region_
  * [__decrindent__](#decrindent-command) - _Un-indent a line_
  * [__discard__](#discard-command) - _Discard the contents of a buffer_
+ * [__eofnl__](#eofnl-command) - _Always end files in newlines_
  * [__goto__](#goto-command) - _Go to a specific line and column_
  * [__incrindent__](#incrindent-command) - _Indent a line_
  * [__indent__](#indent-command) - _Set the indentation depth of a line_
@@ -57,7 +58,7 @@ List of commands
 Full documentation
 ------------------
 
-#### Associate command 
+#### Associate command
  - Associate a buffer with a file
 
 If an argument is given, then that file is associated with the
@@ -77,14 +78,14 @@ Regardless of whether any argument is given, the file associated
 with the current buffer is returned.
 
 ---
-#### Autoindent command 
+#### Autoindent command
  - Automatically indent a line
 
 Set the indent of the current line to the indentation of the
 previous line.
 
 ---
-#### Basebar command 
+#### Basebar command
  - Set the window base-bar string
 
 Sets the string displayed in the window bar. This by default shows
@@ -143,12 +144,12 @@ The default basebar is ' **%n** **%8**│**%0**
 **%L**·**%C** **%8**│**%0** **%m**'.
 
 ---
-#### Bufinfo command 
+#### Bufinfo command
  - Display information about the current buffer
 
 If a file is associated with the buffer, the path of
 that file is also returned, along with the buffer's
-index number.
+index number and the buffer's name.
 
 Prints flags associated with the buffer:
  * `assoc` - The buffer is associated with a pipe or file.
@@ -161,7 +162,7 @@ Prints flags associated with the buffer:
  * `nokill` - This buffer cannot be killed.
 
 ---
-#### Cd command 
+#### Cd command
  - Change directory
 
 Change Edil's current working directory to one specified as an
@@ -169,7 +170,7 @@ argument. Even if no argument is given, the command returns the
 current working directory.
 
 ---
-#### Conffile command 
+#### Conffile command
  - Load a config file
 
 Configuration files are just lists of commands, one on each line,
@@ -187,7 +188,7 @@ are run by default when Edil starts up.
 
 
 ---
-#### Copy command 
+#### Copy command
  - Copy the current region
 
 Copy the current region between the primary and secondary cursors
@@ -195,20 +196,20 @@ the contents of the region is placed into the clipboard buffer,
 which is created if it does not exist already.
 
 ---
-#### Cut command 
+#### Cut command
  - Cut the current region
 
 This command runs the copy command, and then deletes the region.
 
 ---
-#### Decrindent command 
+#### Decrindent command
  - Un-indent a line
 
 Decrease the indentation of the current line to the previous
 indentation level as specified by lvlwidth.
 
 ---
-#### Discard command 
+#### Discard command
  - Discard the contents of a buffer
 
 This command is useful when you don't want to save the contents of
@@ -217,7 +218,12 @@ its modified flag. The buffer can then be killed without edil
 complaining.
 
 ---
-#### Goto command 
+#### Eofnl command
+ - Always end files in newlines
+
+
+---
+#### Goto command
  - Go to a specific line and column
 
  * If given, the first argument specifies the line number to go to.
@@ -228,14 +234,14 @@ returned and printed. Both column and line numbers for this
 command are indexed starting at one.
 
 ---
-#### Incrindent command 
+#### Incrindent command
  - Indent a line
 
 Increase the indentation of the current line to the next
 indentation level as specified by lvlwidth.
 
 ---
-#### Indent command 
+#### Indent command
  - Set the indentation depth of a line
 
 If a number is given as an argument, then indent the current line
@@ -245,7 +251,7 @@ Even if an argument is not given, the command returns the current
 indentation depth of the current line.
 
 ---
-#### Indentmode command 
+#### Indentmode command
  - Set indent modes
 
 Various indent modes can be set:
@@ -267,7 +273,7 @@ To set a mode, give it as an argument, and to unset a mode, give it
 as an argument prefixed with an '!'.
 
 ---
-#### Kill command 
+#### Kill command
  - Kill the current buffer
 
 By default, this command kills the current buffer. If other
@@ -277,7 +283,7 @@ If `!` is given as an argument, the buffers will be
 force-killed, even if they are modified.
 
 ---
-#### Lineify command 
+#### Lineify command
  - Select the current line
 
 Move the primary cursor to the beginning of the current line, and
@@ -285,7 +291,7 @@ the secondary cursor to the end. This places the whole line in the
 region, and allows for it to easily be cut or copied etc.
 
 ---
-#### Load command 
+#### Load command
  - Load a file to a buffer
 
 This command will load the contents of an associated file to the
@@ -302,7 +308,7 @@ and if it is already open, the command simply switches to the
 buffer where it is open instead of opening it twice.
 
 ---
-#### Lvlwidth command 
+#### Lvlwidth command
  - Set the indent level width
 
 The level width is the depth of an indent level, i.e. how far a
@@ -313,7 +319,7 @@ The command takes a new width as a single argument, but even if
 this is not given, the command prints out the current value.
 
 ---
-#### New command 
+#### New command
  - Create a new buffer
 
 Create a new buffer and switch to it. Optionally, open a new
@@ -330,7 +336,7 @@ instead of creating a new one.
 
 
 ---
-#### Next command 
+#### Next command
  - Go to the next buffer
 
 Go to the buffer with an index one higher than the current
@@ -338,14 +344,14 @@ buffer, or if there is no such buffer, loop around to the
 first buffer.
 
 ---
-#### Paste command 
+#### Paste command
  - Paste a buffer
 
 Insert the contents of another buffer at the location of the cursor
 By default, the clipboard buffer is inserted, but if an argument is
 given, it can specify a different buffer index.
 ---
-#### Prev command 
+#### Prev command
  - Go to the previous buffer
 
 Go to the buffer with an index one lower than the current
@@ -353,7 +359,7 @@ buffer, or if there is no such buffer, loop around to the
 final buffer.
 
 ---
-#### Quit command 
+#### Quit command
  - Quit Edil
 
 Exit Edil, if no buffers are modified. If `!` is given as
@@ -361,7 +367,7 @@ an argument, then Edil will exit even if buffers are
 modified
 
 ---
-#### Remap command 
+#### Remap command
  - Remap a key
 
 Remaps a key to a new binding for a specific mode. The
@@ -395,7 +401,7 @@ will remap the `h j k l` keys to move the cursor in movement mode,
 vim style!
 
 ---
-#### Save command 
+#### Save command
  - Save a buffer to a file
 
 Save the contents of the current buffer to the file associated
@@ -404,7 +410,7 @@ with it.
 This command takes no arguments
 
 ---
-#### Saveall command 
+#### Saveall command
  - Save all buffers
 
 Performs the equivalent of the [save](#save-command) command to all
@@ -414,20 +420,20 @@ This command takes no arguments and returns the number of files
 that have been saved.
 
 ---
-#### Snap command 
+#### Snap command
  - Snap the secondary cursor
 
 Move the secondary cursor to the position of the primary cursor.
 
 ---
-#### Swap command 
+#### Swap command
  - Swap the cursors
 
 Move the primary cursor to the secondary cursor, and vice versa.
 The primary and secondary cursors swap places.
 
 ---
-#### Tabwidth command 
+#### Tabwidth command
  - Set the tab width
 
 The tab width is the width that tabs are displayed as.
@@ -436,7 +442,7 @@ The command takes a new width as a single argument, but even if
 this is not given, the command prints out the current value.
 
 ---
-#### Translate command 
+#### Translate command
  - Translate a keypress
 
 This command adds a pair of `inp_key`s to the `inp_keytranslate`
@@ -455,7 +461,7 @@ the [inp header](/inc/inp.h).
 
 
 ---
-#### Unmap command 
+#### Unmap command
  - Unmap a key
 
 This command removes the binding from a key in a specific mode.

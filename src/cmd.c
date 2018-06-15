@@ -280,7 +280,7 @@ void cmd_print_info(FILE *stream, cmd_info *info)
     char upper;
     upper = toupper(info->name[0]);
 
-    fprintf(stream, "#### %c%s command \n", upper, info->name + 1);
+    fprintf(stream, "#### %c%s command\n", upper, info->name + 1);
     fprintf(stream, " - %s\n\n", info->desc);
     fprintf(stream, "%s\n---\n", info->full);
 }
