@@ -53,4 +53,7 @@ void cur_shift(win *w, cur dir);
 void cur_del_region(win *w);
 void cur_ins_buf(win *w, buf *oth);
 
+void cur_ins_long_win(win *w, vec *text);
+void cur_del_long_win(win *w);
+
 #endif

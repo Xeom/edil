@@ -6,7 +6,7 @@
 
 void bind_kcdmap_init(void)
 {
-    BIND_MAP(kcd, mode_buf, inp_key_ctrl | 'A');
+    BIND_MAP(kcd, mode_buf, inp_key_ctrl | '^');
 }
 
 void bind_kcd_key(win *w, inp_key k)

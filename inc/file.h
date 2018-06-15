@@ -1,6 +1,5 @@
 #if !defined(FILE_H)
 # define FILE_H
-# include <stdio.h>
 # include "types.h"
 
 void file_init(file *f);

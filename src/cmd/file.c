@@ -21,8 +21,34 @@
 #include "cmd.h"
 #include "cmd/file.h"
 
+int cmd_file_auto_eofnl = 0;
+
 static int file_switch_if_found(win *w, vec *fname, vec *rtn);
 static buf *file_find(file *f);
+
+CMD_FUNCT(eofnl,
+    CMD_MAX_ARGS(1);
+
+    buf *b;
+    file *f;
+
+    b = w->b;
+    f = &(b->finfo);
+
+    if (CMD_NARGS)
+    {
+        if      (CMD_ARG_IS(1, "all"))  cmd_file_auto_eofnl = 1;
+        else if (CMD_ARG_IS(1, "!all")) cmd_file_auto_eofnl = 0;
+        else if (CMD_ARG_IS(1, "1"))    f->flags |=  file_eofnl;
+        else if (CMD_ARG_IS(1, "0"))    f->flags &= ~file_eofnl;
+    }
+
+    CMD_RTN_FMT(
+        "file: %d, all: %d",
+        (f->flags & file_eofnl) != 0,
+        cmd_file_auto_eofnl
+    );
+)
 
 CMD_FUNCT(load,
     CMD_MAX_ARGS(1);
@@ -51,6 +77,7 @@ CMD_FUNCT(load,
             );
     }
 
+
     if (!file_associated(f))
         CMD_ERR("No associated file");
 
@@ -68,6 +95,8 @@ CMD_FUNCT(load,
     }
     else
         CMD_RTN_FMT("Loaded '%s'", file_name(f));
+
+    if (cmd_file_auto_eofnl) f->flags |= file_eofnl;
 
     win_reset(w);
 )
@@ -131,16 +160,28 @@ CMD_FUNCT(associate,
 )
 
 CMD_FUNCT(saveall,
-    CMD_MAX_ARGS(0);
+    CMD_MAX_ARGS(1);
 
-    int numsaved;
+    int numsaved, force;
     numsaved = 0;
+    force    = 0;
+
+    if (CMD_NARGS == 1)
+    {
+        if (CMD_ARG_IS(1, "!"))
+            force = 1;
+        else
+            CMD_ERR("saveall only takes '!' as an argument.");
+    }
 
     RING_FOREACH(b,
         file *f;
         f = &(b->finfo);
 
-        if (!file_associated(f) || !(b->flags & buf_modified))
+        if (!file_associated(f))
+            continue;
+
+        if (!(b->flags & buf_modified) && !force)
             continue;
 
         if (file_save(f, b) == -1)
@@ -165,7 +206,6 @@ CMD_FUNCT(save,
 
     file *f;
     buf  *b;
-
     b = w->b;
     f = &(b->finfo);
 
@@ -288,6 +328,9 @@ void file_clr_win(win *w)
 
 void cmd_file_init(void)
 {
+    CMD_ADD(eofnl,
+        , "");
+
     CMD_ADD(new,
         Create a new buffer,
         "Create a new buffer and switch to it. Optionally, open a new\n"

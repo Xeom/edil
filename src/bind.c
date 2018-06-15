@@ -12,6 +12,7 @@
 #include "bind/cmdbind.h"
 #include "bind/barbind.h"
 
+#include "bind/lngmap.h"
 #include "bind/kcdmap.h"
 #include "bind/movmap.h"
 #include "bind/bufmap.h"
@@ -35,6 +36,7 @@ table bind_mov;
 table bind_buf;
 table bind_bar;
 table bind_kcd;
+table bind_lng;
 
 bind_mode_info bind_modes[] =
 {
@@ -60,6 +62,12 @@ bind_mode_info bind_modes[] =
         "mov", bind_mode_mov,
         &bind_mov,
         NULL, NULL
+    },
+
+    [bind_mode_lng] = {
+        "lng", bind_mode_lng,
+        &bind_lng,
+        bind_lng_ins, NULL
     }
 };
 
@@ -171,11 +179,17 @@ int bind_remap_str(bind_mode_type mode, inp_key k, char *str)
 int bind_unmap(vec *chrmode, inp_key k)
 {
     bind_mode_type  mode;
-    bind_mode_info *modeinfo;
 
     mode = bind_mode_get(chrmode);
 
     if (mode == bind_mode_none) return -1;
+
+    return bind_unmap_str(mode, k);
+}
+
+int bind_unmap_str(bind_mode_type mode, inp_key k)
+{
+    bind_mode_info *modeinfo;
 
     modeinfo = &bind_modes[mode];
 
@@ -204,6 +218,7 @@ void bind_init(void)
     bind_movmap_init();
     bind_barmap_init();
     bind_kcdmap_init();
+    bind_lngmap_init();
 
     vec_init(&bind_ins_buf, sizeof(chr));
 }

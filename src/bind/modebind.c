@@ -26,12 +26,18 @@ BIND_FUNCT(mode_mov,
     bind_mode = bind_mode_mov;
 )
 
+BIND_FUNCT(mode_lng,
+    bind_bar_deactivate(w);
+    bind_mode = bind_mode_lng;
+)
+
 void bind_modebind_init(void)
 {
     BIND_ADD(mode_cmd, Open the command bar);
     BIND_ADD(mode_buf, Switch to buffer mode);
     BIND_ADD(mode_kcd, Switch to keycode mode);
     BIND_ADD(mode_mov, Switch to movement mode);
+    BIND_ADD(mode_lng, Switch to long-cursor mode);
 }
 
 void bind_cmd_activate(win *w)

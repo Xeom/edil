@@ -77,8 +77,9 @@ struct namevec_item_s
 
 typedef enum
 {
-    file_cr   = 0x01,
-    file_pipe = 0x02,
+    file_cr    = 0x01,
+    file_pipe  = 0x02,
+    file_eofnl = 0x04
 } file_flags;
 
 struct file_s
@@ -274,6 +275,7 @@ typedef enum
     bind_mode_kcd,
     bind_mode_bar,
     bind_mode_mov,
+    bind_mode_lng,
     bind_mode_none
 } bind_mode_type;
 

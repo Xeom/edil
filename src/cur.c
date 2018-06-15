@@ -195,7 +195,6 @@ void cur_del_win(win *w)
         win_out_after(w, w->pri);
     else
         win_out_line(w, w->pri);
-
 }
 
 void cur_enter_win(win *w)
@@ -453,6 +452,53 @@ void cur_del_region(win *w)
     win_out_after(w, *start);
 }
 
+void cur_ins_long_win(win *w, vec *text)
+{
+    cur *start, *end, c;
+    buf *b;
+
+    b = w->b;
+    CHK_FLAGS(b);
+
+    start = CUR_START(&(w->pri), &(w->sec));
+    end   = CUR_END  (&(w->pri), &(w->sec));
+
+    c.cn = w->pri.cn;
+    for (c.ln = start->ln; c.ln <= end->ln; ++(c.ln))
+    {
+        if (buf_line_len(b, c) < c.cn)
+            continue;
+
+        cur_ins(c, b, text, PRI_SEC);
+
+        win_out_line(w, (cur){ .cn = c.cn - 1, .ln = c.ln });
+    }
+}
+
+void cur_del_long_win(win *w)
+{
+    cur *start, *end, c;
+    buf *b;
+
+    b = w->b;
+    CHK_FLAGS(b);
+
+    start = CUR_START(&(w->pri), &(w->sec));
+    end   = CUR_END  (&(w->pri), &(w->sec));
+
+    c.cn = w->pri.cn;
+    for (c.ln = start->ln; c.ln <= end->ln; ++(c.ln))
+    {
+        if (buf_line_len(b, c) <= c.cn)
+            continue;
+
+        cur_del(c, b, PRI_SEC);
+
+        win_out_line(w, c);
+    }
+}
+
+/* TODO: Replace this AND the buffer function */
 void cur_ins_buf(win *w, buf *oth)
 {
     buf *b;

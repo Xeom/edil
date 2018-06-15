@@ -5,3 +5,4 @@ dep/
 errs.txt
 log.txt
 layouts/gen-xcodes
+deps.d

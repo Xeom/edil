@@ -50,16 +50,16 @@ static char *welcome[] =
     "            %6'--------------------'",
     "             %8- Copyright 2018",
     "",
-    "  For help, please consult the %15README.md%16 file",
+    " For help, please consult the %15README.md%16 file",
     " included in the repository. The %15docs/%16 directory",
-    " in the repository includes various documentation",
-    " on commands, keybindings etc.",
+    " in the repository includes various files that",
+    " document %3E%2d%4i%5l%15's%16 features.",
     "",
-    "  The file %15docs/editing.md%16 in particular provides",
-    " a quick guide to starting using %3E%2d%4i%5l%16 as an editor",
+    " The file %15docs/editing.md%16 in particular provides",
+    " a quick guide to starting using %3E%2d%4i%5l%16 as an editor.",
     "",
-    "  Press %15Ctrl%16+%15Esc%16+%15K%16 and then %15enter%16 to exit, or press",
-    " %15Ctrl%16+%15X%16, type %11\"quit !\"%16 and press %15enter%16."
+    " Press %15Ctrl%16+%15Esc%16+%15K%16 and then %15enter%16 to exit, or",
+    " press %15Ctrl%16+%15X%16, type %11\"quit !\"%16 and press %15enter%16."
 };
 
 static char *help = "\n"
