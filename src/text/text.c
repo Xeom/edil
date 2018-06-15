@@ -127,15 +127,21 @@ line *text_new_line(text *t, cur c)
 
     ptr = vec_ins(&(t->lines), c.ln, 1, NULL);
 
+    if (ptr)
+    {
+        l = malloc(sizeof(line));
+        *ptr = l;
+
+        line_init(l);
+        line_lock(l);
+
+    }
+    else
+    {
+        l = NULL;
+    }
+
     pthread_mutex_unlock(&(t->lock));
-
-    if (!ptr) return NULL;
-
-    l = malloc(sizeof(line));
-    *ptr = l;
-
-    line_init(l);
-    line_lock(l);
 
     return l;
 }
