@@ -27,6 +27,11 @@ int circvec_empty(circvec *cv)
     return cv->empty;
 }
 
+size_t circvec_size(circvec *cv)
+{
+    return vec_len(&(cv->v));
+}
+
 size_t circvec_get_free(circvec *cv)
 {
     vec *v;
@@ -125,4 +130,26 @@ void *circvec_get(circvec *cv, ssize_t ind)
     if (ind <  0)            ind += len;
 
     return vec_get(v, ind);
+}
+
+void circvec_resize(circvec *cv, size_t sz)
+{
+    circvec new;
+    size_t  width;
+
+    width = cv->v.width;
+
+    circvec_init(&new, width, sz);
+
+    while (!(circvec_empty(cv) || circvec_full(&new))
+    {
+        void *from, *to;
+        from = circvec_pop(cv);
+        to   = circvec_push(&new);
+
+        memcpy(to, from, width);
+    }
+
+    circvec_kill(cv);
+    memcpy(cv, &new, sizeof(circvec));
 }

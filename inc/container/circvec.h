@@ -23,4 +23,6 @@ void *circvec_push(circvec *cv);
 
 void *circvec_get(circvec *cv, ssize_t ind);
 
+void circvec_resize(circvec *cv, size_t sz);
+
 #endif
