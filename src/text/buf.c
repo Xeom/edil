@@ -87,54 +87,50 @@ void buf_clr(buf *b)
 
 void buf_ins_nl(buf *b, cur loc)
 {
-    size_t num;
+    ssize_t num;
+    vec    chrs;
     cur    newloc;
-    line  *line1, *line2;
+
+    if (loc.ln >= buf_len(b)) return;
 
     newloc = (cur){ .ln = loc.ln + 1 };
 
-    line1 = text_get_line(&(b->t), loc);
-    if (!line1) return;
-    line2 = text_new_line(&(b->t), newloc);
-    if (!line2) return;
+    vec_init(&chrs, sizeof(chr));
+    buf_cpy_line(b, loc, &chrs);
+    buf_ins_lines(b, newloc, 1);
 
-    num = line_len(line1) - loc.cn;
+    num = vec_len(&chrs) - loc.cn;
 
     if (num > 0)
     {
-        chr *mem;
+        if (vec_len(&chrs) > (size_t)num)
+            vec_del(&chrs, 0, vec_len(&chrs) - num);
 
-        mem = line_chr(line1, loc);
-        line_ins_mem(line2, newloc, num, mem);
-        line_del(line1, loc, num);
+        buf_ins(b, newloc, &chrs);
     }
 
-    line_unlock(line1);
-    line_unlock(line2);
+    vec_kill(&chrs);
 }
 
 void buf_del_nl(buf *b, cur loc)
 {
-    size_t num;
     cur    prevloc;
-    line  *line1, *line2;
+    vec    chrs;
+
+    if (loc.ln >= buf_len(b) - 1) return;
 
     prevloc = (cur){ .ln = loc.ln + 1 };
 
-    line1 = text_get_line(&(b->t), loc);
-    if (!line1) return;
-    line2 = text_get_line(&(b->t), prevloc);
-    if (!line2) return;
+    vec_init(&chrs, sizeof(chr));
+    buf_cpy_line(b, prevloc, &chrs);
+    buf_del_lines(b, prevloc, 1);
 
-    num = line_len(line2);
+    loc.cn = buf_line_len(b, loc);
 
-    if (num > 0)
-        line_cpy(line2, line_vec(line1));
+    if (vec_len(&chrs))
+        buf_ins(b, loc, &chrs);
 
-    line_unlock(line1);
-    line_unlock(line2);
-
-    text_del_lines(&(b->t), prevloc, 1);
+    vec_kill(&chrs);
 }
 
 ssize_t buf_line_len(buf *b, cur loc)
