@@ -9,7 +9,6 @@ struct cur_s
     ssize_t cn, ln;
 };
 
-# include "buf.h"
 # include "win.h"
 
 # if !defined(MAX)

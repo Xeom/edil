@@ -1,7 +1,11 @@
 #if !defined(BUF_LINE_H)
 # define BUF_LINE_H
+# include "vec.h"
 
 typedef struct line_s line;
+
+# include "chr.h"
+# include "cur.h"
 
 struct line_s
 {
@@ -9,9 +13,6 @@ struct line_s
     vec chrs;
 };
 
-# include "chr.h"
-# include "cur.h"
-# include "vec.h"
 
 /* Initialize and kill a line. The line should NOT **
  * be locked when these are called.                */

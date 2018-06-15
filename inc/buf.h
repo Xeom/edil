@@ -2,10 +2,10 @@
 # define BUF_H
 # include "vec.h"
 # include "col.h"
-# include "chr.h"
 
 typedef struct buf_s buf;
 
+# include "chr.h"
 # include "cur.h"
 # include "file.h"
 

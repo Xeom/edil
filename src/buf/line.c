@@ -1,3 +1,6 @@
+#include <pthread.h>
+
+#include "indent.h"
 #include "buf/line.h"
 
 void line_init(line *l)
@@ -5,7 +8,7 @@ void line_init(line *l)
     if (!l) return;
 
     vec_init(&(l->chrs), sizeof(chr));
-    pthread_mutex_create(&(l->lock), NULL);
+    pthread_mutex_init(&(l->lock), NULL);
 }
 
 void line_kill(line *l)
@@ -41,7 +44,7 @@ chr *line_chr(line *l, cur c)
 {
     if (!l) return NULL;
 
-    return vec_get(&(l->chrs), c->cn);
+    return vec_get(&(l->chrs), c.cn);
 }
 
 vec *line_vec(line *l)
@@ -51,7 +54,7 @@ vec *line_vec(line *l)
     return &(l->chrs);
 }
 
-ssize_t line_len(line *l);
+ssize_t line_len(line *l)
 {
     if (!l) return 0;
 
@@ -76,7 +79,7 @@ void line_ins_str(line *l, cur c, char *str)
 
 void line_ins_mem(line *l, cur c, size_t n, chr *mem)
 {
-    size_t len, num;
+    ssize_t len;
 
     if (!l) return;
 
@@ -91,8 +94,8 @@ void line_ins_mem(line *l, cur c, size_t n, chr *mem)
 
 void line_del(line *l, cur c, size_t n)
 {
-    if (c.cn + n > line_len(l))
-        return 0;
+    if (c.cn + (ssize_t)n > line_len(l))
+        return;
 
     while (c.cn && chr_is_blank(line_chr(l, c)))
     {

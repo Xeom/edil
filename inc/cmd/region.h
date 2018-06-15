@@ -1,6 +1,6 @@
 #if !defined(CMD_REGION)
 # define CMD_REGION
-# include "buf.h"
+# include "buf/buf.h"
 # include "vec.h"
 # include "win.h"
 

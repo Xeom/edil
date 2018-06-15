@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "file.h"
-#include "buf.h"
+#include "buf/buf.h"
 #include "ring.h"
 #include "ui.h"
 #include "cmd.h"

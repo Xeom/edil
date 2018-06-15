@@ -20,7 +20,7 @@ struct file_s
     file_flags flags;
 };
 
-# include "buf.h"
+# include "buf/buf.h"
 
 void file_init(file *f);
 

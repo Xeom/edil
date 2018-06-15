@@ -3,9 +3,9 @@
 # include <stdio.h>
 # include <unistd.h>
 
-# if !defined(BAR_H)
- typedef struct win_s win;
-#endif
+typedef struct win_s win;
+
+# include "buf/buf.h"
 
 # include "bar.h"
 # include "cur.h"

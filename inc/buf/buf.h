@@ -1,11 +1,12 @@
 #if !defined(BUF_H)
 # define BUF_H
-# include "buf/text.h"
 # include "chr.h"
 
 typedef struct buf_s buf;
 
+# include "buf/text.h"
 # include "file.h"
+# include "cur.h"
 
 /* Bit flags describing attributes of buffers */
 typedef enum
@@ -25,6 +26,15 @@ struct buf_s
     buf_flags flags;
 };
 
+static inline line *buf_get_line (buf *b, cur c) { return text_get_line(&(b->t), c); }
+static inline line *buf_new_line (buf *b, cur c) { return text_new_line(&(b->t), c); }
+
+static inline void buf_del_lines(buf *b, cur c, size_t n) { text_del_lines(&(b->t), c, n); }
+static inline void buf_ins_lines(buf *b, cur c, size_t n) { text_ins_lines(&(b->t), c, n); }
+
+static inline size_t buf_len(buf *b)  { return text_len (&(b->t)); }
+static inline cur    buf_last(buf *b) { return text_last(&(b->t)); }
+
 void buf_init(buf *b);
 void buf_kill(buf *b);
 
@@ -35,6 +45,8 @@ void buf_ins_mem(buf *b, cur loc, size_t n, chr *mem);
 void buf_del(buf *b, cur loc, size_t n);
 
 void buf_clr(buf *b);
+
+ssize_t buf_line_len(buf *b, cur loc);
 
 void buf_ins_nl(buf *b, cur loc);
 void buf_del_nl(buf *b, cur loc);

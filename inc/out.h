@@ -3,7 +3,7 @@
 # include <stdio.h>
 # include "col.h"
 # include "vec.h"
-# include "buf.h"
+# include "buf/buf.h"
 # include "cur.h"
 
 extern col out_blank_line_col;

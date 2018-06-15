@@ -46,18 +46,19 @@ line *text_get_line(text *t, cur c)
 
 void text_del_lines(text *t, cur c, size_t n)
 {
-    size_t ind, end, len;
+    ssize_t ind, len;
     line **ptr, *l;
 
     pthread_mutex_lock(&(t->lock));
 
     len = vec_len(&(t->lines));
 
-    if (n + c.ln > len) n = len - c.ln;
+    if (c.ln >= len) return;
+    if (c.ln + (ssize_t)n > len) n = len - c.ln;
 
-    if (len == n) return;
+    if (len == (ssize_t)n) return;
 
-    for (ind = c.ln; ind < c.ln + n; ++ind)
+    for (ind = c.ln; ind < c.ln + (ssize_t)n; ++ind)
     {
         ptr = vec_get(&(t->lines), c.ln);
         if (!ptr) continue;
@@ -76,7 +77,7 @@ void text_del_lines(text *t, cur c, size_t n)
 
 void text_ins_lines(text *t, cur c, size_t n)
 {
-    size_t ind, end, len;
+    ssize_t ind, len;
     line **ptr, *l;
 
     pthread_mutex_lock(&(t->lock));
@@ -85,9 +86,9 @@ void text_ins_lines(text *t, cur c, size_t n)
 
     if (c.ln > len) c.ln = len;
 
-    vec_ins(&(t->lines), c.ln, n);
+    vec_ins(&(t->lines), c.ln, n, NULL);
 
-    for (ind = c.ln; ind < end; ++ind)
+    for (ind = c.ln; ind < c.ln + (ssize_t)n; ++ind)
     {
         ptr = vec_get(&(t->lines), c.ln);
         if (!ptr) continue;
@@ -102,19 +103,20 @@ void text_ins_lines(text *t, cur c, size_t n)
 
 line *text_new_line(text *t, cur c)
 {
+    ssize_t len;
+    line **ptr, *l;
+
     pthread_mutex_lock(&(t->lock));
 
     len = vec_len(&(t->lines));
 
-    if (c.ln > len) c.ln = len;;
+    if (c.ln > len) c.ln = len;
 
-    vec_ins(&(t->lines), c.ln, 1);
-
-    ptr = vec_get(&(t->lines), c.ln);
+    ptr = vec_ins(&(t->lines), c.ln, 1, NULL);
 
     pthread_mutex_unlock(&(t->lock));
 
-    if (!ptr) return;
+    if (!ptr) return NULL;
 
     l = malloc(sizeof(line));
     *ptr = l;

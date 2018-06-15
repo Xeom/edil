@@ -2,7 +2,7 @@
 # define INDENT_H
 # include "col.h"
 # include "chr.h"
-# include "buf.h"
+# include "buf/buf.h"
 # include "vec.h"
 
 typedef enum

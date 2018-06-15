@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "buf.h"
+#include "buf/buf.h"
 #include "indent.h"
 
 void buf_init(buf *b)

@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "buf/buf.h"
 
 void buf_init(buf *b)
@@ -10,13 +12,11 @@ void buf_init(buf *b)
 
     b->prihint = (cur){0, 0};
 
-    buf_ins_line(b, (cur){0, 0});
+    text_ins_lines(&(b->t), (cur){0, 0}, 1);
 }
 
 void buf_kill(buf *b)
 {
-    size_t ln;
-
     file_kill(&(b->finfo));
     vec_kill(&(b->name));
     text_kill(&(b->t));
@@ -41,7 +41,7 @@ void buf_ins_str(buf *b, cur loc, char *str)
     l = text_get_line(&(b->t), loc);
     if (!l) return;
 
-    line_ins_str(l, loc, n, str);
+    line_ins_str(l, loc, str);
 
     line_unlock(l);
 }
@@ -169,8 +169,9 @@ void buf_ins_from(buf *b, cur c, buf *oth, cur loc, cur end)
     {
         ssize_t len, num;
         line *l;
-        l   = text_get_line(&(oth->t), loc);
-        len = line_len(line);
+        l = text_get_line(&(oth->t), loc);
+
+        len = line_len(l);
         num = len - loc.cn;
 
         if (num > 0)
@@ -178,7 +179,7 @@ void buf_ins_from(buf *b, cur c, buf *oth, cur loc, cur end)
 
         c = (cur){ .cn = len };
         buf_ins_nl(b, c);
-        c = (cur){ .ln = c->ln + 1 };
+        c = (cur){ .ln = c.ln + 1 };
 
         line_unlock(l);
     }
@@ -187,14 +188,14 @@ void buf_ins_from(buf *b, cur c, buf *oth, cur loc, cur end)
     {
         ssize_t num;
         line *l;
-        text_get_line(&(oth->t), loc);
+        l = text_get_line(&(oth->t), loc);
 
         num = end.cn - loc.cn;
 
         if (num > 0)
             buf_ins_mem(b, c, num, line_chr(l, loc));
 
-        loc->cn += num;
+        loc.cn += num;
 
         line_unlock(l);
     }

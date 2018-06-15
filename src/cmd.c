@@ -204,37 +204,30 @@ void cmd_log(vec *chrs, int iscmd)
     }
 
     loc.ln = buf_len(cmd_log_buf) - 1;
-    buf_ins_line(cmd_log_buf, loc);
+    buf_ins_lines(cmd_log_buf, loc, 1);
 
-    buf_ins(cmd_log_buf, loc, vec_first(chrs), vec_len(chrs));
+    if (iscmd)
+        VEC_FOREACH(chrs, chr *, c, chr_set_cols(c, cmd_log_cmd_col))
+    else
+        VEC_FOREACH(chrs, chr *, c, chr_set_cols(c, cmd_log_rtn_col))
+
+    buf_ins(cmd_log_buf, loc, chrs);
 
     if (iscmd)
     {
         vec prefix;
-        int len;
 
         vec_init(&prefix, sizeof(chr));
         chr_from_str(&prefix, ">> ");
+        VEC_FOREACH(&prefix, chr *, c, chr_set_cols(c, cmd_log_prefix_col));
 
-        len = vec_len(&prefix);
+        buf_ins(cmd_log_buf, loc, &prefix);
 
-        buf_ins(cmd_log_buf, loc, vec_first(&prefix), len);
-        buf_setcol(cmd_log_buf, loc, len, cmd_log_prefix_col);
-        loc.cn += len;
-
-        buf_setcol(cmd_log_buf, loc, vec_len(chrs), cmd_log_cmd_col);
         vec_kill(&prefix);
-    }
-    else
-    {
-        buf_setcol(cmd_log_buf, loc, vec_len(chrs), cmd_log_rtn_col);
     }
 
     if (buf_len(cmd_log_buf) > 256)
-    {
-        buf_del_line(cmd_log_buf, (cur){0, 0});
-        buf_del_line(cmd_log_buf, (cur){0, 0});
-    }
+        buf_del_lines(cmd_log_buf, (cur){0, 0}, 2);
 }
 
 void cmd_print_all(FILE *stream)
