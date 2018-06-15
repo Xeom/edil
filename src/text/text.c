@@ -73,7 +73,7 @@ void text_del_lines(text *t, cur c, size_t n)
     {
         for (ind = c.ln; ind < c.ln + (ssize_t)n; ++ind)
         {
-            ptr = vec_get(&(t->lines), c.ln);
+            ptr = vec_get(&(t->lines), ind);
             if (!ptr) continue;
 
             l = *ptr;
