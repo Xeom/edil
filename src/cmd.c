@@ -3,7 +3,7 @@
 
 #include "container/vec.h"
 #include "container/namevec.h"
-#include "chr.h"
+#include "buf/chr.h"
 #include "ring.h"
 
 #include "cmd/buf.h"

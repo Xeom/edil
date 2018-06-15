@@ -4,11 +4,11 @@
 #include "buf/buf.h"
 #include "buf/line.h"
 #include "container/vec.h"
-#include "chr.h"
+#include "buf/chr.h"
 #include "win.h"
 #include "indent.h"
 
-#include "cur.h"
+#include "buf/cur.h"
 
 #define CHK_FLAGS(b) \
     { if ((b)->flags & buf_readonly) return; \

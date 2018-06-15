@@ -1,11 +1,12 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "container/table.h"
+#include "buf/chr.h"
 #include "bar.h"
 #include "inp.h"
 #include "win.h"
 #include "ui.h"
-#include "chr.h"
 
 #include "bind/modebind.h"
 #include "bind/curbind.h"

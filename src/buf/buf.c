@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "chr.h"
+#include "buf/chr.h"
 #include "container/vec.h"
 #include "file.h"
 #include "buf/line.h"

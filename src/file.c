@@ -16,7 +16,7 @@
 #include "buf/line.h"
 #include "buf/buf.h"
 #include "container/vec.h"
-#include "chr.h"
+#include "buf/chr.h"
 
 #include "file.h"
 

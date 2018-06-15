@@ -17,9 +17,10 @@
 #include <pthread.h>
 #include <sys/types.h>
 
+#include "container/table.h"
+#include "container/vec.h"
 #include "bind.h"
 #include "ui.h"
-#include "container/vec.h"
 #include "out.h"
 
 #include "inp.h"

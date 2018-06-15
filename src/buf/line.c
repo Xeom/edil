@@ -1,7 +1,7 @@
 #include <pthread.h>
 
 #include "container/vec.h"
-#include "chr.h"
+#include "buf/chr.h"
 #include "indent.h"
 #include "buf/line.h"
 

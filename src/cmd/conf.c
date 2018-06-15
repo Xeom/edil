@@ -3,12 +3,12 @@
 #include <pwd.h>
 #include <errno.h>
 
+#include "container/table.h"
 #include "bar.h"
 #include "inp.h"
 #include "bind.h"
 #include "file.h"
 #include "win.h"
-#include "container/vec.h"
 #include "cmd.h"
 #include "ui.h"
 

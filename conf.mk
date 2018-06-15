@@ -1,5 +1,5 @@
-FILES=buf/buf buf/text buf/line \
-      bar chr cmd col cur file indent inp out ring ui win bind \
+FILES=buf/buf buf/text buf/line buf/chr buf/col buf/cur \
+      bar cmd file indent inp out ring ui win bind \
       container/vec container/namevec container/circvec container/table \
       cmd/file cmd/nav cmd/indent cmd/buf cmd/region cmd/conf \
       bind/curbind bind/cmdbind bind/modebind bind/barbind \

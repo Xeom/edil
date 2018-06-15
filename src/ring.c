@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "chr.h"
+#include "buf/chr.h"
 #include "container/vec.h"
 
 #include "ring.h"

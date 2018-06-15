@@ -15,9 +15,9 @@
 #include <sys/types.h>
 #include <stdio.h>
 
-#include "chr.h"
+#include "buf/chr.h"
 #include "container/vec.h"
-#include "col.h"
+#include "buf/col.h"
 #include "indent.h"
 
 #include "out.h"

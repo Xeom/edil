@@ -1,8 +1,8 @@
 #include <string.h>
 
-#include "chr.h"
-#include "col.h"
-#include "cur.h"
+#include "buf/chr.h"
+#include "buf/col.h"
+#include "buf/cur.h"
 #include "win.h"
 #include "ring.h"
 #include "buf/line.h"

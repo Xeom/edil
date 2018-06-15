@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "ui.h"
-#include "chr.h"
+#include "buf/chr.h"
 #include "bar.h"
 #include "bind/modebind.h"
 

@@ -3,8 +3,8 @@
 
 #include "out.h"
 #include "container/vec.h"
-#include "chr.h"
-#include "col.h"
+#include "buf/chr.h"
+#include "buf/col.h"
 #include "win.h"
 #include "file.h"
 #include "bind.h"

@@ -1,8 +1,8 @@
-#include "chr.h"
+#include "buf/chr.h"
 
 #include "container/vec.h"
 
-#include "col.h"
+#include "buf/col.h"
 
 col col_default = { .fg = col_none, .bg = col_none, .attr = 0 };
 
@@ -110,4 +110,3 @@ void col_print(col c, FILE *f)
 
     fputs("m", f);
 }
-

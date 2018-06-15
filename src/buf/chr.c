@@ -3,9 +3,9 @@
 #include <stdlib.h>
 
 #include "container/vec.h"
-#include "col.h"
+#include "buf/col.h"
 
-#include "chr.h"
+#include "buf/chr.h"
 
 int chr_utf8_len(char c)
 {

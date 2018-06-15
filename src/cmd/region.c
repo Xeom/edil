@@ -1,6 +1,6 @@
 #include "buf/buf.h"
 #include "ring.h"
-#include "cur.h"
+#include "buf/cur.h"
 
 #include "cmd.h"
 #include "cmd/region.h"

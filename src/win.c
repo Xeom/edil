@@ -4,8 +4,8 @@
 #include "buf/buf.h"
 #include "buf/line.h"
 
-#include "cur.h"
-#include "chr.h"
+#include "buf/cur.h"
+#include "buf/chr.h"
 #include "container/vec.h"
 #include "bar.h"
 #include "out.h"
