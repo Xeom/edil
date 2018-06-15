@@ -26,6 +26,14 @@ void text_kill(text *t)
     pthread_mutex_destroy(&(t->lock));
 }
 
+void text_cpy_line(text *t, cur c, vec *v)
+{
+    line *l;
+    l = text_get_line(t, c);
+    vec_cpy(v, line_vec(l));
+    line_unlock(l);
+}
+
 line *text_get_line(text *t, cur c)
 {
     line **ptr, *rtn;
@@ -127,20 +135,25 @@ line *text_new_line(text *t, cur c)
 
     ptr = vec_ins(&(t->lines), c.ln, 1, NULL);
 
+    if (ptr)
+    {
+        l = malloc(sizeof(line));
+        *ptr = l;
+
+        line_init(l);
+        line_lock(l);
+    }
+    else
+    {
+        l = NULL;
+    }
+
     pthread_mutex_unlock(&(t->lock));
-
-    if (!ptr) return NULL;
-
-    l = malloc(sizeof(line));
-    *ptr = l;
-
-    line_init(l);
-    line_lock(l);
 
     return l;
 }
 
-size_t text_len(text *t)
+ssize_t text_len(text *t)
 {
     size_t rtn;
 

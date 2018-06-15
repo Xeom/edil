@@ -9,8 +9,10 @@ static inline line *buf_new_line (buf *b, cur c) { return text_new_line(&(b->t),
 static inline void buf_del_lines(buf *b, cur c, size_t n) { text_del_lines(&(b->t), c, n); }
 static inline void buf_ins_lines(buf *b, cur c, size_t n) { text_ins_lines(&(b->t), c, n); }
 
-static inline size_t buf_len(buf *b)  { return text_len (&(b->t)); }
-static inline cur    buf_last(buf *b) { return text_last(&(b->t)); }
+static inline ssize_t buf_len(buf *b)  { return text_len (&(b->t)); }
+static inline cur     buf_last(buf *b) { return text_last(&(b->t)); }
+
+static inline void buf_cpy_line(buf *b, cur c, vec *v) { text_cpy_line(&(b->t), c, v); }
 
 void buf_init(buf *b);
 void buf_kill(buf *b);
