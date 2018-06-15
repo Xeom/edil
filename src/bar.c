@@ -2,13 +2,13 @@
 #include <stdlib.h>
 
 #include "out.h"
-#include "vec.h"
+#include "container/vec.h"
 #include "chr.h"
 #include "col.h"
 #include "win.h"
 #include "file.h"
 #include "bind.h"
-#include "circvec.h"
+#include "container/circvec.h"
 #include "buf/buf.h"
 
 #include "bar.h"

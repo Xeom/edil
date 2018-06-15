@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "chr.h"
-#include "vec.h"
+#include "container/vec.h"
 
 #include "ring.h"
 

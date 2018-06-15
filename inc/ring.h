@@ -1,7 +1,7 @@
 #if !defined(RING_H)
 # define RING_H
 
-#include "vec.h"
+#include "container/vec.h"
 #include "buf/buf.h"
 
 extern vec ring_bufs;

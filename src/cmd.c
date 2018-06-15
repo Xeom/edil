@@ -1,8 +1,8 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "vec.h"
-#include "namevec.h"
+#include "container/vec.h"
+#include "container/namevec.h"
 #include "chr.h"
 #include "ring.h"
 

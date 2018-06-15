@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "chr.h"
-#include "vec.h"
+#include "container/vec.h"
 #include "file.h"
 #include "buf/line.h"
 

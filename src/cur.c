@@ -3,7 +3,7 @@
 
 #include "buf/buf.h"
 #include "buf/line.h"
-#include "vec.h"
+#include "container/vec.h"
 #include "chr.h"
 #include "win.h"
 #include "indent.h"

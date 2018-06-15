@@ -6,7 +6,7 @@
 
 #include "cur.h"
 #include "chr.h"
-#include "vec.h"
+#include "container/vec.h"
 #include "bar.h"
 #include "out.h"
 #include "ui.h"

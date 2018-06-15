@@ -1,5 +1,6 @@
 FILES=buf/buf buf/text buf/line \
-      bar chr cmd col cur file indent inp namevec table out ring vec ui win bind circvec \
+      bar chr cmd col cur file indent inp out ring ui win bind \
+      container/vec container/namevec container/circvec container/table \
       cmd/file cmd/nav cmd/indent cmd/buf cmd/region cmd/conf \
       bind/curbind bind/cmdbind bind/modebind bind/barbind \
       bind/barmap bind/bufmap bind/movmap bind/kcdmap bind/lngmap

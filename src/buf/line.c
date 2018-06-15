@@ -1,6 +1,6 @@
 #include <pthread.h>
 
-#include "vec.h"
+#include "container/vec.h"
 #include "chr.h"
 #include "indent.h"
 #include "buf/line.h"

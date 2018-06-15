@@ -2,7 +2,7 @@
 # define CMD_H
 # include <stdlib.h>
 # include "types.h"
-# include "vec.h"
+# include "container/vec.h"
 # include "chr.h"
 
 /* Define code as a static function with a particular command name.         *

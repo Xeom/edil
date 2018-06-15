@@ -19,7 +19,7 @@
 
 #include "bind.h"
 #include "ui.h"
-#include "vec.h"
+#include "container/vec.h"
 #include "out.h"
 
 #include "inp.h"

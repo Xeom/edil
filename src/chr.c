@@ -2,7 +2,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-#include "vec.h"
+#include "container/vec.h"
 #include "col.h"
 
 #include "chr.h"

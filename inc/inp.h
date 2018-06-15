@@ -1,7 +1,6 @@
 #if !defined(INP_H)
 # define INP_H
-# include <stddef.h>
-# include "table.h"
+# include "types.h"
 
 extern table inp_keytranslate;
 

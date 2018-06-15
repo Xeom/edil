@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "vec.h"
+#include "container/vec.h"
 #include "cmd.h"
 #include "win.h"
 #include "out.h"

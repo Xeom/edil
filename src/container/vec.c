@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "vec.h"
+#include "container/vec.h"
 
 /* Call after operations that might shorten a vec */
 static void vec_resize_shorter(vec *v)

@@ -1,9 +1,9 @@
 #if !defined(BIND_H)
 # define BIND_H
 # include "types.h"
-# include "vec.h"
+# include "container/vec.h"
 # include "inp.h"
-# include "namevec.h"
+# include "container/namevec.h"
 
 /* The current mode */
 extern bind_mode_type bind_mode;

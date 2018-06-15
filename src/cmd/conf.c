@@ -8,7 +8,7 @@
 #include "bind.h"
 #include "file.h"
 #include "win.h"
-#include "vec.h"
+#include "container/vec.h"
 #include "cmd.h"
 #include "ui.h"
 
