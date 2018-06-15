@@ -1,17 +1,7 @@
 #if !defined(NAMEVEC_H)
 # define NAMEVEC_H
 # include <stdlib.h>
-# include "vec.h"
-# include "win.h"
-# include "bind.h"
-
-typedef struct namevec_item_s namevec_item;
-
-struct namevec_item_s
-{
-    char *name;
-    void *ptr;
-};
+# include "types.h"
 
 void namevec_init(vec *v, namevec_item *items, size_t bytes);
 void namevec_sort(vec *v);

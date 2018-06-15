@@ -1,16 +1,7 @@
 #if !defined(CIRCVEC_H)
 # define CIRCVEC_H
-# include "vec.h"
 # include <unistd.h>
-
-typedef struct circvec_s circvec;
-
-struct circvec_s
-{
-    vec v;
-    size_t ins, del;
-    unsigned int empty : 1;
-};
+# include "types.h"
 
 void circvec_init(circvec *cv, size_t width, size_t size);
 

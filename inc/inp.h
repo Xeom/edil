@@ -3,50 +3,6 @@
 # include <stddef.h>
 # include "table.h"
 
-typedef enum
-{
-    inp_key_esc       = 0x200,
-    inp_key_ctrl      = 0x400,
-    inp_key_none      = 0x100,
-    inp_key_up,
-    inp_key_down,
-    inp_key_right,
-    inp_key_left,
-    inp_key_home,
-    inp_key_end,
-    inp_key_pgup,
-    inp_key_pgdn,
-    inp_key_insert,
-    inp_key_shifttab,
-    inp_key_shiftdel,
-    inp_key_shiftback,
-    inp_key_tab,
-    inp_key_del,
-    inp_key_back,
-    inp_key_enter,
-    inp_key_f1,
-    inp_key_f2,
-    inp_key_f3,
-    inp_key_f4,
-    inp_key_f5,
-    inp_key_f6,
-    inp_key_f7,
-    inp_key_f8,
-    inp_key_f9,
-    inp_key_f10,
-    inp_key_f11,
-    inp_key_f12
-} inp_key;
-
-typedef struct inp_keycode_s inp_keycode;
-
-struct inp_keycode_s
-{
-    inp_key key;
-    char *code;
-    char *name;
-};
-
 extern table inp_keytranslate;
 
 inp_key inp_get_key(unsigned char c);

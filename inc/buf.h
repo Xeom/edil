@@ -1,32 +1,6 @@
 #if !defined(BUF_H)
 # define BUF_H
-# include "vec.h"
-# include "col.h"
-
-typedef struct buf_s buf;
-
-# include "chr.h"
-# include "cur.h"
-# include "file.h"
-
-/* Bit flags describing attributes of buffers */
-typedef enum
-{
-    buf_readonly   = 0x01, /* Don't modify this                            */
-    buf_modified   = 0x02, /* This has been modified                       */
-    buf_nofile     = 0x04, /* Buffer cannot be associated with a filename  */
-    buf_nokill     = 0x08  /* Buffer cannot be killed */
-} buf_flags;
-
-/* A representation of some text */
-struct buf_s
-{
-    vec       lines; /* A vector of lines */
-    file      finfo;
-    vec       name;
-    cur       prihint;
-    buf_flags flags; /* The flags of the buffer */
-};
+# include "types.h"
 
 void buf_init(buf *b);
 

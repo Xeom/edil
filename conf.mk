@@ -3,6 +3,7 @@ FILES=buf/buf buf/text buf/line \
       cmd/file cmd/nav cmd/indent cmd/buf cmd/region cmd/conf \
       bind/curbind bind/cmdbind bind/modebind bind/barbind \
       bind/barmap bind/bufmap bind/movmap bind/kcdmap
+HEADERS=types
 
 SRCDIR=src/
 INCDIR=inc/

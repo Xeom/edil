@@ -1,20 +1,6 @@
 #if !defined(CMD_H)
 # define CMD_H
-# include <stdarg.h>
-# include "vec.h"
-# include "win.h"
-# include "namevec.h"
-
-typedef struct cmd_info_s cmd_info;
-
-struct cmd_info_s
-{
-    void (*fptr)(vec *, vec *, win *);
-    char *name;
-    char *desc;
-    char *full;
-};
-
+# include "types.h"
 /* Define code as a static function with a particular command name.         *
  * The code is run the variables win *w, vec *args, vec *rtn as parameters. */
 #define CMD_FUNCT(_name, ...) \

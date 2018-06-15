@@ -1,8 +1,6 @@
 #if !defined(CON_H)
 # define CON_H
-# include "inp.h"
-# include "vec.h"
-# include "win.h"
+# include "types.h"
 
 extern int ui_alive;
 

@@ -1,20 +1,11 @@
 #if !defined(CHR_H)
 # define CHR_H
-# include "col.h"
-# include "vec.h"
-
-typedef struct chr_s chr;
+# include "types.h"
 
 #define CHR(_utf8) (chr){                                \
     .utf8 = _utf8,                                       \
     .fnt = { .fg = col_none, .bg = col_none, .attr = 0 } \
 }
-
-struct chr_s
-{
-    char utf8[6];
-    col  fnt;
-};
 
 /* Get the length of a utf8 character, if starting with c */
 int chr_utf8_len(char c);

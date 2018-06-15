@@ -1,19 +1,6 @@
 #if !defined(VEC_H)
 # define VEC_H
-
-# include <stdlib.h>
-
-typedef struct vec_s vec;
-
-struct vec_s
-{
-    /* The stored data, can be NULL */
-    char *data;
-    /* Capacity usage and width in bytes */
-    size_t capacity;
-    size_t usage;
-    size_t width;
-};
+# include "types.h"
 
 #define VEC_FOREACH(_vec, _type, _i, _code) \
     do {                                    \

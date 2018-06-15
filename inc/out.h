@@ -1,10 +1,7 @@
 #if !defined(OUT_H)
 # define OUT_H
 # include <stdio.h>
-# include "col.h"
-# include "vec.h"
-# include "buf/buf.h"
-# include "cur.h"
+# include "types.h"
 
 extern col out_blank_line_col;
 extern char *out_blank_line_text;

@@ -1,7 +1,6 @@
 #if !defined(CMD_FILE_H)
 # define CMD_FILE_H
-# include "win.h"
-# include "vec.h"
+# include "types.h"
 
 void file_clr_win(win *w);
 

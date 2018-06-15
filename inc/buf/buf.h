@@ -1,30 +1,6 @@
 #if !defined(BUF_H)
 # define BUF_H
-# include "chr.h"
-
-typedef struct buf_s buf;
-
-# include "buf/text.h"
-# include "file.h"
-# include "cur.h"
-
-/* Bit flags describing attributes of buffers */
-typedef enum
-{
-    buf_readonly   = 0x01, /* Don't modify this                            */
-    buf_modified   = 0x02, /* This has been modified                       */
-    buf_nofile     = 0x04, /* Buffer cannot be associated with a filename  */
-    buf_nokill     = 0x08  /* Buffer cannot be killed */
-} buf_flags;
-
-struct buf_s
-{
-    text t;
-    file finfo;
-    vec  name;
-    cur  prihint;
-    buf_flags flags;
-};
+# include "types.h"
 
 static inline line *buf_get_line (buf *b, cur c) { return text_get_line(&(b->t), c); }
 static inline line *buf_new_line (buf *b, cur c) { return text_new_line(&(b->t), c); }

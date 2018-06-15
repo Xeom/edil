@@ -19,7 +19,7 @@ DFLAGS=$(addprefix -D, $(DEFINES)) \
 WFLAGS=$(addprefix -W, $(WARNINGS))
 FLAGS+=$(WFLAGS) --std=$(STD) -pedantic -pthread -I$(INCDIR) -fPIC -fdiagnostics-color=always  $(DFLAGS)
 
-HFILES=$(addprefix $(INCDIR), $(addsuffix .h, $(FILES)))
+HFILES=$(addprefix $(INCDIR), $(addsuffix .h, $(FILES) $(HEADERS)))
 CFILES=$(addprefix $(SRCDIR), $(addsuffix .c, $(FILES)))
 OFILES=$(addprefix $(OBJDIR), $(addsuffix .o, $(FILES)))
 DFILES=$(addprefix $(DEPDIR), $(addsuffix .d, $(FILES)))

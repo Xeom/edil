@@ -1,54 +1,6 @@
 #if !defined(BIND_H)
 # define BIND_H
-# include "table.h"
-# include "inp.h"
-# include "win.h"
-
-typedef enum
-{
-    bind_mode_buf,
-    bind_mode_kcd,
-    bind_mode_bar,
-    bind_mode_mov,
-    bind_mode_none
-} bind_mode_type;
-
-typedef struct bind_info_s      bind_info;
-typedef struct bind_mode_info_s bind_mode_info;
-
-# include "namevec.h"
-
-/* This is a function that bound to a particular keystroke, *
- * and called whenever that key is pressed.                 */
-typedef void(*bind_fptr)(win *w, inp_key k);
-
-/* This structure contains information about a particular *
- * 'bind'. This is an action that is performed when a key *
- * is pressed.                                            *
- * A namevec containing all bind_infos is stored as       *
- * bind_all.                                              */
-struct bind_info_s
-{
-    bind_fptr fptr; /* A pointer to the function to call      */
-    char *desc;     /* A description of the binding           */
-    char *name;     /* The name of the binding, used by remap */
-};
-
-struct bind_mode_info_s
-{
-    char  *name;                  /* The name of the mode              */
-    bind_mode_type mode;          /* The identifier of the mode        */
-
-    table *keytable;              /* Mapping keypresses to bind_infos  */
-
-    /* These two function pointers provide general handling of keys for *
-     * when it is difficult to map every possible key.                  *
-     * keyf also provides translation from inp_keys to unicode chrs.    *
-     * Both can be NULL, and if so, they are ignored. Bindings made in  *
-     * keytable override calls to both of these functions.              */
-    void (*insf)(win *, vec *);   /* Called with string of typed chrs  */
-    void (*keyf)(win *, inp_key); /* Called with single non-bound keys */
-};
+# include "types.h"
 
 /* The current mode */
 extern bind_mode_type bind_mode;

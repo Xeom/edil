@@ -1,26 +1,7 @@
 #if !defined(FILE_H)
 # define FILE_H
 # include <stdio.h>
-# include "vec.h"
-
-typedef enum
-{
-    file_cr   = 0x01,
-    file_pipe = 0x02,
-} file_flags;
-
-typedef struct file_s file;
-
-struct file_s
-{
-    vec fname;
-    vec dirname;
-    vec basename;
-    FILE *fptr;
-    file_flags flags;
-};
-
-# include "buf/buf.h"
+# include "types.h"
 
 void file_init(file *f);
 

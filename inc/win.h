@@ -2,28 +2,7 @@
 # define WIN_H
 # include <stdio.h>
 # include <unistd.h>
-
-typedef struct win_s win;
-
-# include "buf/buf.h"
-
-# include "bar.h"
-# include "cur.h"
-
-struct win_s
-{
-    /* Dimensions */
-    ssize_t scrx, scry;
-    ssize_t rows, cols;
-    ssize_t xpos, ypos;
-
-    /* Text and cursors */
-    buf   *b;
-    cur pri, sec;
-
-    /* Bar at the bottom */
-    bar basebar;
-};
+# include "types.h"
 
 extern win *win_cur;
 

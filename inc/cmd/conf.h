@@ -1,8 +1,6 @@
 #if !defined(CMD_CONF_H)
 # define CMD_CONF_H
-# include "file.h"
-# include "win.h"
-# include "vec.h"
+# include "types.h"
 
 void conf_run_file(file *f, win *w);
 

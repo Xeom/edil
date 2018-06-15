@@ -1,15 +1,7 @@
 #if !defined(CUR_H)
 # define CUR_H
 # include <unistd.h>
-
-typedef struct cur_s cur;
-
-struct cur_s
-{
-    ssize_t cn, ln;
-};
-
-# include "win.h"
+# include "types.h"
 
 # if !defined(MAX)
 #  define MAX(a, b) (((a) > (b)) ? (a) : (b))

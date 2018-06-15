@@ -1,25 +1,6 @@
 #if !defined(BAR_H)
 # define BAR_H
-# include "circvec.h"
-
-typedef struct bar_s bar;
-
-# if !defined(WIN_H)
-typedef struct win_s win;
-# endif
-
-struct bar_s
-{
-    char *format;
-    vec  *typed;
-    circvec scrollback;
-    vec   prompt;
-    int   ind, scrind;
-    win  *w;
-    void (*cb)(win *w, vec *chrs);
-};
-
-# include "win.h"
+# include "types.h"
 
 void bar_init(bar *b, win *w);
 

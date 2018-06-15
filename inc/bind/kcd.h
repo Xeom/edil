@@ -1,8 +1,6 @@
 #if !defined(BIND_KCD_H)
 # define BIND_KCD_H
-# include "win.h"
-# include "vec.h"
-# include "table.h"
+# include "types.h"
 
 extern table bind_kcd;
 

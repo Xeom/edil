@@ -1,9 +1,6 @@
 #if !defined(INDENT_H)
 # define INDENT_H
-# include "col.h"
-# include "chr.h"
-# include "buf/buf.h"
-# include "vec.h"
+# include "types.h"
 
 typedef enum
 {
