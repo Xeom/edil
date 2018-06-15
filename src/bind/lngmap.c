@@ -1,4 +1,4 @@
-#include "buf/cur.h"
+#include "text/cur.h"
 
 #include "bind/curbind.h"
 #include "bind/cmdbind.h"

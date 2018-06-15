@@ -13,10 +13,10 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "buf/line.h"
-#include "buf/buf.h"
+#include "text/line.h"
+#include "text/buf.h"
 #include "container/vec.h"
-#include "buf/chr.h"
+#include "text/chr.h"
 
 #include "file.h"
 

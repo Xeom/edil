@@ -1,8 +1,8 @@
-#include "buf/chr.h"
+#include "text/chr.h"
 
 #include "container/vec.h"
 
-#include "buf/col.h"
+#include "text/col.h"
 
 col col_default = { .fg = col_none, .bg = col_none, .attr = 0 };
 

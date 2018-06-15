@@ -1,4 +1,4 @@
-FILES=buf/buf buf/text buf/line buf/chr buf/col buf/cur \
+FILES=text/buf text/text text/line text/chr text/col text/cur \
       bar cmd file indent inp out ring ui win bind \
       container/vec container/namevec container/circvec container/table \
       cmd/file cmd/nav cmd/indent cmd/buf cmd/region cmd/conf \

@@ -3,13 +3,13 @@
 
 #include "out.h"
 #include "container/vec.h"
-#include "buf/chr.h"
-#include "buf/col.h"
+#include "text/chr.h"
+#include "text/col.h"
 #include "win.h"
 #include "file.h"
 #include "bind.h"
 #include "container/circvec.h"
-#include "buf/buf.h"
+#include "text/buf.h"
 
 #include "bar.h"
 

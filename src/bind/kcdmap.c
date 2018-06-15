@@ -1,5 +1,5 @@
-#include "buf/cur.h"
-#include "buf/chr.h"
+#include "text/cur.h"
+#include "text/chr.h"
 
 #include "bind.h"
 #include "bind/kcdmap.h"

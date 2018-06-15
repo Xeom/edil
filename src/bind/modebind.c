@@ -1,6 +1,6 @@
 #include "ui.h"
 #include "bar.h"
-#include "buf/chr.h"
+#include "text/chr.h"
 
 #include "bind.h"
 #include "bind/modebind.h"

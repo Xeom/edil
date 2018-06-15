@@ -1,9 +1,9 @@
 #include <pthread.h>
 
 #include "container/vec.h"
-#include "buf/chr.h"
+#include "text/chr.h"
 #include "indent.h"
-#include "buf/line.h"
+#include "text/line.h"
 
 void line_init(line *l)
 {

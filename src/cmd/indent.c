@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "win.h"
-#include "buf/cur.h"
+#include "text/cur.h"
 #include "indent.h"
 
 #include "cmd.h"

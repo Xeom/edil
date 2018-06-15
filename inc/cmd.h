@@ -3,7 +3,7 @@
 # include <stdlib.h>
 # include "types.h"
 # include "container/vec.h"
-#include "buf/chr.h"
+#include "text/chr.h"
 
 /* Define code as a static function with a particular command name.         *
  * The code is run the variables win *w, vec *args, vec *rtn as parameters. */

@@ -1,11 +1,11 @@
 #include <string.h>
 
-#include "buf/chr.h"
+#include "text/chr.h"
 #include "container/vec.h"
 #include "file.h"
-#include "buf/line.h"
+#include "text/line.h"
 
-#include "buf/buf.h"
+#include "text/buf.h"
 
 void buf_init(buf *b)
 {

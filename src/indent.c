@@ -1,11 +1,11 @@
 #include <string.h>
 
-#include "buf/chr.h"
-#include "buf/col.h"
-#include "buf/cur.h"
+#include "text/chr.h"
+#include "text/col.h"
+#include "text/cur.h"
 #include "win.h"
 #include "ring.h"
-#include "buf/line.h"
+#include "text/line.h"
 
 #include "indent.h"
 

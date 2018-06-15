@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "container/table.h"
-#include "buf/chr.h"
+#include "text/chr.h"
 #include "bar.h"
 #include "inp.h"
 #include "win.h"

@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "buf/buf.h"
+#include "text/buf.h"
 #include "file.h"
 #include "ring.h"
 #include "win.h"

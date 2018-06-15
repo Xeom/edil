@@ -1,9 +1,9 @@
 #include <stdlib.h>
 
 #include "container/vec.h"
-#include "buf/line.h"
+#include "text/line.h"
 
-#include "buf/text.h"
+#include "text/text.h"
 
 void text_init(text *t)
 {

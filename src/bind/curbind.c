@@ -1,8 +1,8 @@
 #include <string.h>
 
 #include "bind.h"
-#include "buf/cur.h"
-#include "buf/chr.h"
+#include "text/cur.h"
+#include "text/chr.h"
 
 #include "bind/curbind.h"
 

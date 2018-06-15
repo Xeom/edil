@@ -1,11 +1,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "buf/buf.h"
-#include "buf/line.h"
+#include "text/buf.h"
+#include "text/line.h"
 
-#include "buf/cur.h"
-#include "buf/chr.h"
+#include "text/cur.h"
+#include "text/chr.h"
 #include "container/vec.h"
 #include "bar.h"
 #include "out.h"

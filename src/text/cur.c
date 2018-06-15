@@ -1,14 +1,14 @@
 #include <string.h>
 #include <limits.h>
 
-#include "buf/buf.h"
-#include "buf/line.h"
+#include "text/buf.h"
+#include "text/line.h"
 #include "container/vec.h"
-#include "buf/chr.h"
+#include "text/chr.h"
 #include "win.h"
 #include "indent.h"
 
-#include "buf/cur.h"
+#include "text/cur.h"
 
 #define CHK_FLAGS(b) \
     { if ((b)->flags & buf_readonly) return; \

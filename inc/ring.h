@@ -2,7 +2,7 @@
 # define RING_H
 
 #include "container/vec.h"
-#include "buf/buf.h"
+#include "text/buf.h"
 
 extern vec ring_bufs;
 
