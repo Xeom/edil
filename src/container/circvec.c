@@ -141,7 +141,7 @@ void circvec_resize(circvec *cv, size_t sz)
 
     circvec_init(&new, width, sz);
 
-    while (!(circvec_empty(cv) || circvec_full(&new))
+    while (!(circvec_empty(cv) || circvec_full(&new)))
     {
         void *from, *to;
         from = circvec_pop(cv);

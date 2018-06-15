@@ -5,6 +5,8 @@
 
 void circvec_init(circvec *cv, size_t width, size_t size);
 
+size_t circvec_size(circvec *cv);
+
 void circvec_kill(circvec *cv);
 
 int circvec_full(circvec *cv);
