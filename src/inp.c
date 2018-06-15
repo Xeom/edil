@@ -57,19 +57,22 @@ inp_keycode inp_keycodes_static[] =
     {inp_key_right, "[C", "right"},
     {inp_key_left,  "[D", "left"},
 
-    {inp_key_up    | inp_key_ctrl, "OA", "up"},
-    {inp_key_down  | inp_key_ctrl, "OB", "down"},
-    {inp_key_left  | inp_key_ctrl, "OD", "left"},
-    {inp_key_right | inp_key_ctrl, "OC", "right"},
-
     {inp_key_home,     "[1~", "home"},
     {inp_key_del,      "[3~", "del"},
     {inp_key_end,      "[4~", "end"},
     {inp_key_pgup,     "[5~", "pgup"},
     {inp_key_pgdn,     "[6~", "pgdn"},
     {inp_key_insert,   "[4h", "insert"},
+
     {inp_key_shifttab, "[Z",  "Shift+tab"},
     {inp_key_shiftdel, "[2K", "Shift+del"},
+
+    {inp_key_up    | inp_key_ctrl, "OA", "up"},
+    {inp_key_down  | inp_key_ctrl, "OB", "down"},
+    {inp_key_left  | inp_key_ctrl, "OD", "left"},
+    {inp_key_right | inp_key_ctrl, "OC", "right"},
+    {inp_key_end   | inp_key_ctrl, "[J", "end"},
+    {inp_key_del   | inp_key_ctrl, "[M", "del"},
 
     {inp_key_f1,  "OP",    "f1"},
     {inp_key_f2,  "OQ",    "f2"},
