@@ -57,6 +57,11 @@ inp_keycode inp_keycodes_static[] =
     {inp_key_right, "[C", "right"},
     {inp_key_left,  "[D", "left"},
 
+    {inp_key_up    | inp_key_ctrl, "OA", "up"},
+    {inp_key_down  | inp_key_ctrl, "OB", "down"},
+    {inp_key_left  | inp_key_ctrl, "OD", "left"},
+    {inp_key_right | inp_key_ctrl, "OC", "right"},
+
     {inp_key_home,     "[1~", "home"},
     {inp_key_del,      "[3~", "del"},
     {inp_key_end,      "[4~", "end"},
