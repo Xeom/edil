@@ -1,6 +1,8 @@
+#include "buf/buf.h"
 #include "ring.h"
-#include "cmd.h"
+#include "cur.h"
 
+#include "cmd.h"
 #include "cmd/region.h"
 
 buf *region_clipboard = NULL;
@@ -8,7 +10,7 @@ buf *region_clipboard = NULL;
 CMD_FUNCT(copy,
     CMD_MAX_ARGS(0);
 
-    cur loc, start, end;
+    cur start, end;
 
     if (region_clipboard == NULL)
     {
@@ -25,10 +27,7 @@ CMD_FUNCT(copy,
     else if (region_clipboard == w->b)
         CMD_ERR("Cannot copy clipboard");
 
-    loc = (cur){ .ln = buf_len(region_clipboard) };
-
-    while ((loc.ln)--)
-        buf_del_line(region_clipboard, loc);
+    buf_clr(region_clipboard);
 
     start = CUR_START(w->pri, w->sec);
     end   = CUR_END(w->pri,   w->sec);
@@ -36,7 +35,7 @@ CMD_FUNCT(copy,
     if (end.cn < buf_line_len(w->b, end))
         end.cn += 1;
 
-    buf_ins_buf(region_clipboard, &(cur){0, 0}, w->b, start, end);
+    buf_ins_from(region_clipboard, (cur){0, 0}, w->b, start, end);
 
     CMD_RTN_FMT(
         "Copied %lu lines to clipboard",
@@ -73,7 +72,12 @@ CMD_FUNCT(paste,
 
     if (w->b == source) CMD_ERR("Cannot paste buffer into itself");
 
-    cur_ins_buf(w, source);
+    buf_ins_from(
+        w->b,
+        w->pri,
+        region_clipboard,
+        (cur){0, 0}, buf_last(region_clipboard)
+    );
 
     CMD_RTN_FMT("Pasted %lu lines.", buf_len(source));
 )

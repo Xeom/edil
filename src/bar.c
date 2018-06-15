@@ -1,8 +1,17 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "out.h"
-#include "bar.h"
+#include "vec.h"
+#include "chr.h"
+#include "col.h"
+#include "win.h"
+#include "file.h"
 #include "bind.h"
+#include "circvec.h"
+#include "buf/buf.h"
+
+#include "bar.h"
 
 static int bar_append_format(bar *b, vec *cont, char **str);
 
@@ -84,9 +93,9 @@ static int bar_append_format(bar *b, vec *cont, char **str)
     case 'x': chr_format(cont, "%ld", w->scrx); break;
     case 'y': chr_format(cont, "%ld", w->scry); break;
 
-    case 'b': chr_format(cont, "%ld", text_len(&(bf->t))); break;
+    case 'b': chr_format(cont, "%ld", buf_len(bf)); break;
     case 'p':
-        percent = (100 *(w->scry + w->rows)) / (text_len(&(bf->t)));
+        percent = (100 *(w->scry + w->rows)) / buf_len(bf);
         if (percent > 100) percent = 100;
         chr_format(cont, "%d", percent);
         break;

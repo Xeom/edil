@@ -1,7 +1,10 @@
-#include <pthread.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stddef.h>
+#if !defined(TYPES_H)
+# define TYPES_H
+
+# include <pthread.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stddef.h>
 
 /* * * * * * * * *
  * TYPEDEF TIME! *
@@ -313,3 +316,5 @@ struct cmd_info_s
     char *desc;
     char *full;
 };
+
+#endif

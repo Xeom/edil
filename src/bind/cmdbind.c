@@ -1,10 +1,11 @@
 #include <string.h>
 
 #include "ui.h"
-#include "bind.h"
-
+#include "chr.h"
+#include "bar.h"
 #include "bind/modebind.h"
 
+#include "bind.h"
 #include "bind/cmdbind.h"
 
 static void bind_cmd_shortcut_run(char *str, win *w);

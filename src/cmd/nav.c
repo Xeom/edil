@@ -1,7 +1,8 @@
-#include "vec.h"
+#include "buf/buf.h"
 #include "win.h"
-#include "cmd.h"
+#include "cur.h"
 
+#include "cmd.h"
 #include "cmd/nav.h"
 
 CMD_FUNCT(goto,

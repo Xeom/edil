@@ -1,5 +1,6 @@
-#include "bind.h"
+#include "bar.h"
 
+#include "bind.h"
 #include "bind/barbind.h"
 
 BIND_FUNCT(bar_mv_l, bar_move(&(w->basebar), -1))

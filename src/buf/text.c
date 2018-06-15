@@ -1,3 +1,8 @@
+#include <stdlib.h>
+
+#include "vec.h"
+#include "buf/line.h"
+
 #include "buf/text.h"
 
 void text_init(text *t)
@@ -48,29 +53,37 @@ void text_del_lines(text *t, cur c, size_t n)
 {
     ssize_t ind, len;
     line **ptr, *l;
+    int candel = 1;
 
     pthread_mutex_lock(&(t->lock));
 
     len = vec_len(&(t->lines));
-
-    if (c.ln >= len) return;
+    if (c.ln >= len) candel = 0;
     if (c.ln + (ssize_t)n > len) n = len - c.ln;
 
-    if (len == (ssize_t)n) return;
-
-    for (ind = c.ln; ind < c.ln + (ssize_t)n; ++ind)
+    if (candel)
     {
-        ptr = vec_get(&(t->lines), c.ln);
-        if (!ptr) continue;
+        for (ind = c.ln; ind < c.ln + (ssize_t)n; ++ind)
+        {
+            ptr = vec_get(&(t->lines), c.ln);
+            if (!ptr) continue;
 
-        l = *ptr;
-        line_lock(l);
-        line_unlock(l);
-        line_kill(l);
-        free(l);
+            l = *ptr;
+            line_lock(l);
+            line_unlock(l);
+            line_kill(l);
+            free(l);
+        }
+
+        vec_del(&(t->lines), c.ln, n);
     }
 
-    vec_del(&(t->lines), c.ln, n);
+    if (vec_len(&(t->lines)) == 0)
+    {
+        l = malloc(sizeof(line));
+        line_init(l);
+        vec_app(&(t->lines), &l);
+    }
 
     pthread_mutex_unlock(&(t->lock));
 }

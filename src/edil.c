@@ -11,6 +11,8 @@
 #include "win.h"
 #include "out.h"
 #include "inp.h"
+#include "col.h"
+#include "cur.h"
 #include "ui.h"
 #include "cmd.h"
 #include "cmd/conf.h"
@@ -259,7 +261,7 @@ static void load_lines(win *w, int n, char **str)
 
     vec_init(&chrs, sizeof(chr));
 
-    file_clr_win(w);
+    buf_clr(w->b);
     win_reset(w);
 
     w->pri = (cur){0, 0};

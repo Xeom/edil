@@ -1,6 +1,11 @@
 #include <string.h>
 #include <limits.h>
 
+#include "buf/buf.h"
+#include "buf/line.h"
+#include "vec.h"
+#include "chr.h"
+#include "win.h"
 #include "indent.h"
 
 #include "cur.h"
@@ -42,7 +47,9 @@ int cur_chk_blank(cur *c, buf *b, cur dir)
     len = buf_line_len(b, *c);
     while (c->cn > 0 && c->cn < len)
     {
-        if (!chr_is_blank(buf_chr(b, *c)))
+        chr ch = buf_chr(b, *c);
+
+        if (!chr_is_blank(&ch))
             break;
 
         if (dir.ln != 0 || dir.cn < 0)
@@ -122,7 +129,8 @@ void cur_del(cur c, buf *b, cur *affect[], int numaffect)
     else
     {
         cur pretendprev = c;
-        pretendprev.cn += indent_get_width(buf_chr(b, c), c.ln);;
+        chr ch = buf_chr(b, c);
+        pretendprev.cn += indent_get_width(&ch, c.ln);;
 
         cur_get_rel_pos(pretendprev, b, affect, numaffect, rel);
         buf_del(b, c, 1);
@@ -137,7 +145,7 @@ void cur_ins(cur c, buf *b, vec *text, cur *affect[], int numaffect)
 
     cur_get_rel_pos(c, b, affect, numaffect, rel);
     origlen = buf_line_len(b, c);
-    buf_ins(b, c, vec_first(text), vec_len(text));
+    buf_ins(b, c, text);
     newlen  = buf_line_len(b, c);
 
     c.cn += newlen - origlen;
@@ -318,7 +326,7 @@ static void cur_shift_line(win *w, ssize_t ln, int dir)
 {
     ssize_t cn1, cn2, len;
     cur cur1, cur2;
-    chr tmp, *c;
+    chr tmp;
     buf *b;
     b = w->b;
     CHK_FLAGS(b);
@@ -335,18 +343,16 @@ static void cur_shift_line(win *w, ssize_t ln, int dir)
 
     if (dir == 1)
     {
-        c = buf_chr(b, cur2);
-        tmp = *c;
+        tmp = buf_chr(b, cur2);
         buf_del(b, cur2, 1);
-        buf_ins(b, cur1, &tmp, 1);
+        buf_ins_mem(b, cur1, 1, &tmp);
     }
     else if (dir == -1)
     {
         cur1.cn -= 1;
 
-        c = buf_chr(b, cur1);
-        tmp = *c;
-        buf_ins(b, cur2, &tmp, 1);
+        tmp = buf_chr(b, cur1);
+        buf_ins_mem(b, cur2, 1, &tmp);
         buf_del(b, cur1, 1);
     }
 }
@@ -374,28 +380,33 @@ void cur_shift(win *w, cur dir)
     }
     else if (dir.ln > 0)
     {
-        vec *line;
+        line *l;
 
-        buf_ins_line(b, *start);
+        buf_ins_lines(b, *start, 1);
 
-        line = buf_line(b, (cur){ .ln = end->ln + 2 });
-        if (line)
+        l = buf_get_line(b, (cur){ .ln = end->ln + 2 });
+        if (l)
         {
-            buf_ins(b, (cur){ .ln = start->ln }, vec_first(line), vec_len(line));
-            buf_del_line(b, (cur){ .ln = end->ln + 2 });
+            buf_ins(b, (cur){ .ln = start->ln }, line_vec(l));
+            line_unlock(l);
+
+            buf_del_lines(b, (cur){ .ln = end->ln + 2 }, 1);
         }
+
     }
     else if (dir.ln < 0 && start->ln)
     {
-        vec *line;
+        line *l;
 
-        buf_ins_line(b, (cur){ .ln = end->ln + 1 });
+        buf_ins_lines(b, (cur){ .ln = end->ln + 1 }, 1);
 
-        line = buf_line(b, (cur){ .ln = start->ln - 1 });
-        if (line)
+        l = buf_get_line(b, (cur){ .ln = start->ln - 1 });
+        if (l)
         {
-            buf_ins(b, (cur){ .ln = end->ln + 1 }, vec_first(line), vec_len(line));
-            buf_del_line(b, (cur){ .ln = start->ln - 1 });
+            buf_ins(b, (cur){ .ln = end->ln + 1 }, line_vec(l));
+            line_unlock(l);
+
+            buf_del_lines(b, (cur){ .ln = start->ln - 1 }, 1);
         }
     }
 
@@ -433,7 +444,7 @@ void cur_del_region(win *w)
         buf_del(b, (cur){ .ln = end->ln }, end->cn + 1);
 
         for (c.ln = end->ln - 1; c.ln > start->ln; --(c.ln))
-            buf_del_line(b, c);
+            buf_del_lines(b, c, 1);
 
         buf_del_nl(b, *start);
     }
@@ -456,14 +467,15 @@ void cur_ins_buf(win *w, buf *oth)
 
     for (; from.ln < len; ++(from.ln))
     {
-        vec *text;
-
-        text = buf_line(oth, from);
+        line *l;
 
         if (from.ln != 0)
             cur_enter(w->pri, b, PRI_SEC);
 
-        cur_ins(w->pri, b, text, PRI_SEC);
+        l = buf_get_line(oth, from);
+        cur_ins(w->pri, b, line_vec(l), PRI_SEC);
+
+        line_unlock(l);
     }
 
     w->pri = prev;

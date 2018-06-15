@@ -1,5 +1,7 @@
-#include "bind.h"
+#include "cur.h"
+#include "chr.h"
 
+#include "bind.h"
 #include "bind/kcdmap.h"
 
 void bind_kcdmap_init(void)

@@ -1,9 +1,10 @@
 #include <string.h>
 
-#include "chr.h"
+#include "win.h"
+#include "cur.h"
 #include "indent.h"
-#include "cmd.h"
 
+#include "cmd.h"
 #include "cmd/indent.h"
 
 #define INDENT_MAX_TABWIDTH 64

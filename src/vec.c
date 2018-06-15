@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -28,7 +29,6 @@ static void vec_resize_longer(vec *v)
     /* Increase the capacity until the data fits */
     do
     {
- //  printf("%lu %lu\n", v->usage, v->capacity);
         v->capacity <<= 1;
     } while (v->usage > v->capacity);
 

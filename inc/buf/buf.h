@@ -1,6 +1,7 @@
 #if !defined(BUF_H)
 # define BUF_H
 # include "types.h"
+# include "buf/text.h"
 
 static inline line *buf_get_line (buf *b, cur c) { return text_get_line(&(b->t), c); }
 static inline line *buf_new_line (buf *b, cur c) { return text_new_line(&(b->t), c); }

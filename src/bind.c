@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "bar.h"
 #include "inp.h"
 #include "win.h"
 #include "ui.h"

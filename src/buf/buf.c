@@ -1,11 +1,16 @@
 #include <string.h>
 
+#include "chr.h"
+#include "vec.h"
+#include "file.h"
+#include "buf/line.h"
+
 #include "buf/buf.h"
 
 void buf_init(buf *b)
 {
     text_init(&(b->t));
-    vec_init(&(b->name),  sizeof(char));
+    vec_init(&(b->name), sizeof(char));
     file_init(&(b->finfo));
 
     b->flags = 0;
@@ -159,6 +164,7 @@ chr buf_chr(buf *b, cur loc)
     ptr = line_chr(l, loc);
     if (!ptr) return rtn;
     rtn = *ptr;
+    line_unlock(l);
 
     return rtn;
 }

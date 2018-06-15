@@ -8,6 +8,7 @@
 # include <stdio.h>
 #endif
 
+#include <stdlib.h>
 #include <signal.h>
 #include <string.h>
 #include <termios.h>

@@ -1,6 +1,8 @@
-#include "bind.h"
 #include "ui.h"
+#include "bar.h"
+#include "chr.h"
 
+#include "bind.h"
 #include "bind/modebind.h"
 
 static void bind_bar_deactivate(win *w);

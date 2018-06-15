@@ -2,6 +2,7 @@
 
 #include "bind.h"
 #include "cur.h"
+#include "chr.h"
 
 #include "bind/curbind.h"
 

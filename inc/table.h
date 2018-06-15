@@ -1,6 +1,6 @@
 #if !defined(TABLE_H)
 # define TABLE_H
-# include <stddef.h>
+# include "types.h"
 
 /* Initialize a table */
 void table_init(table *t, size_t valwidth, size_t keywidth);

@@ -1,5 +1,6 @@
 #if !defined(BUF_TEXT_H)
 # define BUF_TEXT_H
+# include "types.h"
 
 void text_init(text *t);
 void text_kill(text *t);

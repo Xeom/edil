@@ -1,8 +1,9 @@
-#include "bind.h"
+#include "cur.h"
 
 #include "bind/curbind.h"
 #include "bind/cmdbind.h"
 
+#include "bind.h"
 #include "bind/bufmap.h"
 
 void bind_bufmap_init(void)

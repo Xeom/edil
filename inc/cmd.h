@@ -1,6 +1,10 @@
 #if !defined(CMD_H)
 # define CMD_H
+# include <stdlib.h>
 # include "types.h"
+# include "vec.h"
+# include "chr.h"
+
 /* Define code as a static function with a particular command name.         *
  * The code is run the variables win *w, vec *args, vec *rtn as parameters. */
 #define CMD_FUNCT(_name, ...) \

@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "chr.h"
+#include "vec.h"
 
 #include "namevec.h"
 

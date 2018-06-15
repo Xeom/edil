@@ -1,5 +1,7 @@
 #include "chr.h"
 
+#include "vec.h"
+
 #include "col.h"
 
 col col_default = { .fg = col_none, .bg = col_none, .attr = 0 };

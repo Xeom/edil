@@ -1,11 +1,12 @@
 #include <string.h>
 
-#include "file.h"
 #include "buf/buf.h"
+#include "file.h"
 #include "ring.h"
+#include "win.h"
 #include "ui.h"
-#include "cmd.h"
 
+#include "cmd.h"
 #include "cmd/buf.h"
 
 CMD_FUNCT(bufinfo,
@@ -27,7 +28,6 @@ CMD_FUNCT(bufinfo,
     if (b->flags & buf_modified) CMD_RTN("mod ");
     if (b->flags & buf_nofile)   CMD_RTN("nofile ");
     if (b->flags & buf_nokill)   CMD_RTN("nokill ");
-
 )
 
 CMD_FUNCT(next,

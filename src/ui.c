@@ -1,10 +1,8 @@
 #include <string.h>
 
-#include "indent.h"
-#include "cur.h"
-#include "chr.h"
+#include "vec.h"
 #include "cmd.h"
-#include "bind.h"
+#include "win.h"
 #include "out.h"
 
 #include "ui.h"

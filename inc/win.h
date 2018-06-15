@@ -8,8 +8,6 @@ extern win *win_cur;
 
 void win_init(win *w, buf *b);
 
-vec *win_line(win *w, size_t ln);
-
 ssize_t win_max_ln(win *w);
 ssize_t win_max_cn(win *w);
 ssize_t win_min_ln(win *w);

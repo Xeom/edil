@@ -3,6 +3,8 @@
 #include <pwd.h>
 #include <errno.h>
 
+#include "bar.h"
+#include "inp.h"
 #include "bind.h"
 #include "file.h"
 #include "win.h"

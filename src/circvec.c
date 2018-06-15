@@ -1,3 +1,5 @@
+#include "vec.h"
+
 #include "circvec.h"
 
 void circvec_init(circvec *cv, size_t width, size_t size)

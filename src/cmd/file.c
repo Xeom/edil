@@ -13,12 +13,12 @@
 #include <string.h>
 #include <libgen.h>
 
-#include "cmd.h"
-#include "chr.h"
+#include "win.h"
 #include "ring.h"
 #include "indent.h"
 #include "file.h"
 
+#include "cmd.h"
 #include "cmd/file.h"
 
 static int file_switch_if_found(win *w, vec *fname, vec *rtn);
@@ -283,7 +283,7 @@ void file_clr_win(win *w)
     loc.cn = 0;
 
     while ((loc.ln)--)
-        buf_del_line(w->b, loc);
+        buf_del_lines(w->b, loc, 1);
 }
 
 void cmd_file_init(void)

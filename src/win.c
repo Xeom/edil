@@ -1,5 +1,13 @@
 #include <string.h>
+#include <stdlib.h>
 
+#include "buf/buf.h"
+#include "buf/line.h"
+
+#include "cur.h"
+#include "chr.h"
+#include "vec.h"
+#include "bar.h"
 #include "out.h"
 #include "ui.h"
 #include "file.h"
@@ -51,11 +59,6 @@ void win_init(win *w, buf *b)
 void win_kill(win *w)
 {
     bar_kill(&(w->basebar));
-}
-
-vec *win_line(win *w, size_t ln)
-{
-    return buf_line(w->b, (cur){ .ln = ln });
 }
 
 ssize_t win_max_ln(win *w)
@@ -173,7 +176,8 @@ vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *mod)
 void win_out_line(win *w, cur c)
 {
     int      needsfree = 0;
-    vec     *line;
+    line    *l;
+    vec     *v;
     ssize_t   outlen, maxlen;
 
     if (win_out_goto(w, &c) == 0) return;
@@ -184,11 +188,12 @@ void win_out_line(win *w, cur c)
         return;
     }
 
-    line = win_line(w, c.ln);
-    if (!line) return;
+    l = buf_get_line(w->b, c);
+    if (!l) return;
 
-    line = win_add_trailing_space(w->pri, w->sec, c.ln, line, &needsfree);
-    line = win_add_cur(w->pri, w->sec, c.ln, line, &needsfree);
+    v = line_vec(l);
+    v = win_add_trailing_space(w->pri, w->sec, c.ln, v, &needsfree);
+    v = win_add_cur(w->pri, w->sec, c.ln, v, &needsfree);
 
     if (needsfree)
     {
@@ -196,21 +201,23 @@ void win_out_line(win *w, cur c)
         win_out_goto(w, &c);
     }
 
-    outlen = (ssize_t)vec_len(line) - c.cn;
-    maxlen = win_max_cn(w) + 1      - c.cn;
+    outlen = (ssize_t)vec_len(v) - c.cn;
+    maxlen = win_max_cn(w) + 1   - c.cn;
 
     if (maxlen < outlen) outlen = maxlen;
     if (outlen < 0)      outlen = 0;
 
-    out_chrs(vec_get(line, c.cn), outlen, c.cn, stdout);
+    out_chrs(vec_get(v, c.cn), outlen, c.cn, stdout);
 
     if (outlen != w->cols) out_clr_line(stdout);
 
     if (needsfree)
     {
-        vec_kill(line);
-        free(line);
+        vec_kill(v);
+        free(v);
     }
+
+    line_unlock(l);
 }
 
 void win_out_after(win *w, cur c)

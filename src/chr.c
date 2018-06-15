@@ -1,5 +1,9 @@
 #include <string.h>
 #include <stdarg.h>
+#include <stdlib.h>
+
+#include "vec.h"
+#include "col.h"
 
 #include "chr.h"
 

@@ -1,6 +1,11 @@
 #include <string.h>
 
+#include "chr.h"
+#include "col.h"
+#include "cur.h"
+#include "win.h"
 #include "ring.h"
+#include "buf/line.h"
 
 #include "indent.h"
 
@@ -56,17 +61,18 @@ int indent_get_width(chr *c, size_t ind)
 
 void indent_add_blanks_buf(buf *b)
 {
-    vec *lines;
-    size_t ln, maxln;
+    ssize_t len;
+    cur loc;
 
-    lines = &(b->lines);
-    maxln = vec_len(lines);
-    for (ln = 0; ln < maxln; ln++)
+    len = buf_len(b);
+    for (loc = (cur){0, 0}; loc.ln < len; ++(loc.ln))
     {
-        vec *l;
-        l = vec_get(lines, ln);
+        line *l;
+        l = buf_get_line(b, loc);
 
-        indent_add_blanks_line(l, 0);
+        indent_add_blanks_line(line_vec(l), 0);
+
+        line_unlock(l);
     }
 }
 
@@ -128,46 +134,51 @@ void indent_add_blanks_chr(vec *line, size_t ind)
 
 size_t indent_get_depth(buf *b, cur c)
 {
-    vec *line;
-    size_t ind, len;
+    line *l;
+    size_t depth, len;
 
-    line = vec_get(&(b->lines), c.ln);
-    if (!line) return 0;
+    l = buf_get_line(b, c);
+    if (!l) return 0;
 
-    len = vec_len(line);
-    for (ind = 0; ind < len; ind++)
+    len = line_len(l);
+    for (depth = 0; depth < len; ++depth)
     {
         chr *c;
-        c = vec_get(line, ind);
-        if (!c || !chr_is_whitespace(c)) break;
+        c = line_chr(l, (cur){ .cn = depth });
+        if (!chr_is_whitespace(c)) break;
     }
 
-    return ind;
+    line_unlock(l);
+    return depth;
 }
 
 int indent_is_blank(buf *b, cur c)
 {
-    vec *line;
+    line *l;
     size_t ind;
 
-    line = vec_get(&(b->lines), c.ln);
-    if (!line) return 0;
+    l = buf_get_line(b, c);
+    if (!l) return 1;
 
-    ind = vec_len(line);
+    ind = line_len(l);
     while (ind--)
     {
         chr *c;
-        c = vec_get(line, ind);
-        if (!c || !chr_is_whitespace(c))
+        c = line_chr(l, (cur){ .cn = ind });
+        if (!chr_is_whitespace(c))
+        {
+            line_unlock(l);
             return 0;
+        }
     }
 
+    line_unlock(l);
     return 1;
 }
 
 void indent_set_depth(buf *b, cur c, size_t depth)
 {
-    vec *line;
+    line *l;
     size_t orig;
 
     c.cn = 0;
@@ -175,13 +186,12 @@ void indent_set_depth(buf *b, cur c, size_t depth)
     if (b->flags & buf_readonly) return;
     b->flags |= buf_modified;
 
-    line = vec_get(&(b->lines), c.ln);
-    if (!line) return;
-
     orig = indent_get_depth(b, c);
 
-    if (orig)
-        buf_del(b, c, orig);
+    l = buf_get_line(b, c);
+    if (!l) return;
+
+    if (orig) line_del(l, c, orig);
 
     if (depth)
     {
@@ -206,39 +216,41 @@ void indent_set_depth(buf *b, cur c, size_t depth)
         vec_rep(&whitespace, 0, 1, &space, spaces);
         vec_rep(&whitespace, 0, 1, &tab,   tabs);
 
-        buf_ins(b, c, vec_first(&whitespace), vec_len(&whitespace));
+        line_ins(l, c, &whitespace);
 
         vec_kill(&whitespace);
     }
 
-    indent_add_blanks_line(line, 0);
+    line_unlock(l);
 }
 
 void indent_trim_end(buf *b, cur c)
 {
-    vec *line;
-    size_t len;
+    size_t n;
+    line  *l;
 
     if (b->flags & buf_readonly) return;
     b->flags |= buf_modified;
 
     if (!(indent_mode & indent_trim)) return;
 
-    line = vec_get(&(b->lines), c.ln);
-    if (!line) return;
+    l = buf_get_line(b, c);
+    if (!l) return;
 
-    len = vec_len(line);
-    c.cn = len;
+    c.cn = line_len(l);
     while (c.cn--)
     {
         chr *cr;
-        cr = vec_get(line, c.cn);
+        cr = line_chr(l, c);
         if (!cr || !chr_is_whitespace(cr)) break;
     }
 
     c.cn += 1;
+    n = line_len(l) - c.cn;
 
-    buf_del(b, c, len - c.cn);
+    if (n) buf_del(b, c, n);
+
+    line_unlock(l);
 }
 
 cur indent_incr_depth(buf *b, cur c)

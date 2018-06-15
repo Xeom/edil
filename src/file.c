@@ -13,6 +13,11 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "buf/line.h"
+#include "buf/buf.h"
+#include "vec.h"
+#include "chr.h"
+
 #include "file.h"
 
 void file_init(file *f)
@@ -154,7 +159,7 @@ int file_load(file *f, buf *b)
             return -1;
     }
 
-    buf_del_line(b, (cur){ .ln = buf_len(b) - 1 });
+    buf_del_lines(b, (cur){ .ln = buf_len(b) - 1 }, 1);
 
     if (!(f->flags & file_pipe))
         file_close(f);
@@ -162,7 +167,7 @@ int file_load(file *f, buf *b)
     return 0;
 }
 
-int file_read_line(file *f, vec *line)
+int file_read_line(file *f, vec *chrs)
 {
     size_t width, ind;
     chr    utfchr = CHR("");
@@ -171,7 +176,7 @@ int file_read_line(file *f, vec *line)
     ind   = 0;
     width = 0;
 
-    vec_clr(line);
+    vec_clr(chrs);
 
     while (!feof(f->fptr))
     {
@@ -180,7 +185,7 @@ int file_read_line(file *f, vec *line)
         if (width == ind)
         {
             if (width)
-                vec_app(line, &utfchr);
+                vec_app(chrs, &utfchr);
 
             width = chr_utf8_len(c);
             ind   = 0;
@@ -214,20 +219,19 @@ int file_ended(file *f)
 
 int file_load_line(file *f, buf *b)
 {
-    vec line;
-
-    vec_init(&line, sizeof(chr));
+    vec chrs;
+    vec_init(&chrs, sizeof(chr));
 
     cur loc;
     loc = (cur){ .ln = buf_len(b) };
 
-    file_read_line(f, &line);
+    file_read_line(f, &chrs);
 
     loc.ln -= 1;
-    buf_ins_line(b, loc);
-    buf_ins(b, loc, vec_first(&line), vec_len(&line));
+    buf_ins_lines(b, loc, 1);
+    buf_ins(b, loc, &chrs);
 
-    vec_kill(&line);
+    vec_kill(&chrs);
 
     if (ferror(f->fptr))
         return -1;
@@ -283,18 +287,17 @@ int file_save(file *f, buf *b)
 int file_save_line(file *f, buf *b, cur loc)
 {
     size_t len, ind;
-    vec *line;
+    line *l;
 
-    line = buf_line(b, loc);
-    len  = buf_line_len(b, loc);
+    l   = buf_get_line(b, loc);
+    len = line_len(l);
 
     for (ind = 0; ind < len; ind++)
     {
         size_t width;
         chr *c;
 
-        c = vec_get(line, ind);
-
+        c = line_chr(l, (cur){ .cn = ind });
         if (!c || chr_is_blank(c)) continue;
 
         width = chr_len(c);
@@ -302,6 +305,8 @@ int file_save_line(file *f, buf *b, cur loc)
         if (fwrite(c->utf8, 1, width, f->fptr) != width)
             return -1;
     }
+
+    line_unlock(l);
 
     return 0;
 }
