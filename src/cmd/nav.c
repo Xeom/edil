@@ -1,6 +1,7 @@
 #include "text/buf.h"
 #include "win.h"
 #include "text/cur.h"
+#include "updater.h"
 
 #include "cmd.h"
 #include "cmd/nav.h"
@@ -23,7 +24,7 @@ CMD_FUNCT(goto,
     cur_chk_bounds(&(w->pri), w->b);
     cur_chk_blank(&(w->pri), w->b, (cur){0, 0});
 
-    win_out_after(w, (cur){0, 0});
+    updater_after(w->b, (cur){0, 0});
     win_show_cur(w, w->pri);
 
     CMD_RTN_FMT(
@@ -43,8 +44,8 @@ CMD_FUNCT(swap,
 
     CMD_RTN("Cursors swapped");
 
-    win_out_line(w, w->pri);
-    win_out_line(w, w->sec);
+    updater_line(w->b, w->pri);
+    updater_line(w->b, w->sec);
 )
 
 CMD_FUNCT(snap,
@@ -57,8 +58,8 @@ CMD_FUNCT(snap,
 
     CMD_RTN("Secondary cursor snapped");
 
-    win_out_line(w, w->pri);
-    win_out_line(w, prev);
+    updater_line(w->b, w->pri);
+    updater_line(w->b, prev);
 )
 
 CMD_FUNCT(lineify,
@@ -75,12 +76,12 @@ CMD_FUNCT(lineify,
     w->sec.cn = len;
     w->sec.ln = w->pri.ln;
 
-    win_out_line(w, w->pri);
+    updater_line(w->b, w->pri);
 
     CMD_RTN("Line selected");
 
     if (prevsec.ln != w->sec.ln)
-        win_out_line(w, prevsec);
+        updater_line(w->b, prevsec);
 )
 
 void cmd_nav_init(void)

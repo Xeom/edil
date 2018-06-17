@@ -7,6 +7,7 @@
 #include "text/cur.h"
 #include "text/chr.h"
 #include "container/vec.h"
+#include "updater.h"
 #include "bar.h"
 #include "out.h"
 #include "ui.h"
@@ -220,18 +221,6 @@ void win_out_line(win *w, cur c)
     line_unlock(l);
 }
 
-void win_out_after(win *w, cur c)
-{
-    if (c.ln < win_min_ln(w))
-        c = (cur){ .ln = w->scry, .cn = 0 };
-
-    while (c.ln <= win_max_ln(w))
-    {
-        win_out_line(w, c);
-        c = (cur){ .ln = c.ln + 1, .cn = 0 };
-    }
-}
-
 void win_show_cur(win *w, cur c)
 {
     int needsupdate = 0;
@@ -251,24 +240,12 @@ void win_show_cur(win *w, cur c)
     }
 
     if (needsupdate)
-        win_out_after(w, (cur){0, 0});
-}
-
-void win_buf_out_line(buf *b, cur c)
-{
-    if (b == win_cur->b)
-        win_out_line(win_cur, c);
-}
-
-void win_buf_out_after(buf *b, cur c)
-{
-    if (b == win_cur->b)
-        win_out_after(win_cur, c);
+        updater_after(w->b, (cur){0, 0});
 }
 
 void win_out_all(void)
 {
-    win_out_after(win_cur, (cur){0, 0});
+    updater_after(win_cur->b, (cur){0, 0});
     bar_out(&(win_cur->basebar));
 }
 

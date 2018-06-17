@@ -16,10 +16,6 @@ ssize_t win_min_cn(win *w);
 void win_kill(win *w);
 
 void win_out_line(win *w, cur c);
-void win_out_after(win *w, cur c);
-
-void win_buf_out_line(buf *b, cur c);
-void win_buf_out_after(buf *b, cur c);
 
 void win_out_all(void);
 

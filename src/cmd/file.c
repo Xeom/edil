@@ -17,6 +17,7 @@
 #include "ring.h"
 #include "indent.h"
 #include "file.h"
+#include "updater.h"
 
 #include "cmd.h"
 #include "cmd/file.h"
@@ -131,7 +132,7 @@ CMD_FUNCT(discard,
     w->b->flags &= ~buf_modified;
     CMD_RTN("Contents of buffer discarded");
 
-    win_out_after(w, (cur){0, 0});
+    updater_after(w->b, (cur){0, 0});
 )
 
 CMD_FUNCT(associate,

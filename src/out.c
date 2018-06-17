@@ -15,10 +15,12 @@
 #include <sys/types.h>
 #include <stdio.h>
 
-#include "text/chr.h"
 #include "container/vec.h"
+#include "text/chr.h"
 #include "text/col.h"
+#include "updater.h"
 #include "indent.h"
+#include "win.h"
 
 #include "out.h"
 
@@ -28,6 +30,10 @@
 #define HIDE_CUR   "\033[?25l"
 #define SHOW_CUR   "\033[?25h"
 #define RESET_COL  "\033[0m"
+
+static void out_init_thread(void);
+static int out_updater_line(buf *b, cur *c);
+static int out_updater_after(buf *b, cur *c);
 
 static void out_handle_winch(int sign);
 
@@ -161,8 +167,6 @@ static void out_handle_winch(int sign)
     out_rows = w.ws_row;
 
     out_to_resize = 1;
-
-    fflush(stdout);
 }
 
 void out_init(FILE *f)
@@ -200,6 +204,8 @@ void out_init(FILE *f)
 
     vec_init(&empty, sizeof(chr));
     out_log(&empty, stdout);
+
+    out_init_thread();
 }
 
 void out_kill(FILE *f)
@@ -207,4 +213,41 @@ void out_kill(FILE *f)
     tcsetattr(fileno(f), TCSANOW, &out_tattr_orig);
 
     fputs(CLR_SCREEN SHOW_CUR RESET_COL, f);
+}
+
+static void out_init_thread(void)
+{
+    static updater u;
+    u.fptr_line  = out_updater_line;
+    u.fptr_after = out_updater_after;
+
+    updater_send_to(&u);
+
+    updater_start(&u);
+}
+
+static int out_updater_line(buf *b, cur *c)
+{
+    if (b == win_cur->b)
+        win_out_line(win_cur, *c);
+
+    return 1;
+}
+
+static int out_updater_after(buf *b, cur *c)
+{
+    if (b == win_cur->b)
+    {
+        if (c->ln < win_min_ln(win_cur))
+            *c = (cur){ .ln = c->ln + 1 };
+
+        if (c->ln > win_max_ln(win_cur))
+            return 0;
+
+        win_out_line(win_cur, *c);
+
+        return 1;
+    }
+
+    return 0;
 }

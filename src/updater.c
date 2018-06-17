@@ -17,7 +17,6 @@ static pthread_key_t updater_send_to_key;
 pthread_mutex_t updater_all_mtx;
 vec updater_all;
 
-
 static void updater_destruct_vec(void *v)
 {
     vec_kill(v);
@@ -34,7 +33,7 @@ void updater_init(void)
 
 void updater_start(updater *u)
 {
-    table_init(&(u->after), sizeof(buf *), sizeof(cur));
+    table_init(&(u->after), sizeof(cur), sizeof(buf *));
     circvec_init(&(u->curs), sizeof(updater_line_loc), 16);
 
     pthread_mutex_init(&(u->lock), NULL);
@@ -105,7 +104,7 @@ void updater_send_to(updater *u)
     vec_app(v, &u);
 }
 
-void updater_after_line(buf *b, cur c)
+void updater_after(buf *b, cur c)
 {
     vec *sendto;
 
@@ -192,7 +191,9 @@ static int updater_process(updater *u)
         if ((u->fptr_after)(*b, c) == 1)
             *c = (cur){ .ln = c->ln + 1 };
         else
+        {
             table_delete(&(u->after), b);
+        }
 
         return 1;
     }

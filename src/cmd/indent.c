@@ -3,6 +3,7 @@
 #include "win.h"
 #include "text/cur.h"
 #include "indent.h"
+#include "updater.h"
 
 #include "cmd.h"
 #include "cmd/indent.h"
@@ -108,7 +109,7 @@ CMD_FUNCT(incrindent,
     ssize_t depth;
 
     w->pri = indent_incr_depth(w->b, w->pri);
-    win_out_line(w, (cur){ .ln = w->pri.ln });
+    updater_line(w->b, (cur){ .ln = w->pri.ln });
 
     depth = indent_get_depth(w->b, w->pri);
     CMD_RTN_FMT("depth: %ld", depth);
@@ -120,7 +121,7 @@ CMD_FUNCT(decrindent,
     ssize_t depth;
 
     w->pri = indent_decr_depth(w->b, w->pri);
-    win_out_line(w, (cur){ .ln = w->pri.ln });
+    updater_line(w->b, (cur){ .ln = w->pri.ln });
 
     depth = indent_get_depth(w->b, w->pri);
     CMD_RTN_FMT("depth: %ld", depth);
@@ -132,7 +133,7 @@ CMD_FUNCT(autoindent,
     ssize_t depth;
 
     w->pri = indent_auto_depth(w->b, w->pri);
-    win_out_line(w, (cur){ .ln = w->pri.ln });
+    updater_line(w->b, (cur){ .ln = w->pri.ln });
 
     depth = indent_get_depth(w->b, w->pri);
     CMD_RTN_FMT("depth: %ld", depth);
@@ -165,7 +166,7 @@ CMD_FUNCT(indent,
             pretend.cn = depth;
             cur_set_rel_pos(pretend, w->b, affect, 2, rel);
 
-            win_out_line(w, (cur){ .ln = w->pri.ln });
+            updater_line(w->b, (cur){ .ln = w->pri.ln });
         }
     }
 

@@ -10,7 +10,7 @@ void updater_del_buf(buf *b);
 
 void updater_send_to(updater *u);
 
-void updater_after_line(buf *b, cur c);
+void updater_after(buf *b, cur c);
 
 void updater_line(buf *b, cur c);
 

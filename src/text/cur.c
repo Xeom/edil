@@ -7,7 +7,7 @@
 #include "text/chr.h"
 #include "win.h"
 #include "indent.h"
-
+#include "updater.h"
 #include "text/cur.h"
 
 #define CHK_FLAGS(b) \
@@ -177,7 +177,7 @@ void cur_ins_win(win *w, vec *text)
     prev = w->pri;
     cur_ins(w->pri, b, text, PRI_SEC);
 
-    win_out_line(w, prev);
+    updater_line(w->b, prev);
 }
 
 void cur_del_win(win *w)
@@ -192,9 +192,9 @@ void cur_del_win(win *w)
     cur_del(w->pri, b, PRI_SEC);
 
     if (isnl)
-        win_out_after(w, w->pri);
+        updater_after(w->b, w->pri);
     else
-        win_out_line(w, w->pri);
+        updater_line(w->b, w->pri);
 }
 
 void cur_enter_win(win *w)
@@ -210,7 +210,7 @@ void cur_enter_win(win *w)
     w->pri = indent_auto_depth(b, w->pri);
     indent_trim_end(b, prev);
 
-    win_out_after(w, (cur){ .ln = prev.ln });
+    updater_after(w->b, (cur){ .ln = prev.ln });
 }
 
 void cur_enter_line_win(win *w)
@@ -223,7 +223,7 @@ void cur_enter_line_win(win *w)
     prev = (cur){ .ln = w->pri.ln };
     cur_enter(prev, b, PRI_SEC);
 
-    win_out_after(w, prev);
+    updater_after(w->b, prev);
 }
 
 void cur_move_win(win *w, cur dir)
@@ -247,12 +247,12 @@ void cur_move_win(win *w, cur dir)
 
     if (c->ln == prev.ln)
     {
-        win_out_line(w, CUR_START(w->pri, prev));
+        updater_line(w->b, CUR_START(w->pri, prev));
     }
     else
     {
-        win_out_line(w, w->pri);
-        win_out_line(w, prev);
+        updater_line(w->b, w->pri);
+        updater_line(w->b, prev);
     }
 }
 
@@ -262,7 +262,7 @@ void cur_home_win(win *w)
     c = &(w->pri);
 
     c->cn = 0;
-    win_out_line(w, *c);
+    updater_line(w->b, *c);
 }
 
 void cur_end_win(win *w)
@@ -273,7 +273,7 @@ void cur_end_win(win *w)
     len = buf_line_len(w->b, *c);
 
     c->cn = len;
-    win_out_line(w, *c);
+    updater_line(w->b, *c);
 }
 
 void cur_pgup_win(win *w)
@@ -286,7 +286,7 @@ void cur_pgup_win(win *w)
     cur_chk_bounds(c, w->b);
     cur_chk_blank(c,  w->b, (cur){ .ln = -1 });
 
-    win_out_after(w, (cur){0, 0});
+    updater_after(w->b, (cur){0, 0});
 }
 
 void cur_pgdn_win(win *w)
@@ -299,7 +299,7 @@ void cur_pgdn_win(win *w)
     cur_chk_bounds(c, w->b);
     cur_chk_blank(c,  w->b, (cur){ .ln = 1 });
 
-    win_out_after(w, (cur){0, 0});
+    updater_after(w->b, (cur){0, 0});
 }
 
 static int cur_can_shift_line(win *w, ssize_t ln, int dir)
@@ -431,7 +431,7 @@ void cur_shift(win *w, cur dir)
     cur_chk_blank(start, b, dir);
     cur_chk_blank(end,   b, dir);
 
-    win_out_after(w, (cur){ .ln = start->ln - 1 });
+    updater_after(w->b, (cur){ .ln = start->ln - 1 });
 }
 
 void cur_del_region(win *w)
@@ -460,7 +460,7 @@ void cur_del_region(win *w)
     }
 
     *end = *start;
-    win_out_after(w, *start);
+    updater_after(w->b, *start);
 }
 
 void cur_ins_long_win(win *w, vec *text)
@@ -482,7 +482,7 @@ void cur_ins_long_win(win *w, vec *text)
 
         cur_ins(c, b, text, PRI_SEC);
 
-        win_out_line(w, (cur){ .cn = c.cn - 1, .ln = c.ln });
+        updater_line(w->b, (cur){ .cn = c.cn - 1, .ln = c.ln });
     }
 }
 
@@ -505,7 +505,7 @@ void cur_del_long_win(win *w)
 
         cur_del(c, b, PRI_SEC);
 
-        win_out_line(w, c);
+        updater_line(w->b, c);
     }
 }
 

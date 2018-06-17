@@ -1,4 +1,5 @@
 #if !defined(OUT_H)
+
 # define OUT_H
 # include <stdio.h>
 # include "types.h"

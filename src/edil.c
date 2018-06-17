@@ -15,6 +15,7 @@
 #include "text/cur.h"
 #include "ui.h"
 #include "cmd.h"
+#include "updater.h"
 #include "cmd/conf.h"
 #include "cmd/file.h"
 
@@ -240,6 +241,7 @@ static void init_all(void)
 {
     ring_init();
     cmd_init();
+    updater_init();
     out_init(stdout);
     inp_init();
     bind_init();
@@ -335,7 +337,7 @@ int main(int argc, char **argv)
 
     run_startup_cmd();
 
-    win_out_after(&w, (cur){0, 0});
+    updater_after(w.b, (cur){0, 0});
 
     loop();
 
