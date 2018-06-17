@@ -2,9 +2,10 @@
 # define BIND_CMDBIND_H
 
 #define BIND_CMD_MAP_ALL(mode) \
-    BIND_MAP(mode, cmd_new,  inp_key_esc | 'n') \
-    BIND_MAP(mode, cmd_load, inp_key_esc | 'a') \
-    BIND_MAP(mode, cmd_goto, inp_key_esc | 'g') \
+    BIND_MAP(mode, cmd_new,    inp_key_esc | 'n') \
+    BIND_MAP(mode, cmd_load,   inp_key_esc | 'a') \
+    BIND_MAP(mode, cmd_goto,   inp_key_esc | 'g') \
+    BIND_MAP(mode, cmd_buffer, inp_key_esc | 'b') \
     \
     BIND_MAP(mode, cmd_quit, inp_key_esc | inp_key_ctrl | 'K') \
     \
