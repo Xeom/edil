@@ -243,6 +243,15 @@ complaining.
 #### Eofnl command
  - Always end files in newlines
 
+Every file can have an eofnl flag set. If the flag is set, then
+when it is saved, an extra newline is added to the end, if one is
+not already there.
+
+The command can take the following arguments:
+ - `all` - Enables the flag on all newly opened files by default.
+ - `!all` - Disables the flag by default.
+ - `1` - Enables the flag on this specific file.
+ - `0` - Disables the flag on this specific file.
 
 ---
 #### Goto command

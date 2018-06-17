@@ -49,6 +49,8 @@ Buf mode
 | `10f` - _backspace_    | cur_back       | Delete backwards at the cursor position           |
 | `110` - _enter_        | cur_enter      | Insert a newline at the current ursor             |
 | `310` - _Esc+enter_    | cur_enter_line | Insert a newline before the current line          |
+| `111` - _paste(_       | cur_pastebegin | Disable indentation ready for a paste             |
+| `112` - _paste)_       | cur_pasteend   | Re-enable indentation after a paste               |
 
 Kcd mode
 --------

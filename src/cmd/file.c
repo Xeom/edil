@@ -329,7 +329,17 @@ void file_clr_win(win *w)
 void cmd_file_init(void)
 {
     CMD_ADD(eofnl,
-        Always end files in newlines, "");
+        Always end files in newlines,
+        "Every file can have an eofnl flag set. If the flag is set, then\n"
+        "when it is saved, an extra newline is added to the end, if one is\n"
+        "not already there.\n\n"
+
+        "The command can take the following arguments:\n"
+        " - `all` - Enables the flag on all newly opened files by default.\n"
+        " - `!all` - Disables the flag by default.\n"
+        " - `1` - Enables the flag on this specific file.\n"
+        " - `0` - Disables the flag on this specific file.\n"
+    );
 
     CMD_ADD(new,
         Create a new buffer,
