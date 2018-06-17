@@ -17,6 +17,7 @@
         _cmd_funct_ ## _name (args, rtn, w, &_tmpvecs);                            \
         VEC_FOREACH(&_tmpvecs, vec **, vptr,                                       \
             vec_kill(*vptr);                                                       \
+            free(*vptr);                                                           \
         );                                                                         \
         vec_kill(&_tmpvecs);                                                       \
     }                                                                              \
@@ -41,8 +42,8 @@
 
 /* Create a vector that is automatically killed after the command */
 #define CMD_TMP_VEC(_name, _type) \
-    vec *_name = malloc(sizeof(vec));         \
-    *(vec **)vec_app(_tmpvecs, NULL) = _name; \
+    vec *_name = malloc(sizeof(vec)); \
+    vec_app(_tmpvecs, &_name); \
     vec_init(_name, sizeof(_type));
 
 /* Get arguments as chr vecs */

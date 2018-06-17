@@ -51,8 +51,12 @@ void bar_init(bar *b, win *w)
 
 void bar_kill(bar *b)
 {
-    vec_kill(b->typed);
     vec_kill(&(b->prompt));
+
+    while (!circvec_empty(&(b->scrollback)))
+        vec_kill(circvec_pop(&(b->scrollback)));
+
+    circvec_kill(&(b->scrollback));
 
     free(b->format);
 }
