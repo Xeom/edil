@@ -343,4 +343,3 @@ void indent_set_tab_width(size_t width)
 
     win_out_all();
 }
-
