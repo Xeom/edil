@@ -248,9 +248,9 @@ void indent_trim_end(buf *b, cur c)
     c.cn += 1;
     n = line_len(l) - c.cn;
 
-    if (n) buf_del(b, c, n);
-
     line_unlock(l);
+
+    if (n) buf_del(b, c, n);
 }
 
 cur indent_incr_depth(buf *b, cur c)
