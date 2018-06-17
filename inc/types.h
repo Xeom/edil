@@ -214,6 +214,8 @@ typedef enum
     inp_key_del,
     inp_key_back,
     inp_key_enter,
+    inp_key_pastebegin,
+    inp_key_pasteend,
     inp_key_f1,
     inp_key_f2,
     inp_key_f3,

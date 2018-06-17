@@ -228,6 +228,7 @@ void bind_kill(void)
 {
     FOREACH_MODE(info, table_kill(info->keytable););
 
+    vec_kill(&bind_all);
     vec_kill(&bind_ins_buf);
 }
 

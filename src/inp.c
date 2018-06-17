@@ -68,6 +68,9 @@ inp_keycode inp_keycodes_static[] =
     {inp_key_shifttab, "[Z",  "Shift+tab"},
     {inp_key_shiftdel, "[2K", "Shift+del"},
 
+    {inp_key_pastebegin, "[200~", "paste("},
+    {inp_key_pasteend,   "[201~", "paste)"},
+
     {inp_key_up    | inp_key_ctrl, "OA", "up"},
     {inp_key_down  | inp_key_ctrl, "OB", "down"},
     {inp_key_left  | inp_key_ctrl, "OD", "left"},
@@ -360,6 +363,7 @@ void inp_kill(void)
 {
     inp_listen_kill();
 
+    table_kill(&inp_keytranslate);
     vec_kill(&inp_keycodes);
 }
 

@@ -28,6 +28,7 @@
 #define HIDE_CUR   "\033[?25l"
 #define SHOW_CUR   "\033[?25h"
 #define RESET_COL  "\033[0m"
+#define PASTE_BRA  "\033[?2004h"
 
 static void out_handle_winch(int sign);
 
@@ -189,7 +190,7 @@ void out_init(FILE *f)
     out_handle_winch(0);
 
     /* Clear sreen and hide cursor */
-    fputs(CLR_SCREEN HIDE_CUR, f);
+    fputs(CLR_SCREEN HIDE_CUR PASTE_BRA, f);
 
     /* Mount window size handler */
     act.sa_handler = out_handle_winch;
