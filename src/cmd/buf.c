@@ -124,7 +124,7 @@ CMD_FUNCT(kill,
         }
     );
 
-    win_set_buf(w, new);
+    win_set_buf_killed(w, new);
 
     CMD_RTN_FMT("switched to %d", ring_get_ind(new));
 
