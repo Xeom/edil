@@ -206,10 +206,19 @@ void bar_move(bar *b, int n)
 
 void bar_run(bar *b)
 {
+    vec tmp;
+
     bar_scrollback_new(b);
 
     if (b->cb)
-        b->cb(b->w, b->typed);
+    {
+        vec_init(&tmp, sizeof(chr));
+        vec_cpy(&tmp, b->typed);
+
+        b->cb(b->w, &tmp);
+
+        vec_kill(&tmp);
+    }
 
     bar_cancel(b);
 }

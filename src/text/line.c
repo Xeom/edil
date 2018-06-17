@@ -96,8 +96,12 @@ void line_ins_mem(line *l, cur c, size_t n, chr *mem)
 
 void line_del(line *l, cur c, size_t n)
 {
+    ssize_t len;
+    len = line_len(l);
+
+    if (c.cn >= len) return;
     if (c.cn + (ssize_t)n > line_len(l))
-        return;
+        n = len - c.cn;
 
     while (c.cn && chr_is_blank(line_chr(l, c)))
     {

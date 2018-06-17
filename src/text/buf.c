@@ -184,7 +184,7 @@ void buf_ins_from(buf *b, cur c, buf *oth, cur loc, cur end)
         if (num > 0)
             buf_ins(b, c, &chrs);
 
-        c = (cur){ .cn = len };
+        c.cn = len;
         buf_ins_nl(b, c);
         c = (cur){ .ln = c.ln + 1 };
     }
