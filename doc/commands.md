@@ -25,6 +25,7 @@ List of commands
  * [__associate__](#associate-command) - _Associate a buffer with a file_
  * [__autoindent__](#autoindent-command) - _Automatically indent a line_
  * [__basebar__](#basebar-command) - _Set the window base-bar string_
+ * [__buffer__](#buffer-command) - _Switch to a specified buffer_
  * [__bufinfo__](#bufinfo-command) - _Display information about the current buffer_
  * [__cd__](#cd-command) - _Change directory_
  * [__conffile__](#conffile-command) - _Load a config file_
@@ -142,6 +143,27 @@ For the attributes, the following values may be summed:
 
 The default basebar is ' **%n** **%8**│**%0**
 **%L**·**%C** **%8**│**%0** **%m**'.
+
+---
+#### Buffer command
+ - Switch to a specified buffer
+
+This command switches the current window to a specified buffer.
+It takes one argument, which is used to search for a matching
+buffer. If no argument is given, the it goes back to the
+buffer that was previously navigated away from using this
+command.
+
+If the command is given a number, then the buffer with that id is
+chosen.
+
+Then, the names of every buffer are checked. These are generally
+basenames of the files associated with those buffers.
+
+Finally, the full path of every buffer is checked.
+
+The buffer that is switched to will be the first one after the
+current buffer that matches.
 
 ---
 #### Bufinfo command
