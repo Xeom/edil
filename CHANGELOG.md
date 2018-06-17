@@ -78,6 +78,9 @@ Upcoming
  - [ ] Tab completion for commands.
  - [x] Added saveall ! option
  - [x] Added eofnl command.
+ - [x] Added buffer command.
+ - [x] Rewritten buffer system.
+ - [ ] Multithreading.
 
 0.3.0
 -----
@@ -93,9 +96,6 @@ Upcoming
 
 1.0.0
 -----
-
- - [ ] Rewritten buffer system.
- - [ ] Multithreading.
 
 Features for the future
 -----------------------

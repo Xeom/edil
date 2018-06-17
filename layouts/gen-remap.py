@@ -76,7 +76,7 @@ for line in sys.stdin.readlines():
     if (conv & 0x400 and c not in ctrlable):
         err("{} is getting mapped to invalid key {}".format(bind, getname(code)))
 
-        print("# !!! The following is an invalid keybinding to '{0}'. \n"
+        print("# !!! The following is an invalid keybinding to '{0}'.\n"
               "#     Please remap this manually. The original keybinding\n"
               "#     was '{1}'\n"
               "# unmap {2} {3:x}\n"

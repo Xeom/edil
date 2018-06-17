@@ -9,6 +9,68 @@
 #include "cmd.h"
 #include "cmd/buf.h"
 
+static buf *cmd_buf_find(buf *orig, char *search);
+
+CMD_FUNCT(buffer,
+    CMD_MAX_ARGS(1);
+
+    static buf *prev = NULL;
+    buf *b;
+
+    if (CMD_NARGS == 0)
+    {
+        if (!prev)
+            CMD_ERR("No previous buffer to switch back to");
+
+        b = prev;
+    }
+
+    else
+    {
+        prev = w->b;
+
+        CMD_ARG_STR(1, search)
+        b = cmd_buf_find(w->b, vec_first(search));
+
+        if (b == NULL)
+            CMD_ERR("Could not find matching buffer.");
+
+    }
+
+    prev = w->b;
+
+    win_set_buf(w, b);
+
+    CMD_RTN_FMT(
+        "switched buffer %d -> %d",
+        ring_get_ind(prev), ring_get_ind(b)
+    );
+)
+
+static buf *cmd_buf_find(buf *orig, char *search)
+{
+    int id;
+    buf *b;
+    if (sscanf(search, "%d", &id) == 1)
+    {
+        return ring_get(id);
+    }
+
+    for (b = ring_next(orig); b != orig; b = ring_next(b))
+    {
+        if (strstr(buf_get_name(b), search))
+            return b;
+    }
+
+    for (b = ring_next(orig); b != orig; b = ring_next(b))
+    {
+        if (strstr(file_name(&(b->finfo)), search))
+            return b;
+    }
+
+    return NULL;
+}
+
 CMD_FUNCT(bufinfo,
 
     buf  *b;
@@ -124,7 +186,7 @@ CMD_FUNCT(kill,
         }
     );
 
-    win_set_buf(w, new);
+    win_set_buf_killed(w, new);
 
     CMD_RTN_FMT("switched to %d", ring_get_ind(new));
 
@@ -162,6 +224,26 @@ CMD_FUNCT(quit,
 
 void cmd_buf_init(void)
 {
+    CMD_ADD(buffer,
+        Switch to a specified buffer,
+        "This command switches the current window to a specified buffer.\n"
+        "It takes one argument, which is used to search for a matching\n"
+        "buffer. If no argument is given, the it goes back to the\n"
+        "buffer that was previously navigated away from using this\n"
+        "command.\n\n"
+
+        "If the command is given a number, then the buffer with that id is\n"
+        "chosen.\n\n"
+
+        "Then, the names of every buffer are checked. These are generally\n"
+        "basenames of the files associated with those buffers.\n\n"
+
+        "Finally, the full path of every buffer is checked.\n\n"
+
+        "The buffer that is switched to will be the first one after the\n"
+        "current buffer that matches.\n"
+    );
+
     CMD_ADD(bufinfo,
         Display information about the current buffer,
         "If a file is associated with the buffer, the path of\n"

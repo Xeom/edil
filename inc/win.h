@@ -28,6 +28,7 @@ void win_show_cur(win *w, cur c);
 void win_reset(win *w);
 
 void win_set_buf(win *w, buf *b);
+void win_set_buf_killed(win *w, buf *b);
 
 vec *win_add_cur(cur pri, cur sec, ssize_t ln, vec *line, int *tofree);
 

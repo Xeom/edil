@@ -81,8 +81,8 @@ void buf_clr(buf *b)
 
     b->prihint = (cur){0, 0};
 
-    len = text_len(&(b->t));
-    text_del_lines(&(b->t), (cur){0, 0}, len);
+    len = buf_len(b);
+    buf_del_lines(b, (cur){0, 0}, len);
 }
 
 void buf_ins_nl(buf *b, cur loc)
@@ -106,6 +106,7 @@ void buf_ins_nl(buf *b, cur loc)
         if (vec_len(&chrs) > (size_t)num)
             vec_del(&chrs, 0, vec_len(&chrs) - num);
 
+        buf_del(b, loc,    num);
         buf_ins(b, newloc, &chrs);
     }
 
@@ -167,40 +168,43 @@ chr buf_chr(buf *b, cur loc)
 
 void buf_ins_from(buf *b, cur c, buf *oth, cur loc, cur end)
 {
+    vec chrs;
+    vec_init(&chrs, sizeof(chr));
+
     for (; loc.ln < end.ln; loc = (cur){ .ln = loc.ln + 1 })
     {
         ssize_t len, num;
-        line *l;
-        l = text_get_line(&(oth->t), loc);
 
-        len = line_len(l);
+        vec_clr(&chrs);
+        text_cpy_line(&(oth->t), loc, &chrs);
+
+        len = vec_len(&chrs);
         num = len - loc.cn;
 
         if (num > 0)
-            buf_ins_mem(b, c, num, line_chr(l, loc));
+            buf_ins(b, c, &chrs);
 
         c = (cur){ .cn = len };
         buf_ins_nl(b, c);
         c = (cur){ .ln = c.ln + 1 };
-
-        line_unlock(l);
     }
 
     if (loc.ln == end.ln)
     {
         ssize_t num;
-        line *l;
-        l = text_get_line(&(oth->t), loc);
+
+        vec_clr(&chrs);
+        text_cpy_line(&(oth->t), loc, &chrs);
 
         num = end.cn - loc.cn;
 
         if (num > 0)
-            buf_ins_mem(b, c, num, line_chr(l, loc));
+            buf_ins_mem(b, c, num, vec_get(&chrs, loc.cn));
 
         loc.cn += num;
-
-        line_unlock(l);
     }
+
+    vec_kill(&chrs);
 }
 
 void buf_set_name(buf *b, char *name)

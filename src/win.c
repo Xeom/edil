@@ -289,6 +289,11 @@ void win_reset(win *w)
 void win_set_buf(win *w, buf *b)
 {
     w->b->prihint = w->pri;
+    win_set_buf_killed(w, b);
+}
+
+void win_set_buf_killed(win *w, buf *b)
+{
     w->b = b;
     win_reset(w);
 }

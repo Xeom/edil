@@ -379,33 +379,44 @@ void cur_shift(win *w, cur dir)
     }
     else if (dir.ln > 0)
     {
-        line *l;
+        cur delcur;
+        delcur = (cur){ .ln = end->ln + 2 };
 
         buf_ins_lines(b, *start, 1);
 
-        l = buf_get_line(b, (cur){ .ln = end->ln + 2 });
-        if (l)
+        if (CUR_GREATER(buf_last(b), delcur))
         {
-            buf_ins(b, (cur){ .ln = start->ln }, line_vec(l));
-            line_unlock(l);
+            vec chrs;
+            vec_init(&chrs, sizeof(chr));
 
-            buf_del_lines(b, (cur){ .ln = end->ln + 2 }, 1);
+            buf_cpy_line(b, delcur, &chrs);
+            buf_del_lines(b, delcur, 1);
+            buf_ins(b, (cur){ .ln = start->ln }, &chrs);
+
+            vec_kill(&chrs);
         }
-
     }
     else if (dir.ln < 0 && start->ln)
     {
-        line *l;
+        cur delcur;
+        delcur = (cur){ .ln = start->ln - 1 };
 
-        buf_ins_lines(b, (cur){ .ln = end->ln + 1 }, 1);
-
-        l = buf_get_line(b, (cur){ .ln = start->ln - 1 });
-        if (l)
+        if (delcur.ln >= 0)
         {
-            buf_ins(b, (cur){ .ln = end->ln + 1 }, line_vec(l));
-            line_unlock(l);
+            buf_ins_lines(b, (cur){ .ln = end->ln + 1 }, 1);
 
-            buf_del_lines(b, (cur){ .ln = start->ln - 1 }, 1);
+            vec chrs;
+            vec_init(&chrs, sizeof(chr));
+
+            buf_cpy_line(b, delcur, &chrs);
+            buf_del_lines(b, delcur, 1);
+            buf_ins(b, (cur){ .ln = end->ln }, &chrs);
+
+            vec_kill(&chrs);
+        }
+        else
+        {
+            return;
         }
     }
 

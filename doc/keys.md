@@ -25,6 +25,7 @@ Buf mode
 | `45a` - _Ctrl+Z_       | cmd_r_snap     | Run snap command                                  |
 | `45e` - _Ctrl+^_       | mode_kcd       | Switch to keycode mode                            |
 | `261` - _Esc+a_        | cmd_load       | Shortcut for load command                         |
+| `262` - _Esc+b_        | cmd_buffer     | Shortcut for buffer command                       |
 | `267` - _Esc+g_        | cmd_goto       | Shortcut for goto command                         |
 | `26d` - _Esc+m_        | mode_mov       | Switch to movement mode                           |
 | `26e` - _Esc+n_        | cmd_new        | Shortcut for new command                          |
@@ -61,13 +62,16 @@ Bar mode
 
 |         Key            | Binding        | Description                                       |
 |         -------------- | -------------- | ------------------------------------------------- |
-| `441` - _Ctrl+A_       | mode_buf       | Switch to buffer mode                             |
-| `44b` - _Ctrl+K_       | mode_kcd       | Switch to keycode mode                            |
+| `445` - _Ctrl+E_       | mode_buf       | Switch to buffer mode                             |
+| `44c` - _Ctrl+L_       | mode_lng       | Switch to long-cursor mode                        |
 | `458` - _Ctrl+X_       | mode_buf       | Switch to buffer mode                             |
+| `45e` - _Ctrl+^_       | mode_kcd       | Switch to keycode mode                            |
 | `101` - _up_           | bar_mv_u       | Scroll back one place                             |
 | `102` - _down_         | bar_mv_d       | Scroll forward one place                          |
 | `103` - _right_        | bar_mv_r       | Move bar cursor right                             |
 | `104` - _left_         | bar_mv_l       | Move bar cursor left                              |
+| `105` - _home_         | bar_home       | Go to the start of the bar                        |
+| `106` - _end_          | bar_end        | Go to the end of the bar                          |
 | `10e` - _del_          | bar_del        | Delete forwards in bar                            |
 | `10f` - _backspace_    | bar_back       | Delete backwards in bar                           |
 | `110` - _enter_        | bar_enter      | Submit contents of bar                            |
@@ -94,6 +98,7 @@ Mov mode
 | `45e` - _Ctrl+^_       | mode_kcd       | Switch to keycode mode                            |
 | `061` - _a_            | cur_skp_l      | Skip the cursor left quickly                      |
 | `261` - _Esc+a_        | cmd_load       | Shortcut for load command                         |
+| `262` - _Esc+b_        | cmd_buffer     | Shortcut for buffer command                       |
 | `064` - _d_            | cur_skp_r      | Skip the cursor right quickly                     |
 | `065` - _e_            | cur_faster     | Increase the skip speed                           |
 | `066` - _f_            | cur_pgup       | Move the cursor to the top of the screen          |
@@ -142,6 +147,7 @@ Lng mode
 | `45a` - _Ctrl+Z_       | cmd_r_snap     | Run snap command                                  |
 | `45e` - _Ctrl+^_       | mode_kcd       | Switch to keycode mode                            |
 | `261` - _Esc+a_        | cmd_load       | Shortcut for load command                         |
+| `262` - _Esc+b_        | cmd_buffer     | Shortcut for buffer command                       |
 | `267` - _Esc+g_        | cmd_goto       | Shortcut for goto command                         |
 | `26d` - _Esc+m_        | mode_mov       | Switch to movement mode                           |
 | `26e` - _Esc+n_        | cmd_new        | Shortcut for new command                          |
