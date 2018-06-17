@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "bind.h"
+#include "indent.h"
 #include "text/cur.h"
 #include "text/chr.h"
 
@@ -76,6 +77,17 @@ BIND_FUNCT(cur_ins_tab,
     vec_kill(&tabvec);
 )
 
+indent_flag indent_mode_pre_paste;
+
+BIND_FUNCT(cur_pastebegin,
+    indent_mode_pre_paste = indent_mode;
+    indent_mode = 0;
+)
+
+BIND_FUNCT(cur_pasteend,
+    indent_mode = indent_mode_pre_paste;
+)
+
 void bind_curbind_init(void)
 {
     BIND_ADD(cur_mv_u, Move the cursor up);
@@ -112,4 +124,7 @@ void bind_curbind_init(void)
     BIND_ADD(cur_back, Delete backwards at the cursor position);
 
     BIND_ADD(cur_ins_tab, Insert a tab at the cursor position);
+
+    BIND_ADD(cur_pastebegin, Disable indentation ready for a paste);
+    BIND_ADD(cur_pasteend,   Re-enable indentation after a paste);
 }

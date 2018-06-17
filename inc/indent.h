@@ -2,14 +2,6 @@
 # define INDENT_H
 # include "types.h"
 
-typedef enum
-{
-    indent_spacify   = 0x01,
-    indent_auto      = 0x02,
-    indent_skipblank = 0x04,
-    indent_trim      = 0x08
-} indent_flag;
-
 extern indent_flag indent_mode;
 extern int         indent_tab_width;
 extern int         indent_lvl_width;
