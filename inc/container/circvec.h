@@ -23,6 +23,8 @@ void *circvec_peek(circvec *cv);
 
 void *circvec_push(circvec *cv);
 
+void circvec_pipe_push(circvec *cv, void *data);
+
 void *circvec_get(circvec *cv, ssize_t ind);
 
 void circvec_resize(circvec *cv, size_t sz);

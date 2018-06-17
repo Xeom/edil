@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "container/vec.h"
 
 #include "container/circvec.h"
@@ -104,6 +106,21 @@ void *circvec_push(circvec *cv)
     cv->empty = 0;
 
     return ptr;
+}
+
+void circvec_pipe_push(circvec *cv, void *data)
+{
+    void *new;
+    size_t width;
+
+    width = cv->v.width;
+
+    if (circvec_full(cv))
+        circvec_resize(cv, circvec_size(cv) << 1);
+
+    new = circvec_push(cv);
+
+    if (data) memcpy(new, data, width);
 }
 
 void *circvec_get(circvec *cv, ssize_t ind)

@@ -10,22 +10,24 @@
  * TYPEDEF TIME! *
  * * * * * * * * */
 
-typedef struct bar_s            bar;            /* Bar at base of windows */
-typedef struct bind_info_s      bind_info;      /* Function bound to key  */
-typedef struct bind_mode_info_s bind_mode_info; /* UI Mode                */
-typedef struct buf_s            buf;            /* Text and metadata      */
-typedef struct chr_s            chr;            /* Utf-8 char with font   */
-typedef struct circvec_s        circvec;        /* A circular buffer      */
-typedef struct cmd_info_s       cmd_info;       /* Function bound as cmd  */
-typedef struct cur_s            cur;            /* Position in buffer     */
-typedef struct file_s           file;           /* File or pipe etc.      */
-typedef struct inp_keycode_s    inp_keycode;    /* Key escape code        */
-typedef struct line_s           line;           /* A line of text         */
-typedef struct namevec_item_s   namevec_item;   /* Maps a name to a void* */
-typedef struct table_s          table;          /* A hashtable container  */
-typedef struct text_s           text;           /* A series of lines      */
-typedef struct vec_s            vec;            /* A vector container     */
-typedef struct win_s            win;            /* Displays a buffer      */
+typedef struct bar_s              bar;              /* Bar at base of windows */
+typedef struct bind_info_s        bind_info;        /* Function bound to key  */
+typedef struct bind_mode_info_s   bind_mode_info;   /* UI Mode                */
+typedef struct buf_s              buf;              /* Text and metadata      */
+typedef struct chr_s              chr;              /* Utf-8 char with font   */
+typedef struct circvec_s          circvec;          /* A circular buffer      */
+typedef struct cmd_info_s         cmd_info;         /* Function bound as cmd  */
+typedef struct cur_s              cur;              /* Position in buffer     */
+typedef struct file_s             file;             /* File or pipe etc.      */
+typedef struct inp_keycode_s      inp_keycode;      /* Key escape code        */
+typedef struct line_s             line;             /* A line of text         */
+typedef struct namevec_item_s     namevec_item;     /* Maps a name to a void* */
+typedef struct table_s            table;            /* A hashtable container  */
+typedef struct text_s             text;             /* A series of lines      */
+typedef struct vec_s              vec;              /* A vector container     */
+typedef struct updater_s          updater;          /* Updater thread         */
+typedef struct updater_line_loc_s updater_line_loc; /* Updater location       */
+typedef struct win_s              win;              /* Displays a buffer      */
 
 /* * * * * * * *
  * CONTAINERS  *
@@ -317,6 +319,30 @@ struct cmd_info_s
     char *name;
     char *desc;
     char *full;
+};
+
+/* * * * * *
+ * THREADS *
+ * * * * * */
+
+struct updater_line_loc_s
+{
+    cur  c;
+    buf *b;
+};
+
+struct updater_s
+{
+    int (* fptr_line )(buf *, cur *c);
+    int (* fptr_after)(buf *, cur *c);
+
+    pthread_t thread;
+
+    pthread_mutex_t lock;
+    pthread_cond_t  ready;
+
+    table after;
+    circvec curs;
 };
 
 #endif
