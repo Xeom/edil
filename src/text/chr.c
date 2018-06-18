@@ -4,6 +4,7 @@
 
 #include "container/vec.h"
 #include "text/col.h"
+#include "print.h"
 
 #include "text/chr.h"
 
@@ -35,7 +36,7 @@ void chr_print(chr *c, FILE *f)
     if (chr_is_blank(c))
         return;
 
-    fwrite(c->utf8, 1, len, f);
+    print_mem(c->utf8, len);
 }
 
 int chr_is_whitespace(chr *c)

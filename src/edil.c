@@ -12,6 +12,7 @@
 #include "out.h"
 #include "inp.h"
 #include "text/col.h"
+#include "print.h"
 #include "text/cur.h"
 #include "ui.h"
 #include "cmd.h"
@@ -242,6 +243,7 @@ static void init_all(void)
     ring_init();
     cmd_init();
     updater_init();
+    print_init();
     out_init(stdout);
     inp_init();
     bind_init();

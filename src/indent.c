@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "print.h"
 #include "text/chr.h"
 #include "text/col.h"
 #include "text/cur.h"
@@ -32,7 +33,7 @@ void indent_print_tab(size_t ind, FILE *f, col fnt)
         size_t n;
         n = width - len;
 
-        while (n--) fputs(" ", f);
+        while (n--) print_str(" ");
 
         str = indent_tab_text;
     }
@@ -41,9 +42,9 @@ void indent_print_tab(size_t ind, FILE *f, col fnt)
         str = indent_tab_text + len - width;
     }
 
-    fputs(str, f);
-    col_print(fnt, f);
+    print_str(str);
 
+    col_print(fnt, f);
 }
 
 int indent_get_width(chr *c, size_t ind)

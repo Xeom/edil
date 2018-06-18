@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "out.h"
+#include "print.h"
 #include "container/vec.h"
 #include "text/chr.h"
 #include "text/col.h"
@@ -339,6 +340,7 @@ void bar_out(bar *b)
 
     out_goto(w->xpos + 1, w->ypos + w->rows, stdout);
     out_chrs(vec_first(&chrs), w->cols, 0, stdout);
+    print_flush();
 
     vec_kill(&chrs);
 }

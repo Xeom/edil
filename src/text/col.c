@@ -1,4 +1,5 @@
 #include "text/chr.h"
+#include "print.h"
 
 #include "container/vec.h"
 
@@ -57,7 +58,6 @@ void col_parse_string(col c, vec *chrs, char *str)
         if (*(str) == '\0')
         {
             chr_from_mem(chrs, seg, str - seg);
-
         }
 
         while (colind < vec_len(chrs))
@@ -86,27 +86,28 @@ col col_update(col c, col_desc d)
 
 void col_print(col c, FILE *f)
 {
-    fputs("\033[0", f);
+    print_str("\033[0");
+
 #if !defined(COL_NONE)
     if (c.fg < col_none)
     {
-        if (c.fg & col_bright) fputs(";1", f);
-        fprintf(f, ";%d", (c.fg & col_allcols) + 30);
+        if (c.fg & col_bright) print_str(";1");
+        print_fmt(";%d", (c.fg &col_allcols) + 30);
     }
 #endif
-    if (c.attr & col_under) fputs(";4", f);
-    if (c.attr & col_rev)   fputs(";7", f);
-    if (c.attr & col_blink) fputs(";5", f);
+    if (c.attr & col_under) print_str(";4");
+    if (c.attr & col_rev)   print_str(";7");
+    if (c.attr & col_blink) print_str(";5");
 
 #if !defined(COL_NONE)
     if (c.bg < col_none)
     {
         if (c.bg & col_bright)
-            fprintf(f, ";%d", (c.bg & col_allcols) + 100);
+            print_fmt(";%d", (c.bg & col_allcols) + 100);
         else
-            fprintf(f, ";%d", (c.bg & col_allcols) + 40);
+            print_fmt(";%d", (c.bg & col_allcols) + 40);
     }
 #endif
 
-    fputs("m", f);
+    print_str("m");
 }

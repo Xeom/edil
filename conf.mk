@@ -1,11 +1,10 @@
 FILES=text/buf text/text text/line text/chr text/col text/cur \
-      bar cmd file indent inp out ring ui win bind updater \
+      bar cmd file indent inp out ring ui win bind updater print \
       container/vec container/namevec container/circvec container/table \
       cmd/file cmd/nav cmd/indent cmd/buf cmd/region cmd/conf \
       bind/curbind bind/cmdbind bind/modebind bind/barbind \
       bind/barmap bind/bufmap bind/movmap bind/kcdmap bind/lngmap
 HEADERS=types
-
 
 SRCDIR=src/
 INCDIR=inc/

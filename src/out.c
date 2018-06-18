@@ -20,6 +20,7 @@
 #include "text/col.h"
 #include "updater.h"
 #include "indent.h"
+#include "print.h"
 #include "win.h"
 
 #include "out.h"
@@ -72,7 +73,7 @@ static struct termios out_tattr_orig;
 
 void out_goto(int cn, int ln, FILE *f)
 {
-    fprintf(f, GOTO(%d, %d), ln, cn);
+    print_fmt(GOTO(%d, %d), ln, cn);
 }
 
 void out_log(vec *chrs, FILE *f)
@@ -113,15 +114,15 @@ void out_log(vec *chrs, FILE *f)
 
 void out_clr_line(FILE *f)
 {
-    fputs(CLR_LINE, f);
+    print_str(CLR_LINE);
 }
 
 void out_blank_line(FILE *f)
 {
-    fputs(CLR_LINE, f);
+    print_str(CLR_LINE);
 
     col_print(out_blank_line_col, f);
-    fputs(out_blank_line_text,    f);
+    print_str(out_blank_line_text);
 }
 
 void out_chrs(chr *chrs, size_t n, size_t off, FILE *f)
@@ -130,7 +131,7 @@ void out_chrs(chr *chrs, size_t n, size_t off, FILE *f)
     col currcol;
     size_t ind;
 
-    fputs(RESET_COL, f);
+    print_str(RESET_COL);
 
     for (ind = 0; ind < n; ind++)
     {
@@ -193,7 +194,7 @@ void out_init(FILE *f)
     out_handle_winch(0);
 
     /* Clear sreen and hide cursor */
-    fputs(CLR_SCREEN HIDE_CUR, f);
+    print_str(CLR_SCREEN HIDE_CUR);
 
     /* Mount window size handler */
     act.sa_handler = out_handle_winch;
@@ -205,6 +206,8 @@ void out_init(FILE *f)
     vec_init(&empty, sizeof(chr));
     out_log(&empty, stdout);
 
+    vec_kill(&empty);
+
     out_init_thread();
 }
 
@@ -212,7 +215,8 @@ void out_kill(FILE *f)
 {
     tcsetattr(fileno(f), TCSANOW, &out_tattr_orig);
 
-    fputs(CLR_SCREEN SHOW_CUR RESET_COL, f);
+    print_str(CLR_SCREEN SHOW_CUR RESET_COL);
+    print_flush();
 }
 
 static void out_init_thread(void)
@@ -229,7 +233,11 @@ static void out_init_thread(void)
 static int out_updater_line(buf *b, cur *c)
 {
     if (b == win_cur->b)
+    {
         win_out_line(win_cur, *c);
+
+        print_flush();
+    }
 
     return 1;
 }
@@ -246,8 +254,11 @@ static int out_updater_after(buf *b, cur *c)
 
         win_out_line(win_cur, *c);
 
+        print_flush();
+
         return 1;
     }
+
 
     return 0;
 }
