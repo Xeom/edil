@@ -41,6 +41,8 @@ static void out_handle_winch(int sign);
 ssize_t out_cols, out_rows;
 int out_to_resize;
 
+static updater out_thread;
+
 /* The colour and text to be printed when a line that doesn't exist *
  * is displayed (not just empty, a line beyond the end of the buf)  */
 char *out_blank_line_text = "\xc2\xbb";
@@ -213,6 +215,8 @@ void out_init(FILE *f)
 
 void out_kill(FILE *f)
 {
+    updater_end(&out_thread);
+
     tcsetattr(fileno(f), TCSANOW, &out_tattr_orig);
 
     print_str(CLR_SCREEN SHOW_CUR RESET_COL);
@@ -221,13 +225,12 @@ void out_kill(FILE *f)
 
 static void out_init_thread(void)
 {
-    static updater u;
-    u.fptr_line  = out_updater_line;
-    u.fptr_after = out_updater_after;
+    out_thread.fptr_line  = out_updater_line;
+    out_thread.fptr_after = out_updater_after;
 
-    updater_send_to(&u);
+    updater_send_to(&out_thread);
 
-    updater_start(&u);
+    updater_start(&out_thread);
 }
 
 static int out_updater_line(buf *b, cur *c)

@@ -5,6 +5,7 @@
 void updater_init(void);
 
 void updater_start(updater *u);
+void updater_end(updater *u);
 
 void updater_del_buf(buf *b);
 

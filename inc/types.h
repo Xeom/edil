@@ -341,6 +341,8 @@ struct updater_s
     pthread_mutex_t lock;
     pthread_cond_t  ready;
 
+    unsigned int alive : 1;
+
     table after;
     circvec curs;
 };

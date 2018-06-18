@@ -33,6 +33,8 @@ void updater_init(void)
 
 void updater_start(updater *u)
 {
+    u->alive = 1;
+
     table_init(&(u->after), sizeof(cur), sizeof(buf *));
     circvec_init(&(u->curs), sizeof(updater_line_loc), 16);
 
@@ -43,6 +45,22 @@ void updater_start(updater *u)
     vec_app(&updater_all, &u);
     pthread_create(&(u->thread), NULL, updater_listener_thread, u);
     pthread_mutex_unlock(&updater_all_mtx);
+}
+
+void updater_end(updater *u)
+{
+    pthread_mutex_lock(&(u->lock));
+
+    u->alive = 0;
+
+    table_kill(&(u->after));
+    circvec_kill(&(u->curs));
+
+    pthread_cond_broadcast(&(u->ready));
+
+    pthread_mutex_unlock(&(u->lock));
+
+    pthread_join(u->thread, NULL);
 }
 
 static vec *updater_get_send_vec(void)
@@ -161,7 +179,7 @@ static void *updater_listener_thread(void *arg)
 
     pthread_mutex_lock(&(u->lock));
 
-    while (1)
+    while (u->alive)
     {
         if (updater_process(u) == 1)
         {
