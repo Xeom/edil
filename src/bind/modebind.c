@@ -27,8 +27,17 @@ BIND_FUNCT(mode_mov,
 )
 
 BIND_FUNCT(mode_lng,
+    vec chrs;
+    vec_init(&chrs, sizeof(chr));
+    chr_from_str(&chrs, "snap");
+
     bind_bar_deactivate(w);
+
+    ui_cmd_cb(w, &chrs);
+
     bind_mode = bind_mode_lng;
+
+    vec_kill(&chrs);
 )
 
 void bind_modebind_init(void)
